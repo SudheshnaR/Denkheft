@@ -1,0 +1,1210 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Denkheft">
+<title>Denkheft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@600;800&family=Lexend:wght@400;500;600&family=Andika:wght@400;700&display=swap">
+<style>
+/* Layout: a school exercise book — squared paper for Mathe, lined paper for Deutsch; one column of topic cards, then a concept page with explanation above an endless practice card. */
+:root{
+  --bg:#eef2f7; --paper:#ffffff; --ink:#1b2438; --muted:#59657e; --line:#d6dfeb; --grid:rgba(47,91,211,.10);
+  --mathe:#2f5bd3; --mathe-soft:#e7eefd; --deutsch:#0d8768; --deutsch-soft:#e0f3ec;
+  --fort:#a8670b; --fort-soft:#fbefd9; --lesen:#a33d72; --lesen-soft:#f8e4ef; --good:#1d8a4a; --good-soft:#e2f5e9; --bad:#c03f2b; --bad-soft:#fbe8e4; --star:#d99a00;
+  --f-display:"Grandstander","Comic Sans MS","Trebuchet MS",sans-serif;
+  --f-body:"Lexend",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-read:"Andika","Lexend",system-ui,sans-serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141d; --paper:#171f2c; --ink:#e7ecf5; --muted:#9ba7bd; --line:#2b3648; --grid:rgba(124,156,255,.09);
+  --mathe:#86a3ff; --mathe-soft:#1e2944; --deutsch:#45cba4; --deutsch-soft:#14322a;
+  --fort:#f2bd4b; --fort-soft:#3a2d10; --lesen:#f08bc4; --lesen-soft:#3a1a2c; --good:#52c882; --good-soft:#15321f; --bad:#ff8b74; --bad-soft:#3a1d17; --star:#f4c445; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f141d; --paper:#171f2c; --ink:#e7ecf5; --muted:#9ba7bd; --line:#2b3648; --grid:rgba(124,156,255,.09);
+  --mathe:#86a3ff; --mathe-soft:#1e2944; --deutsch:#45cba4; --deutsch-soft:#14322a;
+  --fort:#f2bd4b; --fort-soft:#3a2d10; --lesen:#f08bc4; --lesen-soft:#3a1a2c; --good:#52c882; --good-soft:#15321f; --bad:#ff8b74; --bad-soft:#3a1d17; --star:#f4c445; color-scheme:dark}
+
+html,body{min-height:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{background-color:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  --accent:var(--mathe);--accent-soft:var(--mathe-soft);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px;-webkit-text-size-adjust:100%}
+body[data-subject="lesen"]{--accent:var(--lesen);--accent-soft:var(--lesen-soft);background-image:repeating-linear-gradient(to bottom,transparent 0 29px,var(--grid) 29px 30px);background-size:auto}
+body[data-subject="fort"]{--accent:var(--fort);--accent-soft:var(--fort-soft)}
+body[data-subject="deutsch"]{--accent:var(--deutsch);--accent-soft:var(--deutsch-soft);
+  background-image:repeating-linear-gradient(to bottom,transparent 0 29px,var(--grid) 29px 30px);background-size:auto}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+*{box-sizing:border-box}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.top-in,.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top-in{display:flex;flex-direction:column;gap:10px;padding-block:12px 12px}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:1.65rem;letter-spacing:.2px;line-height:1}
+.brand h1 span{color:var(--accent)}
+.total{display:flex;align-items:center;gap:6px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--muted);font-size:.95rem}
+.total b{color:var(--ink)}
+.star{color:var(--star)}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:var(--bg);padding:4px;border-radius:12px}
+.tab{border:0;background:transparent;padding:9px 2px;min-width:0;border-radius:9px;font-weight:600;cursor:pointer;color:var(--muted);font-family:var(--f-display);font-size:clamp(.88rem,3.6vw,1.05rem)}
+.tab[aria-selected="true"]{background:var(--paper);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.tab[data-t="mathe"][aria-selected="true"]{color:var(--mathe)}
+.tab[data-t="deutsch"][aria-selected="true"]{color:var(--deutsch)}
+.tab[data-t="fort"][aria-selected="true"]{color:var(--fort)}
+.tab[data-t="lesen"][aria-selected="true"]{color:var(--lesen)}
+
+.wrap{padding-block:18px 48px}
+.intro{margin:2px 0 16px;color:var(--muted);max-width:60ch}
+.list{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:640px){.list{grid-template-columns:1fr 1fr}}
+.card{display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:center;text-align:left;width:100%;
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:12px;cursor:pointer;transition:transform .12s,border-color .12s}
+.card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.glyph{width:56px;height:56px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;
+  font-family:var(--f-display);font-weight:800;font-size:1.05rem;line-height:1;text-align:center;padding:4px}
+.card-t{min-width:0}
+.card-t strong{display:block;font-weight:600;font-size:1.02rem;line-height:1.3}
+.card-t small{display:block;color:var(--muted);font-size:.86rem;line-height:1.35;margin-top:2px}
+.meta{display:flex;gap:10px;margin-top:6px;font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.pill{background:var(--bg);border-radius:999px;padding:1px 8px;letter-spacing:.3px}
+
+.back{border:0;background:transparent;color:var(--accent);font-weight:600;cursor:pointer;padding:6px 0;margin-bottom:6px}
+.ctitle{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+.ctitle h2{margin:0;font-family:var(--f-display);font-weight:800;font-size:1.6rem;line-height:1.15;text-wrap:balance}
+.ctitle .pill{display:inline-block;margin-top:4px;font-size:.78rem;color:var(--muted)}
+.cols{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:820px){.cols{grid-template-columns:1fr 1.1fr;align-items:start}}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.panel h3{margin:0 0 8px;font-family:var(--f-display);font-weight:800;font-size:1.15rem;color:var(--accent)}
+.panel p{margin:0 0 10px}
+.ex{background:var(--accent-soft);border-radius:10px;padding:10px 12px;margin:10px 0;font-variant-numeric:tabular-nums}
+.ex b{color:var(--accent)}
+details{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px}
+summary{cursor:pointer;font-weight:600;color:var(--muted);font-size:.92rem}
+details p{font-size:.92rem;color:var(--muted);margin:8px 0 0}
+
+.prac-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.prac-head h3{margin:0}
+.score{font-variant-numeric:tabular-nums;font-weight:600;font-size:.95rem}
+.q{font-size:1.18rem;line-height:1.5;margin:6px 0 14px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.q .big{font-size:1.6rem;font-weight:600;letter-spacing:.5px}
+.q .hl{background:var(--accent-soft);color:var(--accent);border-radius:6px;padding:0 5px;font-weight:600}
+.q .gap{display:inline-block;min-width:1.6em;border-bottom:3px solid var(--accent);text-align:center;color:var(--accent);font-weight:600}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-size:.9em;line-height:1.05;margin:0 2px}
+.frac span:first-child{border-bottom:2px solid currentColor;padding:0 3px}
+.text{background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:1.05rem;line-height:1.7}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ans{flex:1 1 140px;min-width:0;max-width:240px;font-size:1.3rem;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--paper);font-variant-numeric:tabular-nums}
+.ans:focus{border-color:var(--accent);outline:none}
+.unit{font-weight:600;color:var(--muted)}
+.pair{display:flex;gap:10px;flex-wrap:wrap}
+.pair label{display:flex;flex-direction:column;gap:4px;font-size:.82rem;color:var(--muted);font-weight:600;flex:1 1 120px;max-width:180px}
+.pair .ans{max-width:none;width:100%}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.choice{border:2px solid var(--line);background:var(--paper);border-radius:12px;padding:12px 10px;font-weight:600;cursor:pointer;font-size:1.05rem;text-align:center}
+.choice:hover{border-color:var(--accent)}
+.choice.right{border-color:var(--good);background:var(--good-soft);color:var(--good)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.choice:disabled{cursor:default}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{border:0;border-radius:12px;padding:11px 18px;font-weight:600;cursor:pointer;background:var(--accent);color:var(--paper)}
+.btn.ghost{background:transparent;color:var(--accent);border:2px solid var(--accent-soft)}
+.fb{margin-top:14px;border-radius:12px;padding:12px 14px;font-size:.98rem}
+.fb.ok{background:var(--good-soft);color:var(--good)}
+.fb.no{background:var(--bad-soft);color:var(--bad)}
+.fb.tip{background:var(--accent-soft);color:var(--ink)}
+.fb b{display:block;font-family:var(--f-display);font-size:1.15rem;margin-bottom:2px}
+.fb .why{color:var(--ink);display:block;margin-top:4px}
+.check li{margin:4px 0}
+.svgbox{max-width:100%;overflow-x:auto;margin:6px 0 10px}
+.svgbox svg text{fill:var(--ink);font-family:var(--f-body);font-size:13px}
+.foot{margin-top:28px;color:var(--muted);font-size:.85rem;max-width:62ch}
+
+.pgrid{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:760px){.pgrid{grid-template-columns:1fr 1fr}.pgrid .wide{grid-column:1/-1}}
+.today{display:grid;gap:12px}
+.bar-row{display:grid;grid-template-columns:76px 1fr 64px;gap:10px;align-items:center;font-variant-numeric:tabular-nums}
+.bar-row .lbl{font-weight:600}
+.track{height:14px;border-radius:999px;background:var(--bg);overflow:hidden}
+.fill{height:100%;border-radius:999px}
+.fill.m{background:var(--mathe)} .fill.d{background:var(--deutsch)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.kpi{background:var(--bg);border-radius:12px;padding:10px;text-align:center}
+.kpi b{display:block;font-family:var(--f-display);font-size:1.6rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi span{font-size:.78rem;color:var(--muted)}
+.goal{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;font-size:.92rem;color:var(--muted)}
+.goal button{border:2px solid var(--line);background:var(--paper);border-radius:10px;width:36px;height:36px;font-weight:700;cursor:pointer}
+.goal b{color:var(--ink);font-variant-numeric:tabular-nums;min-width:2ch;text-align:center}
+.chart svg{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-family:var(--f-body);font-size:10px}
+.legend{display:flex;gap:14px;font-size:.82rem;color:var(--muted);margin-top:6px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+th{text-align:left;font-size:.74rem;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+td.n,th.n{text-align:right}
+.tag{display:inline-block;font-size:.72rem;font-weight:600;border-radius:999px;padding:1px 8px}
+.tag.ok{background:var(--good-soft);color:var(--good)} .tag.warn{background:var(--bad-soft);color:var(--bad)} .tag.m{background:var(--mathe-soft);color:var(--mathe)} .tag.d{background:var(--deutsch-soft);color:var(--deutsch)}
+.muted{color:var(--muted)}
+textarea{width:100%;min-height:90px;font:inherit;font-size:.8rem;border:2px solid var(--line);border-radius:10px;padding:8px;background:var(--paper);color:var(--ink)}
+.small{font-size:.85rem}
+.btn.danger{background:var(--bad)}
+
+.sotd{display:grid;gap:14px;align-items:center}
+@media (min-width:700px){.sotd{grid-template-columns:1.15fr 1fr}}
+.pic{margin:0}
+.pic svg{width:100%;height:auto;display:block;border-radius:14px}
+.sotd h2,.stitle{font-family:var(--f-display);font-weight:800;font-size:1.75rem;line-height:1.15;margin:8px 0 6px;text-wrap:balance}
+.sotd p{margin:0 0 10px}
+.sec{font-family:var(--f-display);font-weight:800;font-size:1.2rem;margin:24px 0 10px;color:var(--accent)}
+.scard{grid-template-columns:104px 1fr}
+.thumb{width:104px;display:block}
+.thumb svg{width:104px;height:auto;display:block;border-radius:9px}
+.story,.qwrap{max-width:680px;margin:0 auto}
+.story figure{margin:20px 0 16px}
+.read{font-family:var(--f-read);font-size:1.22rem;line-height:1.85;margin:0 0 14px;max-width:62ch}
+.words{margin-bottom:6px}
+.words dl{margin:0;display:grid;gap:6px}
+.words dt{display:inline;font-weight:700;font-family:var(--f-read);font-size:1.05rem}
+.words dd{display:inline;margin:0 0 0 6px;color:var(--muted)}
+.end{text-align:center;color:var(--muted);font-family:var(--f-display);margin:18px 0 6px;letter-spacing:2px}
+.sq{margin-bottom:12px}
+.qlab{display:inline-block;font-size:.72rem;letter-spacing:.6px;text-transform:uppercase;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:2px 10px}
+.qq{font-size:1.1rem;margin:10px 0}
+.gapline{font-family:var(--f-read);font-size:1.2rem}
+.choices.stack{grid-template-columns:1fr}
+.choices.stack .choice{text-align:left;font-weight:500}
+.picked{margin:4px 0 10px;padding-left:1.5em}
+.picked li{margin:5px 0;font-weight:600}
+.mine{font-family:var(--f-read);font-size:1.15rem;background:var(--accent-soft);padding:10px 14px;border-radius:10px;margin:8px 0 0}
+.fb strong{font-weight:700}
+.done{text-align:center}
+.big3{font-family:var(--f-display);font-size:2rem;margin:4px 0;font-variant-numeric:tabular-nums}
+.done .btns{justify-content:center}
+.wlist{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.wlist li{border-left:3px solid var(--lesen);padding:2px 0 2px 12px}
+.wlist .wq{font-size:.82rem;color:var(--muted)}
+.wlist .wt{font-family:var(--f-read);font-size:1.05rem}
+.fill.g{background:var(--lesen)}
+
+.seg{display:inline-grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:12px}
+.seg button{border:0;background:transparent;border-radius:9px;padding:8px 12px;font-weight:600;cursor:pointer;color:var(--muted)}
+.seg button.on{background:var(--accent);color:var(--paper)}
+.read.easy{font-size:1.5rem;line-height:1.75;letter-spacing:.015em;word-spacing:.08em}
+.sent{display:block;margin:0 -6px 10px;padding:2px 6px;border-radius:8px;cursor:pointer}
+.sent:hover,.sent:focus-visible{background:var(--accent-soft)}
+.sent.speaking{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+.tip-say{font-size:.9rem;background:var(--accent-soft);border-radius:10px;padding:8px 12px;margin:0 0 12px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <h1>Denk<span>heft</span></h1>
+      <div class="total" aria-live="polite"><span class="star">★</span> <b id="total">0</b> Sterne</div>
+    </div>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" data-t="mathe" id="tab-mathe">Mathe</button>
+      <button class="tab" role="tab" data-t="deutsch" id="tab-deutsch">Deutsch</button>
+      <button class="tab" role="tab" data-t="lesen" id="tab-lesen">Lesen</button>
+      <button class="tab" role="tab" data-t="fort" id="tab-fort">Fortschritt</button>
+    </div>
+  </div>
+</header>
+<main class="wrap" id="app"></main>
+
+<script>
+/* ---------- helpers ---------- */
+const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const fr=x=>Number(x).toFixed(2);
+const hm=m=>{m=((m%1440)+1440)%1440;return Math.floor(m/60)+':'+String(m%60).padStart(2,'0')};
+const big=n=>n.toLocaleString('de-CH');
+const frac=(z,n)=>`<span class="frac"><span>${z}</span><span>${n}</span></span>`;
+const norm=s=>String(s).toLowerCase().replace(/ß/g,'ss').replace(/[„“"'.!?,]/g,'').replace(/\s+/g,' ').trim();
+const numOf=s=>{const t=String(s).replace(',','.').replace(/[^\d.\-]/g,'');return t===''||t==='.'?NaN:parseFloat(t)};
+const minOf=s=>{const m=String(s).match(/(\d{1,2})\D+(\d{1,2})/);return m?(+m[1])*60+(+m[2]):NaN};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* ---------- storage ---------- */
+const KEY='denkheft-v1';
+let store={stars:{},tab:'mathe',days:{},goal:10};
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.stars)store=Object.assign(store,s)}catch(e){}
+store.days=store.days||{};store.goal=store.goal||10;
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}};
+
+/* ---------- MATHE ---------- */
+const MATHE=[
+{id:'stellen',glyph:'H Z E',title:'Stellenwerte bis 1000',sub:'Hunderter, Zehner, Einer',week:'Woche 1',
+ kid:['Jede Ziffer hat einen Platz. Von rechts: <b>Einer</b>, <b>Zehner</b>, <b>Hunderter</b>.','10 Einer sind 1 Zehner. 10 Zehner sind 1 Hunderter. Darum ist 12 Z = 1 H + 2 Z.'],
+ example:'<b>347</b> = 3 H + 4 Z + 7 E = 300 + 40 + 7<br>4 H 12 Z 3 E = 400 + 120 + 3 = <b>523</b>',
+ parent:'Fast calculators sometimes skip place value. Use play money: 100-Fr. notes, 10-Fr. notes and 1-Fr. coins. Gymi tasks often hide tricks in "too many tens".',
+ gen(){const v=ri(1,3);
+  if(v===1){const h=ri(1,8),z=ri(0,14),e=ri(0,9),a=h*100+z*10+e;
+   return {q:`<span class="big">${h} H &nbsp; ${z} Z &nbsp; ${e} E = ?</span>`,type:'num',a,hint:z>9?`${z} Zehner sind ${Math.floor(z/10)} Hunderter und ${z%10} Zehner.`:'Hunderter mal 100, Zehner mal 10, dann alles zusammen.',explain:`${h}·100 + ${z}·10 + ${e} = ${a}`}}
+  if(v===2){const d=shuffle([0,1,2,3,4,5,6,7,8,9]).slice(0,3),max=Math.random()<.5;let a;
+   if(max){a=+d.slice().sort((x,y)=>y-x).join('')}else{const s=d.slice().sort((x,y)=>x-y);if(s[0]===0)[s[0],s[1]]=[s[1],s[0]];a=+s.join('')}
+   return {q:`Bilde die <b>${max?'grösste':'kleinste'}</b> dreistellige Zahl aus den Ziffern <span class="big">${d.join(' , ')}</span>`,type:'num',a,hint:max?'Die grösste Ziffer kommt zu den Hundertern.':'Die kleinste Ziffer nach vorne – aber eine Zahl darf nicht mit 0 anfangen!',explain:`Die Lösung ist ${a}.`}}
+  const n=ri(101,999),pos=pick(['Hunderter','Zehner','Einer']),s=String(n),a=+s[{Hunderter:0,Zehner:1,Einer:2}[pos]];
+  return {q:`Welche Ziffer steht bei <span class="big">${n}</span> an der <b>${pos}stelle</b>?`,type:'num',a,hint:'Von rechts gezählt: Einer, Zehner, Hunderter.',explain:`${n} = ${s[0]} H, ${s[1]} Z, ${s[2]} E`}}},
+
+{id:'add',glyph:'+ −',title:'Clever addieren und subtrahieren',sub:'Runden und ausgleichen',week:'Woche 1',
+ kid:['Ist eine Zahl <b>fast rund</b> (298, 499), rechne zuerst mit der runden Zahl. Danach gleichst du aus.','Beim Plus nimmst du das Zuviel wieder weg. Beim Minus gibst du es wieder dazu.'],
+ example:'298 + 57 → 300 + 57 = 357, dann −2 = <b>355</b><br>500 − 198 → 500 − 200 = 300, dann +2 = <b>302</b>',
+ parent:'Compensating is a mental-maths strategy Gymi problems reward. Always ask: "Did you take too much or too little?"',
+ gen(){const k=ri(1,3),base=ri(1,8)*100,a1=base-k;
+  if(Math.random()<.55){const b=ri(12,95);return {q:`<span class="big">${a1} + ${b} = ?</span>`,type:'num',a:a1+b,hint:`${a1} ist fast ${base}.`,explain:`${base} + ${b} = ${base+b}, dann ${k} weg: ${a1+b}`}}
+  const top=base+ri(1,4)*100;return {q:`<span class="big">${top} − ${a1} = ?</span>`,type:'num',a:top-a1,hint:`Rechne zuerst ${top} − ${base}.`,explain:`${top} − ${base} = ${top-base}. Du hast ${k} zu viel weggenommen, also + ${k} = ${top-a1}`}}},
+
+{id:'mal',glyph:'·',title:'Clever multiplizieren',sub:'Zerlegen und Tricks',week:'Woche 2 · 18',
+ kid:['Zerlege die grosse Zahl in <b>Zehner</b> und <b>Einer</b>. Rechne beide Teile und zähle zusammen.','Liegt eine Zahl knapp unter einem Zehner (19, 29, 99), rechne mit dem Zehner und nimm das Zuviel weg.'],
+ example:'14 · 6 = 10 · 6 + 4 · 6 = 60 + 24 = <b>84</b><br>19 · 5 = 20 · 5 − 5 = <b>95</b><br>25 · 8 = 25 · 4 · 2 = 100 · 2 = <b>200</b>',
+ parent:'Draw the multiplication as a rectangle on squared paper and cut it into two parts. This "area model" later becomes written multiplication and algebra.',
+ gen(){const v=ri(1,4);
+  if(v<=2){let a;do{a=ri(11,39)}while(a%10===0);const b=ri(3,9),t=a-a%10,e=a%10;return {q:`<span class="big">${a} · ${b} = ?</span>`,type:'num',a:a*b,hint:`Zerlege ${a} in ${t} + ${e}.`,explain:`${t}·${b} = ${t*b}, ${e}·${b} = ${e*b}, zusammen ${a*b}`}}
+  if(v===3){const a=pick([19,29,39,49,99]),b=ri(3,9),r=a+1;return {q:`<span class="big">${a} · ${b} = ?</span>`,type:'num',a:a*b,hint:`${a} ist ${r} − 1.`,explain:`${r}·${b} = ${r*b}, minus ${b} = ${a*b}`}}
+  const m=4*ri(1,6);return {q:`<span class="big">25 · ${m} = ?</span>`,type:'num',a:25*m,hint:'25 · 4 = 100. Wie oft steckt 4 in der anderen Zahl?',explain:`${m} = 4 · ${m/4}, also 100 · ${m/4} = ${25*m}`}}},
+
+{id:'teilen',glyph:':',title:'Teilen mit Rest',sub:'Und was der Rest bedeutet',week:'Woche 3',
+ kid:['Beim Teilen bleibt manchmal etwas übrig: der <b>Rest</b>. Der Rest ist immer kleiner als die Zahl, durch die du teilst.','In Geschichten musst du überlegen: Brauche ich für den Rest noch etwas (aufrunden) oder reicht es nicht mehr (abrunden)?'],
+ example:'23 : 4 = <b>5 Rest 3</b>, denn 4 · 5 = 20 und 23 − 20 = 3<br>27 Kinder, 4 pro Auto → 6 Rest 3 → <b>7 Autos</b>',
+ parent:'Interpreting the remainder is a classic Gymi trap. Ask him to say the answer as a sentence before writing a number.',
+ gen(){const v=ri(1,4);
+  if(v<=2){const d=ri(3,12),q=ri(2,12),r=ri(0,d-1),n=d*q+r;return {q:`<span class="big">${n} : ${d} = ?</span>`,type:'pair',labels:['Resultat','Rest'],a:[q,r],hint:`Welche Zahl aus der ${d}er-Reihe liegt knapp unter ${n}?`,explain:`${d}·${q} = ${d*q}, Rest ${r}`}}
+  const d=ri(3,6),q=ri(3,9),r=ri(1,d-1),n=d*q+r;
+  if(v===3)return {q:`${n} Kinder fahren mit Autos zum Ausflug. In jedes Auto passen ${d} Kinder. Wie viele Autos braucht es?`,type:'num',a:q+1,unit:'Autos',hint:'Kein Kind darf zu Hause bleiben!',explain:`${n} : ${d} = ${q} Rest ${r}. Für die ${r} übrigen Kinder braucht es noch ein Auto: ${q+1}.`};
+  return {q:`Ein Buch kostet ${d} Fr. Du hast ${n} Fr. Wie viele Bücher kannst du kaufen?`,type:'num',a:q,unit:'Bücher',hint:'Für ein halbes Buch reicht das Geld nicht.',explain:`${n} : ${d} = ${q} Rest ${r}. Mit ${r} Fr. kannst du kein ganzes Buch mehr kaufen: ${q}.`}}},
+
+{id:'sach',glyph:'?',title:'Sachaufgaben',sub:'Frage, Skizze, Rechnung, Antwort',week:'Woche 4 · 15',
+ kid:['Löse jede Geschichte in 4 Schritten:','<b>1. Frage:</b> Was will ich wissen? <b>2. Skizze:</b> Zeichne es auf. <b>3. Rechnung.</b> <b>4. Antwortsatz.</b>'],
+ example:'Lea hat 3-mal so viele Sticker wie Tim. Zusammen 48.<br>Skizze: Tim ▭, Lea ▭▭▭ → 4 Teile = 48 → 1 Teil = <b>12</b>',
+ parent:'Word problems are the heart of Gymi maths. Insist on the sketch even when he "just knows" – later problems will be too complex to see in his head.',
+ gen(){return pick(SACH)()}},
+
+{id:'geld',glyph:'Fr.',title:'Franken und Rappen',sub:'Einkaufen und Rückgeld',week:'Woche 5',
+ kid:['<b>1 Franken = 100 Rappen.</b> 3.55 Fr. heisst 3 Franken und 55 Rappen.','Rückgeld rechnest du am besten durch <b>Ergänzen</b>: von 6.45 bis 7, dann bis 10.'],
+ example:'Preis 6.45 Fr., du zahlst mit 10 Fr.<br>6.45 → 7.00 (+0.55) → 10.00 (+3) → Rückgeld <b>3.55 Fr.</b>',
+ parent:'Money is his friendliest first step into decimal numbers. Let him pay and count change in real shops.',
+ gen(){const v=ri(1,3);
+  if(v===1){const p=ri(21,195)*5,pay=p<1000?1000:2000;return {q:`Du kaufst etwas für <b>${fr(p/100)} Fr.</b> und bezahlst mit einer ${pay/100}-Franken-Note. Wie viel Rückgeld bekommst du?`,type:'num',a:(pay-p)/100,unit:'Fr.',hint:`Ergänze von ${fr(p/100)} bis zum nächsten ganzen Franken, dann bis ${pay/100}.`,explain:`${pay/100}.00 − ${fr(p/100)} = ${fr((pay-p)/100)} Fr.`}}
+  if(v===2){const it=shuffle([['Brot',ri(28,48)*10],['Milch',ri(30,40)*5],['Äpfel',ri(60,90)*5],['Käse',ri(80,140)*5],['Joghurt',ri(16,26)*5],['Bananen',ri(40,70)*5]]).slice(0,3),t=it.reduce((s,i)=>s+i[1],0);
+   return {q:`Einkaufsliste:<br>${it.map(i=>`${i[0]} &nbsp; ${fr(i[1]/100)} Fr.`).join('<br>')}<br>Wie viel kostet alles zusammen?`,type:'num',a:t/100,unit:'Fr.',hint:'Zähle zuerst die Franken, dann die Rappen zusammen.',explain:`${it.map(i=>fr(i[1]/100)).join(' + ')} = ${fr(t/100)} Fr.`}}
+  const f=ri(2,9),r=pick([5,10,20,25,40,50,75,85,95]);return {q:`Wie viele Rappen sind <b>${f}.${String(r).padStart(2,'0')} Fr.</b>?`,type:'num',a:f*100+r,unit:'Rp.',hint:'1 Franken = 100 Rappen.',explain:`${f}·100 + ${r} = ${f*100+r} Rp.`}}},
+
+{id:'zeit',glyph:'h',title:'Zeit und Fahrplan',sub:'Uhrzeit und Dauer',week:'Woche 6',
+ kid:['Eine Stunde hat <b>60 Minuten</b>, nicht 100! Darum rechnest du mit der Uhr anders als mit normalen Zahlen.','Trick: Rechne zuerst bis zur nächsten <b>vollen Stunde</b>, dann weiter.'],
+ example:'Start 17:30, Film 95 min<br>17:30 → 18:00 (30 min) → noch 65 min → 19:05 → Ende <b>19:05</b>',
+ parent:'Use the SBB app on real trips: let him read departure and arrival times and calculate the duration.',
+ gen(){const v=ri(1,3),st=ri(84,228)*5;
+  if(v===1){const d=pick([15,20,25,35,40,45,50,55,65,75,80,95,105,110]);return {q:`Der Film beginnt um <b>${hm(st)} Uhr</b> und dauert <b>${d} Minuten</b>. Wann ist er fertig?`,type:'time',a:st+d,hint:'Rechne zuerst bis zur nächsten vollen Stunde.',explain:`${hm(st)} + ${d} min = ${hm(st+d)} Uhr`}}
+  if(v===2){const d=ri(3,22)*5;return {q:`Der Zug fährt um <b>${hm(st)}</b> ab und kommt um <b>${hm(st+d)}</b> an. Wie lange dauert die Fahrt?`,type:'num',a:d,unit:'min',hint:'Eine Stunde hat 60 Minuten!',explain:`Von ${hm(st)} bis ${hm(st+d)} sind es ${d} Minuten.`}}
+  const h=ri(1,5),m=pick([0,15,30,45]);return {q:`Wie viele Minuten sind <b>${h} h ${m} min</b>?`,type:'num',a:h*60+m,unit:'min',hint:'1 h = 60 min.',explain:`${h}·60 + ${m} = ${h*60+m} min`}}},
+
+{id:'flaeche',glyph:'cm²',title:'Umfang und Fläche',sub:'Rundherum und innen drin',week:'Woche 7–8',
+ kid:['Der <b>Umfang</b> ist der Weg einmal rundherum (wie ein Zaun). Alle Seiten zusammenzählen.','Die <b>Fläche</b> ist der Platz innen drin. Zähle die Häuschen: Länge · Breite.'],
+ example:'Rechteck 7 cm × 4 cm<br>Umfang: 7 + 4 + 7 + 4 = <b>22 cm</b><br>Fläche: 7 · 4 = <b>28 cm²</b>',
+ parent:'Area and perimeter are often mixed up. Draw rectangles on squared paper and let him count both.',
+ gen(){const v=ri(1,3),w=ri(2,12),h=ri(2,8);
+  const pic=()=>{const sc=Math.min(18,220/w),W=w*sc,H=h*sc;return `<div class="svgbox"><svg width="${W+60}" height="${H+40}" viewBox="0 0 ${W+60} ${H+40}" role="img" aria-label="Rechteck ${w} mal ${h} cm"><rect x="10" y="10" width="${W}" height="${H}" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--accent)"/><text x="${10+W/2}" y="${H+30}" text-anchor="middle">${w} cm</text><text x="${W+16}" y="${10+H/2+4}">${h} cm</text></svg></div>`};
+  if(v===1)return {q:`Wie gross ist der <b>Umfang</b> des Rechtecks?${pic()}`,type:'num',a:2*(w+h),unit:'cm',hint:'Alle 4 Seiten zusammenzählen.',explain:`${w} + ${h} + ${w} + ${h} = ${2*(w+h)} cm`};
+  if(v===2)return {q:`Wie gross ist die <b>Fläche</b> des Rechtecks?${pic()}`,type:'num',a:w*h,unit:'cm²',hint:'Wie viele 1-cm-Häuschen passen hinein?',explain:`${w} · ${h} = ${w*h} cm²`};
+  const s=ri(3,15);return {q:`Ein Quadrat hat einen Umfang von <b>${4*s} cm</b>. Wie lang ist eine Seite?`,type:'num',a:s,unit:'cm',hint:'Ein Quadrat hat 4 gleich lange Seiten.',explain:`${4*s} : 4 = ${s} cm`}}},
+
+{id:'folgen',glyph:'2 4 6',title:'Zahlenfolgen',sub:'Die Regel finden',week:'Woche 9',
+ kid:['Schau, wie es von Zahl zu Zahl weitergeht. Sag die <b>Regel</b> in einem Satz.','Die Regel kann sein: immer plus, immer minus, immer mal, oder: <b>die zwei Zahlen davor zusammen</b>.'],
+ example:'3, 7, 11, 15, … → immer + 4 → <b>19</b><br>2, 3, 5, 8, 13, … → die zwei davor zusammen → <b>21</b>',
+ parent:'Ask for the rule in words before the next number. Explaining patterns is early algebra.',
+ gen(){const v=ri(1,6);let arr,a,rule;
+  if(v===1){const s=ri(1,30),d=ri(2,12);arr=[0,1,2,3].map(i=>s+i*d);a=s+4*d;rule=`immer + ${d}`}
+  else if(v===2){const s=ri(60,120),d=ri(3,11);arr=[0,1,2,3].map(i=>s-i*d);a=s-4*d;rule=`immer − ${d}`}
+  else if(v===3){const s=ri(1,5),m=pick([2,3]);arr=[0,1,2,3].map(i=>s*m**i);a=s*m**4;rule=`immer · ${m}`}
+  else if(v===4){const s=ri(1,6);arr=[0,1,2,3].map(i=>(s+i)**2);a=(s+4)**2;rule=`${s}·${s}, ${s+1}·${s+1}, ${s+2}·${s+2} … (Quadratzahlen)`}
+  else if(v===5){const s=ri(1,10);arr=[s,s+1,s+3,s+6,s+10];a=s+15;rule='erst +1, dann +2, +3, +4, +5'}
+  else{const x=ri(1,4),y=ri(1,5);arr=[x,y];while(arr.length<5)arr.push(arr[arr.length-1]+arr[arr.length-2]);a=arr[4]+arr[3];rule='die zwei Zahlen davor zusammen'}
+  return {q:`Wie geht es weiter?<br><span class="big">${arr.join(', ')}, ?</span>`,type:'num',a,hint:'Rechne die Unterschiede zwischen den Zahlen aus.',explain:`Regel: ${rule} → ${a}`}}},
+
+{id:'geheim',glyph:'x ?',title:'Die geheime Zahl',sub:'Rückwärts rechnen',week:'Woche 10 · 20',
+ kid:['Bei Zahlenrätseln kennst du das Ende, aber nicht den Anfang. Darum rechnest du <b>rückwärts</b>.','Jeder Schritt wird umgedreht: plus wird minus, mal wird geteilt.'],
+ example:'Ich denke mir eine Zahl, rechne · 3 und + 4 und erhalte 19.<br>19 − 4 = 15, 15 : 3 = <b>5</b>',
+ parent:'Undoing steps (inverse operations) is the core of Gymi algebra. Let him invent riddles for you too.',
+ gen(){const v=ri(1,6),x=ri(2,15);
+  if(v===1){const m=ri(2,6),p=ri(1,15),r=x*m+p;return {q:`Ich denke mir eine Zahl. Ich rechne <b>mal ${m}</b> und dann <b>plus ${p}</b>. Ich erhalte <b>${r}</b>. Welche Zahl habe ich mir gedacht?`,type:'num',a:x,hint:'Rückwärts: zuerst minus, dann geteilt.',explain:`${r} − ${p} = ${r-p}, ${r-p} : ${m} = ${x}`}}
+  if(v===2){const p=ri(1,x-1),m=ri(2,5),r=(x-p)*m;return {q:`Ich denke mir eine Zahl. Ich rechne <b>minus ${p}</b> und dann <b>mal ${m}</b>. Ich erhalte <b>${r}</b>. Welche Zahl ist es?`,type:'num',a:x,hint:'Rückwärts: zuerst geteilt, dann plus.',explain:`${r} : ${m} = ${r/m}, ${r/m} + ${p} = ${x}`}}
+  if(v===3){const d=ri(3,9),q=ri(2,9),r=ri(1,d-1),n=d*q+r;return {q:`Ich teile eine Zahl durch <b>${d}</b> und erhalte <b>${q} Rest ${r}</b>. Welche Zahl ist es?`,type:'num',a:n,hint:`Rechne ${d} · ${q} und vergiss den Rest nicht.`,explain:`${d}·${q} + ${r} = ${n}`}}
+  if(v===4){const e=ri(2,12),m=ri(1,6),s=(e+m)*2;return {q:`Lea gibt die Hälfte ihrer Murmeln ab und dann noch ${m}. Jetzt hat sie ${e}. Wie viele hatte sie am Anfang?`,type:'num',a:s,hint:'Rückwärts: zuerst die verschenkten zurückholen, dann verdoppeln.',explain:`${e} + ${m} = ${e+m}, das ist die Hälfte. Am Anfang: ${e+m}·2 = ${s}`}}
+  if(v===5){const k=ri(2,9),y=ri(5,20),r=2*y-k;return {q:`Ich verdopple eine Zahl und ziehe ${k} ab. Ich erhalte ${r}. Wie heisst die Zahl?`,type:'num',a:y,hint:'Zuerst plus, dann halbieren.',explain:`${r} + ${k} = ${r+k}, die Hälfte: ${y}`}}
+  const d=ri(6,20);return {q:`Eine Seerose verdoppelt sich jeden Tag. Am ${d}. Tag ist der Teich ganz bedeckt. An welchem Tag war er halb bedeckt?`,type:'num',a:d-1,hint:'Was war einen Tag vorher?',explain:`Einen Tag vorher war es die Hälfte: Tag ${d-1}.`}}},
+
+{id:'teiler',glyph:'÷ 3',title:'Teiler und Vielfache',sub:'Teilbarkeitsregeln',week:'Woche 11',
+ kid:['Teilbar heisst: es geht <b>ohne Rest</b> auf.','Regeln: durch <b>2</b> – gerade Zahl. Durch <b>5</b> – Endziffer 0 oder 5. Durch <b>10</b> – Endziffer 0. Durch <b>3</b> oder <b>9</b> – die Quersumme ist durch 3 oder 9 teilbar. Durch <b>4</b> – die letzten zwei Ziffern sind durch 4 teilbar.'],
+ example:'123: Quersumme 1 + 2 + 3 = 6 → durch 3 teilbar (123 : 3 = 41)<br>Teiler von 12: 1, 2, 3, 4, 6, 12',
+ parent:'Divisibility rules feel like magic tricks. Let him test the rule with the calculator to see that it always works.',
+ gen(){if(Math.random()<.7){const d=pick([2,3,5,10,9,4]);let n=ri(100,999);if(Math.random()<.5)n=(n-n%d)||d*20;const yes=n%d===0,qs=String(n).split('').reduce((s,c)=>s+ +c,0);
+   const R={2:'Ist die Zahl gerade?',5:'Endet die Zahl auf 0 oder 5?',10:'Endet die Zahl auf 0?',3:'Rechne die Quersumme aus.',9:'Rechne die Quersumme aus.',4:'Schau nur die letzten zwei Ziffern an.'};
+   const W={2:`Endziffer ${n%10} → ${yes?'gerade':'ungerade'}`,5:`Endziffer ${n%10}`,10:`Endziffer ${n%10}`,3:`Quersumme ${qs} → ${qs%3===0?'durch 3 teilbar':'nicht durch 3 teilbar'}`,9:`Quersumme ${qs} → ${qs%9===0?'durch 9 teilbar':'nicht durch 9 teilbar'}`,4:`${n%100} ist ${n%100%4===0?'':'nicht '}durch 4 teilbar`};
+   return {q:`Ist <span class="big">${n}</span> durch <b>${d}</b> teilbar?`,type:'choice',choices:['Ja','Nein'],a:yes?'Ja':'Nein',hint:R[d],explain:`${W[d]}. ${yes?`${n} : ${d} = ${n/d}`:`${n} : ${d} geht nicht ohne Rest auf.`}`}}
+  const n=pick([6,8,10,12,15,16,18,20,24,28,30,36]),ds=[];for(let i=1;i<=n;i++)if(n%i===0)ds.push(i);
+  return {q:`Wie viele Teiler hat <span class="big">${n}</span>? (1 und ${n} zählen auch.)`,type:'num',a:ds.length,hint:`Suche Paare: 1·${n}, 2·…, 3·…`,explain:`Teiler von ${n}: ${ds.join(', ')} – das sind ${ds.length}.`}}},
+
+{id:'brueche',glyph:'½',title:'Brüche entdecken',sub:'Halbe, Drittel, Viertel',week:'Woche 13',
+ kid:['Ein Bruch sagt: in <b>wie viele gleiche Teile</b> (unten) und <b>wie viele davon</b> (oben).',`${frac(3,4)} von 24: zuerst 24 in 4 Teile → 6, dann 3 Teile davon → 18.`],
+ example:`${frac(1,3)} von 24 = 24 : 3 = <b>8</b><br>${frac(3,4)} von 24 = 24 : 4 · 3 = <b>18</b><br>${frac(1,3)} ist grösser als ${frac(1,4)}: weniger Teile, grössere Stücke!`,
+ parent:'Use real food (a chocolate bar with 24 pieces, a pizza). Pictures before symbols.',
+ gen(){if(Math.random()<.7){const [z,n]=pick([[1,2],[1,3],[1,4],[3,4],[2,3],[1,5],[2,5],[1,6],[1,10],[3,10]]),k=ri(2,10),N=n*k;
+   return {q:`Wie viel ist <span class="big">${frac(z,n)}</span> von <b>${N}</b>?`,type:'num',a:z*k,hint:`Teile ${N} zuerst in ${n} gleiche Teile.`,explain:`${N} : ${n} = ${k}, ${z} · ${k} = ${z*k}`}}
+  const [a,b]=shuffle([2,3,4,5,6,8,10]).slice(0,2);return {q:'Welches Stück der gleichen Pizza ist grösser?',type:'choice',choices:[`1/${a}`,`1/${b}`],a:`1/${Math.min(a,b)}`,hint:'Je mehr Teile, desto kleiner ist jedes Stück.',explain:`1/${Math.min(a,b)} ist grösser: die Pizza wird in weniger Teile geschnitten.`}}},
+
+{id:'runden',glyph:'≈',title:'Grosse Zahlen und Runden',sub:'Bis 100 000',week:'Woche 17',
+ kid:['Schau die Ziffer <b>rechts</b> von der Stelle an, auf die du rundest.','<b>0–4</b>: abrunden. <b>5–9</b>: aufrunden.'],
+ example:'3 482 auf Hunderter → Ziffer rechts davon ist 8 → aufrunden → <b>3 500</b><br>67 450 auf Tausender → Ziffer rechts ist 4 → <b>67 000</b>',
+ parent:'Rounding powers every estimate and every "Does my answer make sense?" check.',
+ gen(){const p=pick([10,100,1000]),n=p===10?ri(101,999):p===100?ri(1001,9999):ri(10001,99999),a=Math.round(n/p)*p,nm={10:'Zehner',100:'Hunderter',1000:'Tausender'}[p];
+  return {q:`Runde <span class="big">${big(n)}</span> auf <b>${nm}</b>.`,type:'num',a,hint:'Ziffer rechts davon: 0–4 abrunden, 5–9 aufrunden.',explain:`${big(n)} ≈ ${big(a)}`}}},
+
+{id:'knobel',glyph:'!?',title:'Knobelei',sub:'Logik, Muster und Rätsel',week:'jeden Freitag',
+ kid:['Bei Knobeleien gibt es keinen festen Rechenweg. Probiere, zeichne, mache eine Tabelle.','Ein guter Trick: <b>Probieren und prüfen</b>. Rate eine Lösung und schau, ob sie stimmt.'],
+ example:'5 Köpfe und 14 Beine, Hühner und Kühe. Alle Hühner: 10 Beine. 4 Beine zu viel → jede Kuh hat 2 Beine mehr → <b>2 Kühe</b>',
+ parent:'Let him struggle a little before giving the hint. Praise good strategies (drawing, tables) even when the answer is wrong.',
+ gen(){return KNOBEL[(store.kn=(store.kn||0)+1)%KNOBEL.length]}}
+];
+
+const SACH=[
+()=>{const k=ri(12,28),p=ri(4,12);return {q:`${k} Kinder gehen in den Zoo. Der Eintritt kostet ${p} Fr. pro Kind. Wie viel bezahlt die Klasse zusammen?`,type:'num',a:k*p,unit:'Fr.',hint:'Jedes Kind bezahlt gleich viel.',explain:`${k} · ${p} = ${k*p} Fr.`}},
+()=>{const s=ri(4,15),m=ri(2,4),t=s*(m+1);return {q:`Lea hat ${m}-mal so viele Sticker wie Tim. Zusammen haben sie ${t} Sticker. Wie viele hat Tim?`,type:'num',a:s,hint:`Zeichne: Tim 1 Streifen, Lea ${m} Streifen. Wie viele Streifen zusammen?`,explain:`${m+1} gleiche Teile = ${t}. Ein Teil: ${t} : ${m+1} = ${s}.`}},
+()=>{const a=ri(15,30),b=ri(3,9),c=ri(2,8);return {q:`Im Bus sitzen ${a} Kinder. An der Haltestelle steigen ${b} aus und ${c} ein. Wie viele Kinder sind jetzt im Bus?`,type:'num',a:a-b+c,hint:'Zuerst aussteigen, dann einsteigen.',explain:`${a} − ${b} + ${c} = ${a-b+c}`}},
+()=>{const p=ri(3,8),len=ri(2,6),L=p*len;return Math.random()<.5?{q:`Ein Seil ist ${L} m lang. Es wird in ${p} gleich lange Teile geschnitten. Wie viele Schnitte braucht es?`,type:'num',a:p-1,hint:'Zeichne das Seil und die Schnitte!',explain:`Für ${p} Teile braucht es ${p-1} Schnitte.`}:{q:`Ein Seil ist ${L} m lang. Es wird in ${p} gleich lange Teile geschnitten. Wie lang ist ein Teil?`,type:'num',a:len,unit:'m',hint:'Teile die Länge gerecht auf.',explain:`${L} : ${p} = ${len} m`}},
+()=>{const k=ri(2,4),pp=pick([50,80,120,150,200,250]),n=ri(5,9);return {q:`${k} Gipfeli kosten ${fr(k*pp/100)} Fr. Was kosten ${n} Gipfeli?`,type:'num',a:n*pp/100,unit:'Fr.',hint:'Was kostet zuerst 1 Gipfeli?',explain:`1 Gipfeli: ${fr(k*pp/100)} : ${k} = ${fr(pp/100)} Fr. ${n} Gipfeli: ${n} · ${fr(pp/100)} = ${fr(n*pp/100)} Fr.`}},
+()=>{const v=ri(4,9),t=ri(1,v-1),w=2*v+t;return {q:`Im Hof stehen Velos (2 Räder) und Dreiräder (3 Räder): ${v} Fahrzeuge mit zusammen ${w} Rädern. Wie viele Dreiräder sind es?`,type:'num',a:t,hint:`Stell dir vor, alle ${v} wären Velos. Wie viele Räder wären das?`,explain:`Alles Velos: ${v}·2 = ${2*v} Räder. Es sind ${w-2*v} Räder mehr – jedes Dreirad hat 1 Rad mehr: ${t} Dreiräder.`}},
+()=>{const e=ri(2,3),k=ri(2,4),pe=pick([6,7,8,9]),pk=pick([3,4,5]),t=e*pe+k*pk,pay=t<=50?50:100;return {q:`Eintritt Schwimmbad: Erwachsene ${pe} Fr., Kinder ${pk} Fr. ${e} Erwachsene und ${k} Kinder bezahlen mit ${pay} Fr. Wie viel Rückgeld gibt es?`,type:'num',a:pay-t,unit:'Fr.',hint:'Rechne zuerst aus, was alle zusammen kosten.',explain:`${e}·${pe} + ${k}·${pk} = ${t} Fr. Rückgeld: ${pay} − ${t} = ${pay-t} Fr.`}},
+()=>{const y=ri(3,10),d=ri(2,6),S=2*y+d;return {q:`Lena ist ${d} Jahre älter als ihr Bruder. Zusammen sind sie ${S} Jahre alt. Wie alt ist der Bruder?`,type:'num',a:y,unit:'Jahre',hint:`Nimm zuerst die ${d} Jahre weg, dann sind beide gleich alt.`,explain:`${S} − ${d} = ${S-d}, die Hälfte: ${y} Jahre.`}},
+()=>{const w=ri(3,6),d=ri(2,5),p=ri(3,9);return {q:`Ein Tisch hat ${w} Reihen mit je ${d} Tellern. Auf jedem Teller liegen ${p} Kekse. Wie viele Kekse sind es?`,type:'num',a:w*d*p,unit:'Kekse',hint:'Wie viele Teller sind es zuerst?',explain:`${w}·${d} = ${w*d} Teller, ${w*d}·${p} = ${w*d*p} Kekse`}}
+];
+
+const KNOBEL=[
+{q:'Anna, Ben und Chiara machen Judo, Klettern und Schwimmen. Anna mag kein Wasser. Ben klettert nicht. Chiara macht Judo. Was macht Anna?',type:'choice',choices:['Judo','Klettern','Schwimmen'],a:'Klettern',hint:'Zeichne ein Gitter mit ✓ und ✗.',explain:'Chiara: Judo. Ben klettert nicht → Ben schwimmt. Also klettert Anna.'},
+{q:'Ein Bauer hat Hühner und Kühe: zusammen 5 Köpfe und 14 Beine. Wie viele Kühe hat er?',type:'num',a:2,unit:'Kühe',hint:'Stell dir vor, es wären nur Hühner.',explain:'Nur Hühner: 10 Beine. 4 Beine mehr, jede Kuh hat 2 mehr → 2 Kühe.'},
+{q:'Anna: „Ben war es.“ Ben: „Ich war es nicht.“ Chiara: „Ich war es nicht.“ Nur eine Person sagt die Wahrheit. Wer hat den Kuchen gegessen?',type:'choice',choices:['Anna','Ben','Chiara'],a:'Chiara',hint:'Teste jede Person als Täter und zähle, wie viele die Wahrheit sagen.',explain:'Nur wenn Chiara es war, sagt genau eine Person (Ben) die Wahrheit.'},
+{q:'Wie viele Quadrate siehst du in einem 2×2-Gitter (4 kleine Felder)?',type:'num',a:5,hint:'Vergiss das grosse Quadrat nicht!',explain:'4 kleine + 1 grosses = 5'},
+{q:'Welche Zahl fehlt? 2, 6, 12, 20, 30, ?',type:'num',a:42,hint:'Schau die Unterschiede an: +4, +6, …',explain:'+4, +6, +8, +10, +12 → 42'},
+{q:'Ein Würfel zeigt oben die 3. Welche Zahl liegt unten? (Gegenüberliegende Seiten ergeben zusammen 7.)',type:'num',a:4,hint:'Zusammen 7.',explain:'7 − 3 = 4'},
+{q:'4▢ + ▢7 = 92. Welche Ziffer gehört ins erste Kästchen?',type:'num',a:5,hint:'Beginne bei den Einern: ▢ + 7 endet auf 2.',explain:'45 + 47 = 92'},
+{q:'Zwei Zahlen ergeben zusammen 20. Ihr Unterschied ist 4. Wie heisst die grössere Zahl?',type:'num',a:12,hint:'Probiere Paare: 10 und 10, 11 und 9 …',explain:'12 + 8 = 20 und 12 − 8 = 4'},
+{q:'Eine zweistellige Zahl hat die Quersumme 9. Die Zehnerziffer ist doppelt so gross wie die Einerziffer. Welche Zahl ist es?',type:'num',a:63,hint:'Welche Paare ergeben 9? 9+0, 8+1, 7+2 …',explain:'6 + 3 = 9 und 6 = 2 · 3 → 63'},
+{q:'3 T-Shirts, 2 Hosen und 2 Mützen: Wie viele verschiedene Kombinationen kannst du anziehen?',type:'num',a:12,hint:'Zuerst T-Shirt mit Hose, dann jede mit beiden Mützen.',explain:'3 · 2 · 2 = 12'},
+{q:'Wie viele dreistellige Zahlen kannst du mit den Ziffern 1, 2 und 3 bilden (jede Ziffer genau einmal)?',type:'num',a:6,hint:'Beginne mit 1 vorne: 123, 132 …',explain:'123, 132, 213, 231, 312, 321 = 6'},
+{q:'1 Quadrat braucht 4 Zahnstocher, 2 Quadrate in einer Reihe 7, 3 Quadrate 10. Wie viele Zahnstocher brauchst du für 10 Quadrate?',type:'num',a:31,hint:'Jedes neue Quadrat braucht 3 Zahnstocher mehr.',explain:'4 + 9 · 3 = 31'},
+{q:'2 Äpfel wiegen gleich viel wie 1 Melone. 1 Melone und 1 Apfel wiegen gleich viel wie 6 Orangen. Wie viele Orangen wiegt 1 Apfel?',type:'num',a:2,hint:'Ersetze die Melone durch 2 Äpfel.',explain:'3 Äpfel = 6 Orangen → 1 Apfel = 2 Orangen'},
+{q:'Heute ist Mittwoch. Welcher Tag ist in 10 Tagen?',type:'choice',choices:['Freitag','Samstag','Sonntag','Montag'],a:'Samstag',hint:'In 7 Tagen ist wieder Mittwoch.',explain:'7 Tage → Mittwoch, noch 3 Tage → Samstag'},
+{q:'Tim ist 9 Jahre alt. In 3 Jahren ist Papa 3-mal so alt wie Tim. Wie alt ist Papa jetzt?',type:'num',a:33,unit:'Jahre',hint:'Wie alt ist Tim in 3 Jahren?',explain:'Tim in 3 Jahren: 12. Papa dann: 36. Jetzt: 33.'},
+{q:'Eine Schnecke klettert eine 5 m hohe Mauer hoch. Am Tag schafft sie 3 m, in der Nacht rutscht sie 2 m hinunter. An welchem Tag ist sie oben?',type:'num',a:3,hint:'Zeichne Tag und Nacht auf.',explain:'Tag 1: 3 m, Nacht: 1 m. Tag 2: 4 m, Nacht: 2 m. Tag 3: 5 m – oben!'},
+{q:'Im Zauberquadrat (3×3, Zahlen 1–9) ergibt jede Reihe, Spalte und Diagonale 15. Welche Zahl steht in der Mitte?',type:'num',a:5,hint:'Die mittlere Zahl ist in 4 Reihen dabei.',explain:'Die 5 steht in der Mitte.'},
+{q:'Lisa ist grösser als Mia. Mia ist grösser als Noah. Wer ist am kleinsten?',type:'choice',choices:['Lisa','Mia','Noah'],a:'Noah',hint:'Stell sie der Grösse nach in eine Reihe.',explain:'Lisa > Mia > Noah'},
+{q:'Wie viele Wege gibt es in einem 2×2-Gitter von links oben nach rechts unten, wenn du nur nach rechts oder unten gehen darfst?',type:'num',a:6,hint:'Schreibe an jede Kreuzung, wie viele Wege dorthin führen.',explain:'1, 2, 3 … ganz unten rechts: 6'},
+{q:'Ein Turm aus 3 Würfeln zeigt oben eine 5. Wie gross ist die Summe aller versteckten Würfelseiten oben und unten (die sich berühren oder auf dem Tisch liegen)?',type:'num',a:16,hint:'Oben + unten ergibt bei jedem Würfel 7.',explain:'3 · 7 = 21, minus die sichtbare 5 = 16'}
+];
+
+/* ---------- DEUTSCH data ---------- */
+const WA_SENT=['Der kleine|A Hund|N bellt|V laut|A.','Die Katze|N schläft|V auf dem warmen|A Sofa|N.','Mein Bruder|N klettert|V schnell|A auf den hohen|A Baum|N.','Im Winter|N fahren|V wir in die Berge|N.','Lea|N trinkt|V eine heisse|A Schokolade|N.','Der mutige|A Ritter|N kämpft|V gegen den Drachen|N.','Die Sonne|N scheint|V hell|A.','Wir spielen|V im grossen|A Garten|N.','Opa|N liest|V ein spannendes|A Buch|N.','Das Pferd|N springt|V über den Zaun|N.','Am Morgen|N essen|V wir frisches|A Brot|N.','Die bunten|A Blumen|N blühen|V im Park|N.','Tim|N malt|V ein lustiges|A Bild|N.','Die Kinder|N lachen|V laut|A.','Der Zug|N fährt|V pünktlich|A ab.','Die müde|A Schnecke|N kriecht|V langsam|A.'];
+const ART=[['der','Hund'],['der','Tisch'],['der','Baum'],['der','Apfel'],['der','Ball'],['der','Stuhl'],['der','Zug'],['der','Berg'],['der','Vogel'],['der','Schuh'],['der','Löffel'],['der','Kuchen'],['der','Bleistift'],['der','Käse'],['der','Mond'],['der','Bahnhof'],['der','Schlüssel'],['der','Garten'],['der','Fisch'],['der','Teller'],
+['die','Katze'],['die','Lampe'],['die','Blume'],['die','Schule'],['die','Tasche'],['die','Sonne'],['die','Maus'],['die','Banane'],['die','Zeitung'],['die','Wohnung'],['die','Gabel'],['die','Brücke'],['die','Uhr'],['die','Milch'],['die','Hand'],['die','Strasse'],['die','Freiheit'],['die','Flasche'],['die','Tür'],['die','Wolke'],['die','Freundlichkeit'],
+['das','Haus'],['das','Buch'],['das','Auto'],['das','Bett'],['das','Fenster'],['das','Brot'],['das','Kind'],['das','Pferd'],['das','Mädchen'],['das','Velo'],['das','Messer'],['das','Glas'],['das','Ei'],['das','Schiff'],['das','Bild'],['das','Wasser'],['das','Spiel'],['das','Zimmer'],['das','Häuschen'],['das','Flugzeug']];
+const PLU=[['das Haus','Häuser',['Hause','Hausen']],['die Maus','Mäuse',['Mausen','Mäuser']],['das Buch','Bücher',['Buchen','Büche']],['das Kind','Kinder',['Kinde','Kinds']],['der Apfel','Äpfel',['Apfeln','Apfels']],['der Ball','Bälle',['Ballen','Baller']],['die Katze','Katzen',['Katzer','Kätze']],['der Baum','Bäume',['Baumen','Bäumer']],['das Auto','Autos',['Autoen','Autoe']],['die Blume','Blumen',['Blümer','Blumes']],['der Hund','Hunde',['Hünde','Hunder']],['der Vogel','Vögel',['Vogeln','Vögels']],['die Hand','Hände',['Handen','Händer']],['das Ei','Eier',['Eie','Eis']],['der Zug','Züge',['Zugen','Züger']],['die Stadt','Städte',['Stadte','Städten']],['das Glas','Gläser',['Glase','Glasen']],['der Stuhl','Stühle',['Stuhlen','Stühler']],['die Nacht','Nächte',['Nachten','Nachte']],['das Pferd','Pferde',['Pferder','Pferden']],['der Bruder','Brüder',['Bruders','Brudern']],['das Fenster','Fenster',['Fensters','Fenstern']],['der Lehrer','Lehrer',['Lehrern','Lehrers']],['die Schule','Schulen',['Schüle','Schuler']],['der Fuss','Füsse',['Fusse','Füssen']]];
+const PERS=['ich','du','er/sie/es','wir','ihr','sie (viele)'];
+const reg=s=>[s+'e',s+'st',s+'t',s+'en',s+'t',s+'en'];
+const VERB={spielen:reg('spiel'),machen:reg('mach'),lachen:reg('lach'),malen:reg('mal'),kochen:reg('koch'),singen:reg('sing'),springen:reg('spring'),schwimmen:reg('schwimm'),
+ klettern:['klettere','kletterst','klettert','klettern','klettert','klettern'],arbeiten:['arbeite','arbeitest','arbeitet','arbeiten','arbeitet','arbeiten'],
+ sein:['bin','bist','ist','sind','seid','sind'],haben:['habe','hast','hat','haben','habt','haben'],lesen:['lese','liest','liest','lesen','lest','lesen'],fahren:['fahre','fährst','fährt','fahren','fahrt','fahren'],laufen:['laufe','läufst','läuft','laufen','lauft','laufen'],essen:['esse','isst','isst','essen','esst','essen'],sehen:['sehe','siehst','sieht','sehen','seht','sehen'],geben:['gebe','gibst','gibt','geben','gebt','geben'],schlafen:['schlafe','schläfst','schläft','schlafen','schlaft','schlafen'],tragen:['trage','trägst','trägt','tragen','tragt','tragen']};
+const PRAET=[['gehen','geht','ging'],['sein','ist','war'],['haben','hat','hatte'],['sehen','sieht','sah'],['laufen','läuft','lief'],['rufen','ruft','rief'],['kommen','kommt','kam'],['essen','isst','ass'],['trinken','trinkt','trank'],['fahren','fährt','fuhr'],['schlafen','schläft','schlief'],['finden','findet','fand'],['fliegen','fliegt','flog'],['singen','singt','sang'],['springen','springt','sprang'],['schreiben','schreibt','schrieb'],['lesen','liest','las'],['nehmen','nimmt','nahm'],['geben','gibt','gab'],['sprechen','spricht','sprach'],['bleiben','bleibt','blieb'],['fallen','fällt','fiel'],['denken','denkt','dachte'],['bringen','bringt','brachte'],['wissen','weiss','wusste'],['spielen','spielt','spielte'],['lachen','lacht','lachte'],['machen','macht','machte'],['sagen','sagt','sagte'],['klettern','klettert','kletterte'],['schwimmen','schwimmt','schwamm'],['stehen','steht','stand'],['sitzen','sitzt','sass'],['werfen','wirft','warf'],['helfen','hilft','half'],['ziehen','zieht','zog'],['tragen','trägt','trug'],['malen','malt','malte'],['kaufen','kauft','kaufte'],['hören','hört','hörte']];
+const STEIG=[['gross','grösser','grössten'],['klein','kleiner','kleinsten'],['schnell','schneller','schnellsten'],['langsam','langsamer','langsamsten'],['alt','älter','ältesten'],['jung','jünger','jüngsten'],['warm','wärmer','wärmsten'],['kalt','kälter','kältesten'],['lang','länger','längsten'],['kurz','kürzer','kürzesten'],['gut','besser','besten'],['viel','mehr','meisten'],['gern','lieber','liebsten'],['hoch','höher','höchsten'],['stark','stärker','stärksten'],['laut','lauter','lautesten'],['leise','leiser','leisesten'],['hell','heller','hellsten'],['dunkel','dunkler','dunkelsten'],['klug','klüger','klügsten'],['nah','näher','nächsten'],['schwer','schwerer','schwersten'],['leicht','leichter','leichtesten'],['dick','dicker','dicksten']];
+const ZEICHEN=[['Kommst du heute mit ins Schwimmbad','?'],['Ich habe heute Judo','.'],['Pass auf, das Auto','!'],['Wie spät ist es','?'],['Morgen ist Samstag','.'],['Hilfe','!'],['Wo wohnst du','?'],['Die Katze schläft auf dem Sofa','.'],['Komm sofort her','!'],['Hast du deine Hausaufgaben gemacht','?'],['Wir fahren mit dem Zug nach Zürich','.'],['Was für ein schöner Tag','!'],['Warum ist der Himmel blau','?'],['Mein Lieblingsessen ist Pizza','.'],['Hurra, wir haben gewonnen','!'],['Kannst du mir helfen','?'],['Im Herbst fallen die Blätter','.'],['Sei bitte leise','!']];
+const SATZ=[[['Der Hund','S'],['bellt','P'],['laut','O']],[['Am Morgen','O'],['fährt','P'],['Nico','S'],['mit dem Velo','O'],['zur Schule','O']],[['Meine Schwester','S'],['liest','P'],['ein Buch','O']],[['Im Garten','O'],['spielen','P'],['die Kinder','S']],[['Der Bäcker','S'],['backt','P'],['frisches Brot','O']],[['Heute','O'],['scheint','P'],['die Sonne','S']],[['Oma','S'],['erzählt','P'],['eine Geschichte','O']],[['Nach der Schule','O'],['klettert','P'],['Ben','S'],['in der Halle','O']],[['Die grosse Katze','S'],['jagt','P'],['eine Maus','O']],[['Im Winter','O'],['fahren','P'],['wir','S'],['Ski','O']],[['Der Lehrer','S'],['erklärt','P'],['die Aufgabe','O']],[['Am Abend','O'],['kocht','P'],['Papa','S'],['Spaghetti','O']]];
+const RECHT=[['Han_',['d','t'],'d','Hand → Hände'],['Ber_',['g','k'],'g','Berg → Berge'],['Kor_',['b','p'],'b','Korb → Körbe'],['Kin_',['d','t'],'d','Kind → Kinder'],['Bil_',['d','t'],'d','Bild → Bilder'],['Wel_',['d','t'],'t','Welt → Welten'],['Zu_',['g','k'],'g','Zug → Züge'],['Stran_',['d','t'],'d','Strand → Strände'],['Bro_',['d','t'],'t','Brot → Brote'],['Hu_',['d','t'],'t','Hut → Hüte'],['Fel_',['d','t'],'d','Feld → Felder'],['Ta_',['g','k'],'g','Tag → Tage'],['Flu_',['g','k'],'g','Flug → Flüge'],['Die_',['b','p'],'b','Dieb → Diebe'],['Mon_',['d','t'],'d','Mond → Monde'],['Zwer_',['g','k'],'g','Zwerg → Zwerge'],['Gel_',['d','t'],'d','Geld → Gelder'],['Wan_',['d','t'],'d','Wand → Wände'],['Wor_',['d','t'],'t','Wort → Wörter'],['Pfer_',['d','t'],'d','Pferd → Pferde'],
+['B_ume',['äu','eu'],'äu','Baum → Bäume'],['H_user',['äu','eu'],'äu','Haus → Häuser'],['M_use',['äu','eu'],'äu','Maus → Mäuse'],['Fr_unde',['äu','eu'],'eu','Es gibt kein verwandtes Wort mit au → eu'],['K_lte',['ä','e'],'ä','kalt → Kälte'],['W_lder',['ä','e'],'ä','Wald → Wälder'],['H_nde',['ä','e'],'ä','Hand → Hände'],['F_lder',['ä','e'],'e','Feld → Felder: kein a im Wortstamm'],['Gl_ser',['ä','e'],'ä','Glas → Gläser'],['N_st',['ä','e'],'e','Kein verwandtes Wort mit a → e']];
+const VERBEN=[['„Psst!“, ___ Lea ganz leise.','flüstert',['schreit','brüllt']],['Der Dieb ___ auf Zehenspitzen durch das Haus.','schleicht',['rennt','hüpft']],['„Hilfe!“, ___ der Junge laut.','ruft',['flüstert','murmelt']],['„Wie spät ist es?“, ___ Tim.','fragt',['antwortet','befiehlt']],['Der Hase ___ blitzschnell über die Wiese.','rennt',['kriecht','schleicht']],['Die Schnecke ___ langsam über das Blatt.','kriecht',['rennt','springt']],['Am Sonntag ___ wir gemütlich durch die Altstadt.','schlendern',['rasen','stolpern']],['Tim übersieht den Stein und ___.','stolpert',['schlendert','tanzt']],['„Das ist mein Ball!“, ___ Ben wütend.','schreit',['flüstert','kichert']],['Die Kinder ___ über den lustigen Witz.','lachen',['weinen','gähnen']],['„Ja, ich komme mit“, ___ Mia.','antwortet',['fragt','gähnt']],['Der Adler ___ hoch über den Bergen.','kreist',['kriecht','schwimmt']],['Nach dem langen Tag ___ Papa müde.','gähnt',['jubelt','hüpft']],['Das Pferd ___ über den Zaun.','springt',['kriecht','schwimmt']],['Die Fans ___, als das Tor fällt.','jubeln',['flüstern','gähnen']]];
+const GEGEN=[['gross','klein'],['warm','kalt'],['schnell','langsam'],['hell','dunkel'],['laut','leise'],['voll','leer'],['oben','unten'],['nass','trocken'],['hart','weich'],['schwer','leicht'],['dick','dünn'],['früh','spät'],['viel','wenig'],['stark','schwach'],['lachen','weinen'],['kommen','gehen'],['öffnen','schliessen'],['gewinnen','verlieren'],['Tag','Nacht'],['Sommer','Winter'],['fragen','antworten'],['immer','nie'],['mutig','ängstlich'],['sauber','schmutzig'],['jung','alt'],['teuer','billig']];
+const KOMP=[['das Haus','die Tür','Haustür'],['der Schnee','der Mann','Schneemann'],['der Fuss','der Ball','Fussball'],['der Apfel','der Baum','Apfelbaum'],['die Kinder','der Garten','Kindergarten'],['die Sonne','der Hut','Sonnenhut'],['die Schule','die Tasche','Schultasche'],['der Zahn','die Bürste','Zahnbürste'],['das Spiel','der Platz','Spielplatz'],['die Hand','der Schuh','Handschuh'],['das Feuer','die Wehr','Feuerwehr'],['das Wasser','die Flasche','Wasserflasche'],['der Brief','der Kasten','Briefkasten'],['der Kopf','das Kissen','Kopfkissen'],['der Geburtstag','der Kuchen','Geburtstagskuchen'],['die Blume','die Vase','Blumenvase'],['der Winter','die Jacke','Winterjacke'],['das Velo','der Helm','Velohelm'],['das Haus','das Tier','Haustier'],['der Zug','das Fenster','Zugfenster'],['der Regen','der Schirm','Regenschirm'],['die Nacht','das Licht','Nachtlicht'],['das Gold','der Fisch','Goldfisch'],['das Glas','die Kugel','Glaskugel']];
+const TEXTE=[
+{t:'Nico auf der Felsenegg',x:'Am Samstag fährt Nico mit der Seilbahn auf die Felsenegg. Oben ist es kalt und windig. Er hat seine Mütze vergessen. Seine Grossmutter leiht ihm ihren Schal. Zusammen trinken sie eine heisse Schokolade.',
+ qs:[['Wohin fährt Nico?','Auf die Felsenegg',['Nach Zürich','In den Zoo']],['Wie ist das Wetter oben?','Kalt und windig',['Warm und sonnig','Es regnet stark']],['Warum friert Nico?','Er hat seine Mütze vergessen',['Er hat keine Schuhe','Er ist krank']],['Was macht die Grossmutter?','Sie leiht ihm ihren Schal',['Sie kauft ihm eine Mütze','Sie fährt nach Hause']],['Wie fühlt sich Nico wohl am Schluss?','Warm und zufrieden',['Wütend','Traurig']]]},
+{t:'Der kleine Igel',x:'Im Herbst sucht der kleine Igel Pieks Futter. Er frisst Käfer, Würmer und Schnecken. Bald wird es kalt. Pieks baut sich unter einem Laubhaufen ein Nest. Dort hält er seinen Winterschlaf bis zum Frühling.',
+ qs:[['Was frisst Pieks?','Käfer, Würmer und Schnecken',['Äpfel und Nüsse','Gras und Blätter']],['Wo baut Pieks sein Nest?','Unter einem Laubhaufen',['Auf einem Baum','In einem Haus']],['Warum baut Pieks ein Nest?','Weil es bald kalt wird',['Weil es regnet','Weil er Besuch bekommt']],['Was bedeutet „Winterschlaf“?','Er schläft den ganzen Winter lang',['Er macht im Winter einen Mittagsschlaf','Er schläft im Schnee']],['Wann wacht Pieks wieder auf?','Im Frühling',['Im Sommer','Im Herbst']]]},
+{t:'Das verschwundene Velo',x:'Mia fährt jeden Tag mit dem Velo zur Schule. Am Montag steht ihr Velo nicht mehr vor dem Schulhaus. Mia ist erschrocken. Sie sucht überall. Da sieht sie es hinter der Turnhalle. Ihr Freund Leo hat es dort hingestellt, weil es am Morgen geregnet hat und dort ein Dach ist. Mia muss lachen.',
+ qs:[['Wie kommt Mia zur Schule?','Mit dem Velo',['Mit dem Bus','Zu Fuss']],['Wo findet Mia ihr Velo?','Hinter der Turnhalle',['Vor dem Schulhaus','Zu Hause']],['Warum hat Leo das Velo umgestellt?','Damit es nicht nass wird',['Weil er es ausleihen wollte','Weil es kaputt war']],['Was bedeutet „erschrocken“?','Sie hat plötzlich Angst',['Sie ist müde','Sie freut sich']],['Wie ist Leo?','Hilfsbereit',['Frech','Faul']]]},
+{t:'Die Murmeltiere',x:'Murmeltiere leben in den Alpen. Sie wohnen in Höhlen unter der Erde. Wenn ein Murmeltier einen Adler sieht, pfeift es laut. Dann rennen alle anderen schnell in ihre Höhle. Im Winter schlafen Murmeltiere bis zu sechs Monate lang.',
+ qs:[['Wo leben Murmeltiere?','In den Alpen',['Am Meer','In der Stadt']],['Warum pfeift ein Murmeltier?','Um die anderen zu warnen',['Weil es sich freut','Weil es Hunger hat']],['Vor welchem Tier haben sie Angst?','Vor dem Adler',['Vor der Kuh','Vor dem Fisch']],['Wie lange schlafen sie im Winter?','Bis zu sechs Monate',['Eine Woche','Einen Tag']]]},
+{t:'Ein Kuchen für Oma',x:'Lena und Papa backen einen Schokoladenkuchen für Omas Geburtstag. Lena darf die Eier aufschlagen. Plötzlich fällt ein Ei auf den Boden. Lena lacht und holt einen Lappen. Nach einer Stunde duftet die ganze Küche. Oma strahlt, als sie den Kuchen sieht.',
+ qs:[['Für wen ist der Kuchen?','Für Oma',['Für Papa','Für Lenas Lehrerin']],['Was passiert mit einem Ei?','Es fällt auf den Boden',['Lena isst es','Es ist schon kaputt im Laden']],['Was macht Lena, als das Ei fällt?','Sie lacht und holt einen Lappen',['Sie weint','Sie geht hinaus']],['Was bedeutet „Oma strahlt“?','Sie freut sich sehr',['Sie leuchtet wie eine Lampe','Sie ist müde']]]},
+{t:'Der erste Wettkampf',x:'Am Samstag hat Samir seinen ersten Judo-Wettkampf. Vor dem Kampf ist er sehr nervös. Sein Trainer sagt: „Atme tief ein und denk an das Training.“ Samir verliert den ersten Kampf, aber den zweiten gewinnt er. Am Ende bekommt er eine Bronzemedaille. Er ist stolz.',
+ qs:[['Wie fühlt sich Samir vor dem Kampf?','Nervös',['Gelangweilt','Wütend']],['Was rät ihm der Trainer?','Tief atmen und an das Training denken',['Nach Hause gehen','Schnell etwas essen']],['Wie viele Kämpfe gewinnt Samir?','Einen',['Keinen','Zwei']],['Welche Medaille bekommt er?','Bronze',['Gold','Silber']],['Was bedeutet „stolz“?','Er freut sich über seine Leistung',['Er ist traurig','Er ist müde']]]}
+];
+const IDEEN=[['Der verschwundene Schlüssel',['Keller','Taschenlampe','Katze']],['Gefangen im Kletterwald',['Seil','Gewitter','Freund']],['Mein Haustier kann sprechen',['Geheimnis','Schule','Lachen']],['Ein Tag als Riese',['Berge','Zürichsee','Vorsichtig']],['Das Geheimnis im Wald',['Höhle','Spuren','Karte']],['Als der Schnee nicht aufhörte',['Schlitten','Nachbarn','Schokolade']],['Die Zeitmaschine im Keller',['Dinosaurier','Knopf','Zurück']],['Der Drache, der nicht fliegen konnte',['Training','Mut','Wolken']],['Mein erster Wettkampf',['Nervös','Trainer','Medaille']],['Der Roboter in meiner Klasse',['Fehler','Lehrerin','Freundschaft']],['Plötzlich war ich unsichtbar',['Spiegel','Pausenplatz','Streich']],['Ein Ausflug mit Hindernissen',['Zug','Verpasst','Picknick']]];
+
+/* ---------- DEUTSCH concepts ---------- */
+const choices3=(right,wrong)=>shuffle([right,...wrong]);
+const DEUTSCH=[
+{id:'wortarten',glyph:'N V A',title:'Wortarten',sub:'Nomen, Verb, Adjektiv',week:'Woche 1',
+ kid:['<b>Nomen</b> sind Dinge, Tiere, Menschen und Namen. Sie schreibt man gross: <i>der Hund, Lea</i>.','<b>Verben</b> sagen, was jemand tut: <i>springen, lesen</i>. <b>Adjektive</b> sagen, wie etwas ist: <i>gross, schnell</i>.'],
+ example:'Der <b>kleine</b> (Adjektiv) <b>Hund</b> (Nomen) <b>bellt</b> (Verb).',
+ parent:'Word types are the base of the Gymi "Sprachbetrachtung" part. Colour game: Nomen blue, Verb red, Adjektiv green in his own books.',
+ gen(){const s=pick(WA_SENT),toks=s.split(' ').map(t=>{const m=t.match(/^(.+?)\|([NVA])(.*)$/);return m?{w:m[1],t:m[2],p:m[3]}:{w:t}}),cand=toks.filter(t=>t.t),c=pick(cand);
+  const html=toks.map(t=>(t===c?`<span class="hl">${t.w}</span>`:t.w)+(t.p||'')).join(' ');const nm={N:'Nomen',V:'Verb',A:'Adjektiv'};
+  return {q:`Welche Wortart ist das markierte Wort?<br><span style="font-size:1.25rem">${html}</span>`,type:'choice',choices:['Nomen','Verb','Adjektiv'],a:nm[c.t],hint:'Kann man es anfassen oder ist es ein Name? Kann man es tun? Sagt es, wie etwas ist?',explain:`„${c.w}“ ist ein ${nm[c.t]}.`}}},
+
+{id:'artikel',glyph:'der die das',title:'der, die, das',sub:'Den richtigen Artikel finden',week:'Woche 3',
+ kid:['Jedes Nomen hat einen Begleiter: <b>der</b>, <b>die</b> oder <b>das</b>. Lerne Nomen immer mit Artikel.','Tricks: Wörter auf <b>-ung, -heit, -keit</b> sind immer <b>die</b>. Wörter auf <b>-chen</b> und <b>-lein</b> sind immer <b>das</b>.'],
+ example:'die Zeit<b>ung</b>, die Frei<b>heit</b>, das Mäd<b>chen</b>, das Häus<b>chen</b>',
+ parent:'Articles cause many errors in essays, especially in multilingual families. A good habit: always say a new noun with its article.',
+ gen(){const [a,w]=pick(ART);return {q:`<span class="gap">?</span> <span class="big">${w}</span>`,type:'choice',choices:['der','die','das'],a,hint:/(ung|heit|keit)$/.test(w)?'Schau die Endung an!':/(chen|lein)$/.test(w)?'Schau die Endung an!':'Sag das Wort laut mit allen drei Artikeln. Was klingt richtig?',explain:`${a} ${w}`}}},
+
+{id:'mehrzahl',glyph:'1 → 2',title:'Einzahl und Mehrzahl',sub:'Ein Haus, viele Häuser',week:'Woche 3',
+ kid:['Die Mehrzahl hat immer den Artikel <b>die</b>: die Häuser, die Bälle.','Oft kommt ein Umlaut dazu: a → <b>ä</b>, o → <b>ö</b>, u → <b>ü</b>, au → <b>äu</b>.'],
+ example:'das Haus → die H<b>äu</b>ser<br>der Ball → die B<b>ä</b>lle<br>das Auto → die Auto<b>s</b>',
+ parent:'German plurals have several patterns; frequent reading builds the ear for them better than rules.',
+ gen(){const [s,p,w]=pick(PLU);return {q:`Einzahl: <span class="big">${s}</span><br>Wie heisst die Mehrzahl?`,type:'choice',choices:choices3('die '+p,w.map(x=>'die '+x)),a:'die '+p,hint:'Sag: eins, zwei, viele …',explain:`${s} → die ${p}`}}},
+
+{id:'verben',glyph:'ich du',title:'Verben beugen',sub:'ich spiele, du spielst',week:'Woche 5',
+ kid:['Das Verb ändert sich je nach Person: ich spiel<b>e</b>, du spiel<b>st</b>, er spiel<b>t</b>, wir spiel<b>en</b>, ihr spiel<b>t</b>, sie spiel<b>en</b>.','Manche Verben ändern auch den Stamm: ich lese → du <b>liest</b>, ich fahre → du <b>fährst</b>.'],
+ example:'sein: ich <b>bin</b>, du <b>bist</b>, er <b>ist</b>, wir <b>sind</b>, ihr <b>seid</b>, sie <b>sind</b>',
+ parent:'Irregular "du/er" forms (liest, fährt, isst) are frequent spelling traps in essays.',
+ gen(){const inf=pick(Object.keys(VERB)),i=ri(0,5),f=VERB[inf][i];return {q:`Ergänze: <span class="big">${PERS[i]} <span class="gap">&nbsp;?&nbsp;</span></span> &nbsp;(${inf})`,type:'text',a:[f],hint:`Die Endung für „${PERS[i]}“ ist bei regelmässigen Verben: ${['-e','-st','-t','-en','-t','-en'][i]}`,explain:`${PERS[i]} ${f}`}}},
+
+{id:'praet',glyph:'war',title:'Vergangenheit',sub:'Präteritum für Geschichten',week:'Woche 6',
+ kid:['Geschichten erzählt man in der <b>Vergangenheit</b>: Er <b>ging</b>, sie <b>war</b>, wir <b>hatten</b>.','Viele Verben bekommen <b>-te</b> (spielte, lachte). Andere ändern sich ganz (gehen → ging, sehen → sah).'],
+ example:'Heute: Er <b>geht</b> in den Wald.<br>Gestern: Er <b>ging</b> in den Wald.',
+ parent:'Gymi essays are written in the past tense. The strong verbs (ging, sah, lief, rief) are worth practising until they are automatic.',
+ gen(){const [inf,pr,pt]=pick(PRAET),who=pick(['Er','Sie']);return {q:`Heute: ${who} <b>${pr}</b>.<br>Gestern: <span class="big">${who} <span class="gap">&nbsp;?&nbsp;</span></span> &nbsp;(${inf})`,type:'text',a:[pt],hint:`Sag: „Gestern ${who.toLowerCase()} …“ – klingt ein -te gut oder ändert sich das Wort?`,explain:`${inf}: ${who.toLowerCase()} ${pr} → ${who.toLowerCase()} ${pt}`}}},
+
+{id:'steigern',glyph:'< >',title:'Adjektive steigern',sub:'gross, grösser, am grössten',week:'Woche 7',
+ kid:['Mit Adjektiven kannst du vergleichen: gross → <b>grösser</b> (als …) → <b>am grössten</b>.','Achtung, Ausnahmen: gut → besser → am besten, viel → mehr → am meisten, gern → lieber → am liebsten.'],
+ example:'Der Gepard ist <b>schneller</b> als das Pferd.<br>Der Gepard ist <b>am schnellsten</b>.',
+ parent:'Comparisons make descriptions richer and appear in grammar tasks.',
+ gen(){const [b,k,s]=pick(STEIG);if(Math.random()<.5)return {q:`<span class="big">${b}</span> → <span class="gap">&nbsp;?&nbsp;</span> (als …)`,type:'text',a:[k],hint:'Meist kommt -er dazu, oft mit Umlaut.',explain:`${b} → ${k} → am ${s}`};
+  return {q:`<span class="big">${b}</span> → am <span class="gap">&nbsp;?&nbsp;</span>`,type:'text',a:[s,'am '+s],hint:'Meist kommt -sten oder -esten dazu.',explain:`${b} → ${k} → am ${s}`}}},
+
+{id:'zeichen',glyph:'. ? !',title:'Satzzeichen',sub:'Punkt, Fragezeichen, Ausrufezeichen',week:'Woche 9',
+ kid:['<b>.</b> Punkt: ein normaler Satz. <b>?</b> Fragezeichen: eine Frage. <b>!</b> Ausrufezeichen: ein Befehl, ein Ruf oder ein Gefühl.','Bei Fragen steht das Verb oder ein Fragewort (wer, wie, wo, warum) am Anfang.'],
+ example:'Du spielst Ball<b>.</b> &nbsp; Spielst du Ball<b>?</b> &nbsp; Spiel jetzt Ball<b>!</b>',
+ parent:'Punctuation, including speech marks („ … “), is checked in the Gymi essay.',
+ gen(){const [s,a]=pick(ZEICHEN);return {q:`Welches Zeichen fehlt?<br><span class="big">${s}<span class="gap">&nbsp;</span></span>`,type:'choice',choices:['. Punkt','? Fragezeichen','! Ausrufezeichen'],a:{'.':'. Punkt','?':'? Fragezeichen','!':'! Ausrufezeichen'}[a],hint:'Ist es eine Frage, ein Ruf oder ein ganz normaler Satz?',explain:`${s}${a}`}}},
+
+{id:'satzglieder',glyph:'S P',title:'Subjekt und Prädikat',sub:'Wer oder was? Und das Verb',week:'Woche 14–15',
+ kid:['Das <b>Prädikat</b> ist das Verb. Im Aussagesatz steht es immer an <b>2. Stelle</b>.','Das <b>Subjekt</b> findest du mit der Frage <b>Wer oder was?</b> + Verb.'],
+ example:'Am Morgen | <b>fährt</b> | <b>Nico</b> | mit dem Velo.<br>Wer fährt? → Nico (Subjekt). fährt → Prädikat.',
+ parent:'Satzglieder and the Umstellprobe (moving parts of a sentence) are standard in Gymi grammar tasks.',
+ gen(){const s=pick(SATZ),role=Math.random()<.6?'S':'P',a=s.find(p=>p[1]===role)[0],verb=s.find(p=>p[1]==='P')[0];
+  return {q:`<span style="font-size:1.2rem">${s.map(p=>p[0]).join(' ')}.</span><br>Finde das <b>${role==='S'?'Subjekt':'Prädikat'}</b>.`,type:'choice',choices:shuffle(s.map(p=>p[0])),a,hint:role==='S'?`Frage: Wer oder was ${verb}?`:'Welches Wort ist das Verb?',explain:role==='S'?`Wer oder was ${verb}? → ${a}`:`Das Verb ist „${a}“.`}}},
+
+{id:'recht',glyph:'d / t',title:'Rechtschreib-Detektiv',sub:'Verlängern und ableiten',week:'Woche 17',
+ kid:['Am Wortende hört man <b>d</b> und <b>t</b>, <b>g</b> und <b>k</b>, <b>b</b> und <b>p</b> gleich. <b>Verlängere</b> das Wort: Hund → Hun<b>d</b>e.','Bei <b>ä</b> oder <b>e</b>, <b>äu</b> oder <b>eu</b>: Suche ein verwandtes Wort mit <b>a</b> oder <b>au</b>. Baum → B<b>äu</b>me.'],
+ example:'Ber? → Ber<b>g</b>e → Ber<b>g</b><br>H?user → H<b>au</b>s → H<b>äu</b>ser',
+ parent:'These two strategies solve most spelling doubts. Ask him to say the "detective word" out loud.',
+ gen(){const [w,o,a,t]=pick(RECHT);return {q:`Welcher Buchstabe fehlt?<br><span class="big">${w.replace('_','<span class="gap">?</span>')}</span>`,type:'choice',choices:o,a,hint:'Verlängere das Wort oder suche ein verwandtes Wort.',explain:`${t} → ${w.replace('_',a)}`}}},
+
+{id:'woerter',glyph:'sagen',title:'Treffende Verben',sub:'Besser als sagen und gehen',week:'Woche 10',
+ kid:['Gute Geschichten brauchen genaue Verben. Statt <b>sagen</b>: rufen, flüstern, fragen, antworten, schreien.','Statt <b>gehen</b>: rennen, schleichen, schlendern, stolpern, hüpfen.'],
+ example:'„Psst!“, <b>sagt</b> Lea. → „Psst!“, <b>flüstert</b> Lea.',
+ parent:'A rich verb vocabulary is one of the clearest quality signals in a Gymi essay.',
+ gen(){const [s,a,w]=pick(VERBEN);return {q:`Welches Verb passt am besten?<br><span style="font-size:1.2rem">${s.replace('___','<span class="gap">&nbsp;?&nbsp;</span>')}</span>`,type:'choice',choices:choices3(a,w),a,hint:'Lies den ganzen Satz. Ist es laut oder leise, schnell oder langsam?',explain:s.replace('___',a)}}},
+
+{id:'gegen',glyph:'↔',title:'Gegensätze',sub:'heiss und kalt',week:'Woche 7',
+ kid:['Ein Gegensatz ist das <b>Gegenteil</b>: hell – dunkel, öffnen – schliessen.','Gegensätze helfen dir beim Beschreiben und Vergleichen.'],
+ example:'laut ↔ <b>leise</b><br>gewinnen ↔ <b>verlieren</b>',
+ parent:'Quick ping-pong game: you say a word, he says the opposite. Great for car rides.',
+ gen(){const p=pick(GEGEN),r=Math.random()<.5,w=r?p[0]:p[1],a=r?p[1]:p[0],others=shuffle(GEGEN.filter(x=>x!==p)).slice(0,2).map(x=>x[ri(0,1)]);
+  return {q:`Was ist das Gegenteil von <span class="big">${w}</span>?`,type:'choice',choices:choices3(a,others),a,hint:'Was ist ganz anders, auf der anderen Seite?',explain:`${w} ↔ ${a}`}}},
+
+{id:'komp',glyph:'+',title:'Zusammengesetzte Nomen',sub:'Haus + Tür = Haustür',week:'Woche 11',
+ kid:['Aus zwei Nomen kannst du ein neues Wort bauen: Schnee + Mann = <b>Schneemann</b>.','Das <b>letzte Wort</b> bestimmt den Artikel: die Tür → <b>die</b> Haustür.'],
+ example:'das Spiel + <b>der</b> Platz → <b>der</b> Spielplatz',
+ parent:'Compound nouns are typical of German. Invent silly ones together (der Bananenhelm).',
+ gen(){const [a,b,c]=pick(KOMP),art=b.split(' ')[0];return {q:`${a} + ${b} = <span class="big"><span class="gap">?</span> ${c}</span>`,type:'choice',choices:['der','die','das'],a:art,hint:'Welches Wort steht am Schluss?',explain:`Das letzte Wort ist „${b}“, also: ${art} ${c}`}}},
+
+{id:'lesen',glyph:'Text',title:'Lesen und verstehen',sub:'Kurze Texte mit Fragen',week:'Woche 2 · 13',
+ kid:['Lies den Text zweimal. Beim zweiten Mal suchst du die Antworten.','Manche Antworten stehen nicht im Text: Du musst <b>mitdenken</b>. Frage dich: Woran merke ich das?'],
+ example:'„Oma strahlt.“ → Steht nicht im Text, dass sie sich freut. Aber man merkt es!',
+ parent:'"Why?" questions and word meaning from context are classic Gymi Textverständnis tasks. Let him point to the sentence that proves his answer.',
+ gen(){store.lp=store.lp||{t:0,q:-1};store.lp.q++;let T=TEXTE[store.lp.t%TEXTE.length];if(store.lp.q>=T.qs.length){store.lp.t++;store.lp.q=0;T=TEXTE[store.lp.t%TEXTE.length]}
+  const [qq,a,w]=T.qs[store.lp.q];return {q:`<div class="text"><b>${T.t}</b><br>${T.x}</div>Frage ${store.lp.q+1} von ${T.qs.length}: <b>${qq}</b>`,type:'choice',stack:true,choices:choices3(a,w),a,hint:'Suche den passenden Satz im Text.',explain:a}}},
+
+{id:'schreiben',glyph:'Stift',title:'Schreibwerkstatt',sub:'Eigene Geschichten',week:'Woche 4 · 12 · 20',
+ kid:['Eine gute Geschichte hat einen <b>Anfang</b> (wer, wo, wann), einen <b>Höhepunkt</b> (das Spannendste) und einen <b>Schluss</b>.','Schreibe in der Vergangenheit. Nimm verschiedene Satzanfänge: <i>Plötzlich, Danach, Zum Glück, Am Ende</i>.'],
+ example:'Einleitung → Spannung steigt → <b>Höhepunkt</b> → Lösung → Schluss',
+ parent:'Writing is not auto-checked. Read the story together with the checklist and praise one good word or idea first.',
+ gen(){const [t,w]=pick(IDEEN);return {q:`<div class="text"><b>Titel:</b> ${t}<br><b>Benutze diese Wörter:</b> ${w.join(', ')}</div>Schreibe 8 bis 12 Sätze in dein Heft. Prüfe danach:<ul class="check"><li>Einleitung: Wer? Wo? Wann?</li><li>Ein spannender Höhepunkt</li><li>Ein Schluss</li><li>Vergangenheit (ging, sah, rief …)</li><li>Verschiedene Satzanfänge</li><li>Wörtliche Rede mit „ … “</li></ul>`,type:'free'}}}
+];
+
+/* ---------- GESCHICHTEN: illustration kit (original SVG drawings) ---------- */
+let SID=0;
+const PIC=inner=>`<svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">${inner}</svg>`;
+const D={
+ sky(t='day'){const id='sk'+(++SID),c={day:['#a9dcff','#eaf6ff'],evening:['#ff9f6b','#ffe0b5'],night:['#1d2b55','#3b4f8a'],fog:['#c3ccd5','#e6eaee'],winter:['#cde4f5','#f4f9fd'],indoor:['#f3e3c8','#fbf3e6'],spring:['#9fd8ff','#f2fbff'],hall:['#dfe5ee','#f1f4f8']}[t];
+  return `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c[0]}"/><stop offset="1" stop-color="${c[1]}"/></linearGradient></defs><rect width="320" height="180" fill="url(#${id})"/>`},
+ ground(c='#8cc66a',y=140){return `<rect y="${y}" width="320" height="${180-y}" fill="${c}"/>`},
+ hills(c='#a4d67f',c2='#7fb85a'){return `<path d="M0 128 Q60 96 120 124 T240 118 T320 116 V180 H0Z" fill="${c}"/><path d="M0 150 Q80 122 170 148 T320 140 V180 H0Z" fill="${c2}"/>`},
+ mountains(c='#8a9bb3',snow=true){return `<path d="M-10 140 L60 52 L110 110 L160 38 L230 120 L270 72 L330 140Z" fill="${c}"/>`+(snow?`<path d="M60 52 L49 66 L57 63 L64 70 L72 63Z M160 38 L146 56 L155 52 L163 60 L172 55Z M270 72 L261 84 L269 82 L277 87Z" fill="#fff"/>`:'')},
+ sun(x=270,y=36,r=17){return `<circle cx="${x}" cy="${y}" r="${r+8}" fill="#ffe27a" opacity=".45"/><circle cx="${x}" cy="${y}" r="${r}" fill="#ffd23f"/>`},
+ cloud(x,y,s=1){return `<g transform="translate(${x} ${y}) scale(${s})" fill="#fff"><circle cx="0" cy="0" r="10"/><circle cx="12" cy="-5" r="12"/><circle cx="26" cy="0" r="9"/><rect x="0" y="0" width="26" height="9"/></g>`},
+ pine(x,y,s=1,c='#2f7d4f'){return `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-3" y="-10" width="6" height="10" fill="#7a4e2a"/><path d="M0 -60 L-14 -34 L-6 -34 L-18 -10 L18 -10 L6 -34 L14 -34Z" fill="${c}"/></g>`},
+ tree(x,y,s=1,c='#5aa54a'){return `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-4" y="-28" width="8" height="28" fill="#8b5a2b"/><circle cx="0" cy="-42" r="20" fill="${c}"/><circle cx="-12" cy="-32" r="12" fill="${c}"/><circle cx="12" cy="-32" r="12" fill="${c}"/></g>`},
+ house(x,y,c='#f3c94f',snow=false){return `<g transform="translate(${x} ${y})"><rect x="-24" y="-34" width="48" height="34" fill="${c}"/><path d="M-30 -32 L0 -56 L30 -32Z" fill="#c0533a"/>${snow?'<path d="M-30 -32 L0 -56 L30 -32 L24 -32 L0 -50 L-24 -32Z" fill="#fff"/>':''}<rect x="-6" y="-18" width="12" height="18" fill="#7a4e2a"/><rect x="-18" y="-26" width="9" height="9" fill="#cfe8ff"/><rect x="9" y="-26" width="9" height="9" fill="#cfe8ff"/></g>`},
+ kid(x,y,o={}){const s=o.s||1,sk=o.skin||'#f1c7a1',sh=o.shirt||'#3b82c4',p=o.pants||'#2f3b52',h=o.hair||'#4a3020',hy=y-36*s;
+  const a1=o.up?[x-14*s,y-42*s]:[x-13*s,y-12*s],a2=o.up2?[x+14*s,y-42*s]:[x+13*s,y-12*s];
+  return `<g stroke-linecap="round"${o.rot?` transform="rotate(${o.rot} ${x} ${y})"`:''}>
+  <line x1="${x-4*s}" y1="${y-12*s}" x2="${x-5*s}" y2="${y}" stroke="${p}" stroke-width="${4.4*s}"/><line x1="${x+4*s}" y1="${y-12*s}" x2="${x+5*s}" y2="${y}" stroke="${p}" stroke-width="${4.4*s}"/>
+  <line x1="${x-7*s}" y1="${y-24*s}" x2="${a1[0]}" y2="${a1[1]}" stroke="${sk}" stroke-width="${3.4*s}"/><line x1="${x+7*s}" y1="${y-24*s}" x2="${a2[0]}" y2="${a2[1]}" stroke="${sk}" stroke-width="${3.4*s}"/>
+  <rect x="${x-8*s}" y="${y-28*s}" width="${16*s}" height="${17*s}" rx="${4*s}" fill="${sh}"/>
+  ${o.long?`<path d="M${x-9*s} ${hy} Q${x-13*s} ${hy+13*s} ${x-6*s} ${hy+15*s} L${x-7*s} ${hy}Z M${x+9*s} ${hy} Q${x+13*s} ${hy+13*s} ${x+6*s} ${hy+15*s} L${x+7*s} ${hy}Z" fill="${h}"/>`:''}
+  <circle cx="${x}" cy="${hy}" r="${9*s}" fill="${sk}"/>
+  <path d="M${x-9.5*s} ${hy} Q${x} ${hy-16*s} ${x+9.5*s} ${hy} Q${x} ${hy-7*s} ${x-9.5*s} ${hy}Z" fill="${h}"/>
+  ${o.cap?`<path d="M${x-9.5*s} ${hy-2*s} Q${x} ${hy-17*s} ${x+9.5*s} ${hy-2*s}Z" fill="${o.cap}"/><path d="M${x+6*s} ${hy-3*s} L${x+15*s} ${hy-2*s}" stroke="${o.cap}" stroke-width="${2.5*s}"/>`:''}
+  ${o.braid?`<path d="M${x-8*s} ${hy+2*s} Q${x-14*s} ${hy+14*s} ${x-10*s} ${hy+24*s}" stroke="${h}" stroke-width="${3.5*s}" fill="none"/>`:''}
+  ${o.glasses?`<circle cx="${x-3.2*s}" cy="${hy+1*s}" r="${2.6*s}" fill="none" stroke="#444" stroke-width="${.8*s}"/><circle cx="${x+3.2*s}" cy="${hy+1*s}" r="${2.6*s}" fill="none" stroke="#444" stroke-width="${.8*s}"/>`:''}
+  <circle cx="${x-3*s}" cy="${hy+1*s}" r="${1.15*s}" fill="#2a2a2a"/><circle cx="${x+3*s}" cy="${hy+1*s}" r="${1.15*s}" fill="#2a2a2a"/>
+  <path d="${o.sad?`M${x-3*s} ${hy+6*s} Q${x} ${hy+3.5*s} ${x+3*s} ${hy+6*s}`:`M${x-3*s} ${hy+4*s} Q${x} ${hy+7.5*s} ${x+3*s} ${hy+4*s}`}" stroke="#7a3b2e" stroke-width="${1.1*s}" fill="none"/>
+  ${o.stick?`<line x1="${a2[0]}" y1="${a2[1]}" x2="${a2[0]+2*s}" y2="${y}" stroke="#7a4e2a" stroke-width="${2*s}"/>`:''}</g>`},
+ fox(x,y,s=1,f=1){return `<g transform="translate(${x} ${y}) scale(${s*f} ${s})"><path d="M-14 -12 Q-38 -22 -35 -2 Q-26 5 -13 -4Z" fill="#e8742a"/><path d="M-35 -2 Q-37 -11 -31 -13 Q-30 -4 -26 1Z" fill="#fff"/><ellipse cx="0" cy="-10" rx="17" ry="9" fill="#e8742a"/><rect x="-11" y="-4" width="3.6" height="8" rx="1.6" fill="#5a2e14"/><rect x="7" y="-4" width="3.6" height="8" rx="1.6" fill="#5a2e14"/><circle cx="16" cy="-19" r="8" fill="#e8742a"/><path d="M10 -24 L12 -34 L17 -25Z M17 -25 L22 -34 L23 -22Z" fill="#e8742a"/><path d="M20 -18 L30 -16 L20 -12Z" fill="#fff"/><circle cx="30" cy="-16" r="1.7" fill="#222"/><circle cx="18" cy="-21" r="1.4" fill="#222"/></g>`},
+ marmot(x,y,s=1,f=1,sad=false){return `<g transform="translate(${x} ${y}) scale(${s*f} ${s})"><ellipse cx="0" cy="-15" rx="11" ry="15" fill="#9b6a3c"/><ellipse cx="0" cy="-12" rx="6.5" ry="10" fill="#d6ad78"/><circle cx="-6" cy="-40" r="2.6" fill="#7a5230"/><circle cx="6" cy="-40" r="2.6" fill="#7a5230"/><circle cx="0" cy="-34" r="8" fill="#9b6a3c"/><ellipse cx="0" cy="-31" rx="4.2" ry="3" fill="#d6ad78"/><circle cx="-3" cy="-36" r="1.2" fill="#222"/><circle cx="3" cy="-36" r="1.2" fill="#222"/>${sad?'<path d="M-2 -28 Q0 -29.5 2 -28" stroke="#5a3a20" fill="none"/>':'<rect x="-1.5" y="-29.6" width="3" height="3" fill="#fff"/>'}<ellipse cx="-5" cy="-1" rx="4" ry="2" fill="#7a5230"/><ellipse cx="5" cy="-1" rx="4" ry="2" fill="#7a5230"/></g>`},
+ marmotSleep(x,y,s=1){return `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="-8" rx="15" ry="9" fill="#9b6a3c"/><circle cx="12" cy="-10" r="6" fill="#9b6a3c"/><path d="M10 -11 Q12 -9.5 14 -11" stroke="#222" fill="none"/></g>`},
+ dragon(x,y,s=1,c='#4fae5c',f=1,fly=false){return `<g transform="translate(${x} ${y}) scale(${s*f} ${s})"><path d="M-14 -10 Q-34 -6 -42 -20 Q-30 -12 -14 -17Z" fill="${c}"/>${fly?`<path d="M-6 -20 Q-14 -56 16 -48 Q8 -34 6 -22Z" fill="#000" opacity=".18"/><path d="M-4 -20 Q-10 -54 16 -48 Q8 -34 6 -22Z" fill="${c}"/>`:`<path d="M-6 -18 Q-20 -36 -2 -34 Q2 -26 4 -18Z" fill="#000" opacity=".18"/>`}<ellipse cx="0" cy="-12" rx="16" ry="11" fill="${c}"/><ellipse cx="2" cy="-8" rx="9" ry="6" fill="#f2d675"/><path d="M8 -18 Q14 -30 22 -31 Q33 -31 33 -24 Q33 -18 22 -20 Q16 -18 14 -11Z" fill="${c}"/><circle cx="25" cy="-26.5" r="1.7" fill="#222"/><path d="M19 -30 L21 -37 L24 -30Z" fill="#f2a33a"/><path d="M-12 -21 L-9 -27 L-6 -22 L-3 -28 L0 -23 L3 -28 L6 -22Z" fill="#f2a33a"/>${fly?'':`<rect x="-8" y="-3" width="4.5" height="6" rx="2" fill="${c}"/><rect x="5" y="-3" width="4.5" height="6" rx="2" fill="${c}"/>`}</g>`},
+ robot(x,y,s=1,eyes='#47d1ff',rot=0){return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><rect x="-8" y="-12" width="5" height="12" fill="#8a96a6"/><rect x="3" y="-12" width="5" height="12" fill="#8a96a6"/><line x1="-13" y1="-32" x2="-20" y2="-18" stroke="#8a96a6" stroke-width="3.6" stroke-linecap="round"/><line x1="13" y1="-32" x2="20" y2="-18" stroke="#8a96a6" stroke-width="3.6" stroke-linecap="round"/><rect x="-13" y="-36" width="26" height="25" rx="4" fill="#b8c3d1"/><rect x="-7" y="-30" width="14" height="9" rx="2" fill="#7e8ca0"/><circle cx="-3" cy="-25.5" r="1.7" fill="#f2c94c"/><circle cx="3" cy="-25.5" r="1.7" fill="#ef6a5a"/><rect x="-11" y="-56" width="22" height="18" rx="5" fill="#cdd6e2"/><circle cx="-5" cy="-48" r="3" fill="${eyes}"/><circle cx="5" cy="-48" r="3" fill="${eyes}"/><rect x="-4" y="-42.5" width="8" height="1.8" rx=".9" fill="#55606f"/><line x1="0" y1="-56" x2="0" y2="-64" stroke="#55606f" stroke-width="1.6"/><circle cx="0" cy="-65.5" r="2.5" fill="#ef6a5a"/></g>`},
+ snail(x,y,s=1,crown=false){return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-18 0 L18 0 Q25 0 22 -8 L19 -13 Q16 -7 12 -6 L-14 -6 Q-21 -5 -18 0Z" fill="#dcbb84"/><line x1="19" y1="-12" x2="16" y2="-22" stroke="#b38f58" stroke-width="1.4"/><line x1="21" y1="-11" x2="24" y2="-21" stroke="#b38f58" stroke-width="1.4"/><circle cx="16" cy="-22.5" r="1.6" fill="#6b4d25"/><circle cx="24" cy="-21.5" r="1.6" fill="#6b4d25"/><circle cx="-2" cy="-15" r="11" fill="#d9773a"/><path d="M-2 -15 a3 3 0 1 1 3 3 a6 6 0 1 1 -6 -6 a9 9 0 1 1 9 9" stroke="#9c4b1e" stroke-width="1.5" fill="none"/>${crown?'<g fill="#fff"><circle cx="-10" cy="-26" r="2.4"/><circle cx="-4" cy="-28.5" r="2.4"/><circle cx="2" cy="-28.5" r="2.4"/><circle cx="8" cy="-26" r="2.4"/></g><g fill="#ffd23f"><circle cx="-10" cy="-26" r=".9"/><circle cx="-4" cy="-28.5" r=".9"/><circle cx="2" cy="-28.5" r=".9"/><circle cx="8" cy="-26" r=".9"/></g>':''}</g>`},
+ hare(x,y,s=1,f=1,run=false){return `<g transform="translate(${x} ${y}) scale(${s*f} ${s})">${run?'<g stroke="#9aa5b4" stroke-width="1.6" stroke-linecap="round"><line x1="-34" y1="-14" x2="-22" y2="-14"/><line x1="-38" y1="-8" x2="-24" y2="-8"/><line x1="-32" y1="-20" x2="-22" y2="-20"/></g>':''}<ellipse cx="0" cy="-10" rx="15" ry="10" fill="#c9ad8a"/><circle cx="-15" cy="-12" r="3.4" fill="#fff"/><ellipse cx="-2" cy="-1" rx="6" ry="2.6" fill="#b5976f"/><circle cx="14" cy="-20" r="7.5" fill="#c9ad8a"/><ellipse cx="11" cy="-34" rx="2.6" ry="10" fill="#c9ad8a" transform="rotate(-12 11 -34)"/><ellipse cx="16" cy="-34" rx="2.6" ry="10" fill="#c9ad8a" transform="rotate(10 16 -34)"/><circle cx="17" cy="-21" r="1.4" fill="#222"/><circle cx="21" cy="-18" r="1.3" fill="#e58b8b"/></g>`},
+ bird(x,y,c='#2b2b2b',s=1){return `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="0" rx="9" ry="6" fill="${c}"/><circle cx="7" cy="-5" r="4.5" fill="${c}"/><path d="M11 -5 L16 -4 L11 -3Z" fill="#f2a33a"/><circle cx="8" cy="-6" r="1" fill="#fff"/><path d="M-8 -1 L-15 -4 L-14 2Z" fill="${c}"/></g>`},
+ ptarmigan(x,y,s=1){return `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="-8" rx="13" ry="9" fill="#fafafa" stroke="#c9d3dd"/><circle cx="10" cy="-17" r="6" fill="#fafafa" stroke="#c9d3dd"/><path d="M15 -17 L20 -16 L15 -15Z" fill="#333"/><path d="M8 -21 Q10 -23 13 -21" stroke="#e0453a" stroke-width="1.6" fill="none"/><circle cx="11" cy="-18" r="1" fill="#222"/><path d="M-12 -9 L-19 -12 L-18 -5Z" fill="#333"/></g>`},
+ eagle(x,y,s=1){return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0 Q-16 -14 -36 -8 Q-20 -4 -6 4Z M0 0 Q16 -14 36 -8 Q20 -4 6 4Z" fill="#5a4030"/><ellipse cx="0" cy="2" rx="5" ry="8" fill="#5a4030"/><circle cx="0" cy="-6" r="3.5" fill="#f4f4f4"/><path d="M0 -4 L2 -1 L-1 -2Z" fill="#f2a33a"/></g>`},
+ owl(x,y,s=1){return `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="-14" rx="12" ry="15" fill="#8a6a4a"/><ellipse cx="0" cy="-10" rx="7" ry="9" fill="#d9c3a2"/><path d="M-11 -26 L-8 -33 L-4 -27Z M11 -26 L8 -33 L4 -27Z" fill="#8a6a4a"/><circle cx="-5" cy="-22" r="5" fill="#fff"/><circle cx="5" cy="-22" r="5" fill="#fff"/><circle cx="-5" cy="-22" r="2.3" fill="#222"/><circle cx="5" cy="-22" r="2.3" fill="#222"/><path d="M-1.5 -17 L1.5 -17 L0 -14Z" fill="#f2a33a"/></g>`},
+ cow(x,y,s=1,f=1){return `<g transform="translate(${x} ${y}) scale(${s*f} ${s})"><rect x="-14" y="-8" width="4" height="8" fill="#555"/><rect x="8" y="-8" width="4" height="8" fill="#555"/><rect x="-18" y="-26" width="36" height="19" rx="7" fill="#fff" stroke="#d0d6dd"/><ellipse cx="-6" cy="-19" rx="6" ry="4.5" fill="#3a3a3a"/><ellipse cx="8" cy="-14" rx="4" ry="3" fill="#3a3a3a"/><rect x="15" y="-33" width="13" height="13" rx="4" fill="#fff" stroke="#d0d6dd"/><rect x="20" y="-25" width="9" height="6" rx="3" fill="#f0b4b4"/><path d="M16 -33 L13 -38 M27 -33 L30 -38" stroke="#c9b48a" stroke-width="2"/><circle cx="21" cy="-29" r="1.1" fill="#222"/><circle cx="20" cy="-15" r="3.6" fill="#e3b23c"/></g>`},
+ notes(x,y){return `<g fill="none" stroke="#e3a21a" stroke-width="1.6" stroke-linecap="round"><path d="M${x} ${y} q4 -4 0 -8"/><path d="M${x+6} ${y+1} q6 -6 0 -12"/><path d="M${x+12} ${y+2} q8 -8 0 -16"/></g>`},
+ butterfly(x,y){return `<g transform="translate(${x} ${y})"><ellipse cx="-5" cy="-3" rx="6" ry="5" fill="#b05bd6"/><ellipse cx="5" cy="-3" rx="6" ry="5" fill="#f2b632"/><ellipse cx="-4" cy="4" rx="4" ry="3.5" fill="#d48ae8"/><ellipse cx="4" cy="4" rx="4" ry="3.5" fill="#f6cf6a"/><rect x="-1" y="-6" width="2" height="12" rx="1" fill="#333"/></g>`},
+ fog(){return `<g fill="#fff"><rect y="70" width="320" height="110" opacity=".45"/><ellipse cx="80" cy="100" rx="110" ry="26" opacity=".6"/><ellipse cx="240" cy="125" rx="120" ry="28" opacity=".6"/><ellipse cx="160" cy="60" rx="170" ry="22" opacity=".55"/></g>`},
+ snowflakes(){return `<g fill="#fff">${[[20,20],[60,50],[95,15],[130,70],[170,30],[210,60],[250,18],[285,45],[305,90],[40,95],[110,110],[200,100],[260,120],[150,8],[75,140]].map(([a,b])=>`<circle cx="${a}" cy="${b}" r="2.2"/>`).join('')}</g>`},
+ stars(){return `<g fill="#fff6c8">${[[30,20],[70,40],[120,15],[180,35],[230,12],[290,28],[150,55],[260,60]].map(([a,b])=>`<circle cx="${a}" cy="${b}" r="1.6"/>`).join('')}</g>`},
+ flower(x,y,c='#f06292'){return `<g><line x1="${x}" y1="${y}" x2="${x}" y2="${y-12}" stroke="#4c9a3c" stroke-width="1.6"/><g fill="${c}"><circle cx="${x-3}" cy="${y-14}" r="2.6"/><circle cx="${x+3}" cy="${y-14}" r="2.6"/><circle cx="${x}" cy="${y-17}" r="2.6"/><circle cx="${x}" cy="${y-11}" r="2.6"/></g><circle cx="${x}" cy="${y-14}" r="1.6" fill="#ffd23f"/></g>`},
+ flowers(list){return list.map(([x,y,c])=>D.flower(x,y,c)).join('')},
+ stream(){return `<path d="M135 112 Q165 140 150 180 L196 180 Q206 140 168 112Z" fill="#5fb3e6"/><path d="M152 130 q8 4 4 10 M170 150 q8 4 4 10" stroke="#bfe6ff" stroke-width="2" fill="none"/>`},
+ lake(y=140){return `<rect y="${y}" width="320" height="${180-y}" fill="#4f9fd6"/><g stroke="#bfe6ff" stroke-width="2" stroke-linecap="round"><line x1="40" y1="${y+12}" x2="70" y2="${y+12}"/><line x1="150" y1="${y+22}" x2="190" y2="${y+22}"/><line x1="240" y1="${y+10}" x2="270" y2="${y+10}"/></g>`},
+ planks(n=6,x0=128){let s='';for(let i=0;i<n;i++)s+=`<rect x="${x0+i*12}" y="138" width="10" height="16" rx="1.5" fill="#a4733f" stroke="#7a4e2a"/>`;return s+`<line x1="${x0-4}" y1="136" x2="${x0+n*12+2}" y2="136" stroke="#c9a46b" stroke-width="2"/>`},
+ ball(x,y,c='#e5483d',r=7){return `<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/><circle cx="${x-2}" cy="${y-2}" r="${r/3}" fill="#fff" opacity=".6"/>`},
+ garland(){return `<path d="M0 30 Q160 70 320 30" stroke="#8a6a4a" fill="none"/>${[20,55,90,125,160,195,230,265,300].map((x,i)=>{const yy=30+40*(1-Math.pow((x-160)/160,2))*0.97;return `<path d="M${x-7} ${yy} L${x+7} ${yy} L${x} ${yy+12}Z" fill="${['#e5483d','#ffd23f','#3b82c4','#4caf50'][i%4]}"/>`}).join('')}`},
+ fountain(x,y){return `<g transform="translate(${x} ${y})"><rect x="-26" y="-14" width="52" height="14" rx="3" fill="#9aa5b4"/><rect x="-4" y="-38" width="8" height="24" fill="#9aa5b4"/><path d="M0 -38 Q-12 -46 -16 -30 M0 -38 Q12 -46 16 -30" stroke="#7ec3ef" stroke-width="2.4" fill="none"/></g>`},
+ mitten(x,y,s=1){return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-6 0 L-6 -12 Q-6 -20 0 -20 Q6 -20 6 -12 L6 0Z M-6 -10 Q-12 -12 -10 -16 Q-8 -18 -6 -15Z" fill="#d93a32"/><rect x="-7" y="-2" width="14" height="4" rx="1" fill="#f3d6d4"/><path d="M0 -8 l-2.4 -2.4 a1.4 1.4 0 0 1 2.4 -1.8 a1.4 1.4 0 0 1 2.4 1.8Z" fill="#fff"/></g>`},
+ note(x,y){return `<g transform="translate(${x} ${y})"><rect x="0" y="0" width="30" height="22" fill="#fff" stroke="#c7cdd6"/><g stroke="#8a96a6"><line x1="4" y1="7" x2="26" y2="7"/><line x1="4" y1="12" x2="24" y2="12"/><line x1="4" y1="17" x2="18" y2="17"/></g></g>`},
+ wall(c='#f0e2cd'){return `<rect width="320" height="180" fill="${c}"/><rect y="150" width="320" height="30" fill="#c99c6b"/>`},
+ door(x){return `<rect x="${x}" y="40" width="54" height="110" fill="#8b5a2b"/><rect x="${x+4}" y="44" width="46" height="102" fill="#a4733f"/><circle cx="${x+42}" cy="98" r="2.5" fill="#f2c94c"/>`},
+ table(){return `<rect x="40" y="128" width="240" height="10" rx="3" fill="#8b5a2b"/><rect x="50" y="138" width="8" height="30" fill="#7a4e2a"/><rect x="262" y="138" width="8" height="30" fill="#7a4e2a"/>`},
+ cup(x,y,c='#fff'){return `<rect x="${x-6}" y="${y-10}" width="12" height="10" rx="2" fill="${c}" stroke="#c7cdd6"/><path d="M${x+6} ${y-7} q5 1 0 5" stroke="#c7cdd6" fill="none"/><path d="M${x-2} ${y-14} q2 -3 0 -6 M${x+2} ${y-14} q2 -3 0 -6" stroke="#c7cdd6" fill="none"/>`},
+ heartCookie(x,y){return `<path d="M${x} ${y} l-6 -6 a3.5 3.5 0 0 1 6 -4.5 a3.5 3.5 0 0 1 6 4.5Z" fill="#b5652b"/>`},
+ board(t){return `<rect x="70" y="24" width="180" height="70" rx="4" fill="#2f5a46" stroke="#a4733f" stroke-width="5"/><text x="160" y="66" text-anchor="middle" font-family="Comic Sans MS, sans-serif" font-size="20" fill="#f4f4f4">${t}</text>`},
+ bench(x,y){return `<rect x="${x-30}" y="${y-14}" width="60" height="6" rx="2" fill="#a4733f"/><rect x="${x-30}" y="${y-26}" width="60" height="5" rx="2" fill="#a4733f"/><rect x="${x-26}" y="${y-8}" width="4" height="8" fill="#555"/><rect x="${x+22}" y="${y-8}" width="4" height="8" fill="#555"/>`},
+ leaves(){return `<g>${[[30,160,'#e8742a'],[60,170,'#f2b632'],[250,165,'#d9573a'],[290,172,'#e8742a'],[110,174,'#f2b632'],[210,176,'#d9573a']].map(([x,y,c])=>`<ellipse cx="${x}" cy="${y}" rx="5" ry="3" fill="${c}" transform="rotate(25 ${x} ${y})"/>`).join('')}</g>`},
+ web(x,y){let s=`<g stroke="#b9c3cf" stroke-width=".9" fill="none">`;for(let i=0;i<8;i++){const a=i*Math.PI/4;s+=`<line x1="${x}" y1="${y}" x2="${(x+22*Math.cos(a)).toFixed(1)}" y2="${(y+22*Math.sin(a)).toFixed(1)}"/>`}
+  [7,13,19].forEach(r=>{s+=`<polygon points="${[...Array(8)].map((_,i)=>`${(x+r*Math.cos(i*Math.PI/4)).toFixed(1)},${(y+r*Math.sin(i*Math.PI/4)).toFixed(1)}`).join(' ')}"/>`});
+  return s+`</g><g fill="#9ad7ff">${[[x+7,y],[x-13,y+3],[x+5,y-13],[x-9,y-15],[x+16,y+10]].map(([a,b])=>`<circle cx="${a}" cy="${b}" r="1.8"/>`).join('')}</g>`},
+ beetle(x,y){return `<g transform="translate(${x} ${y})"><g stroke="#222" stroke-width="1"><line x1="-6" y1="-2" x2="-10" y2="-6"/><line x1="-6" y1="2" x2="-10" y2="5"/><line x1="6" y1="-2" x2="10" y2="-6"/><line x1="6" y1="2" x2="10" y2="5"/></g><ellipse cx="0" cy="0" rx="7" ry="5" fill="#2c6ad6"/><line x1="0" y1="-5" x2="0" y2="5" stroke="#173f8c"/><circle cx="8" cy="0" r="2.5" fill="#173f8c"/></g>`},
+ hedgehog(x,y,s=1){return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-14 0 L-12 -6 L-9 -9 L-6 -11 L-3 -13 L0 -12 L3 -13 L6 -11 L9 -9 L11 -6 L12 0Z" fill="#7a5a3a"/><ellipse cx="13" cy="-3" rx="5" ry="3.5" fill="#d9b88f"/><circle cx="17.5" cy="-3" r="1" fill="#222"/><path d="M11 -4.5 q1.2 1 2.4 0" stroke="#222" fill="none" stroke-width=".8"/></g>`},
+ bed(x,y,w){return `<rect x="${x}" y="${y}" width="${w}" height="10" rx="3" fill="#8a5a33"/>`},
+ shed(x,y){return `<g transform="translate(${x} ${y})"><rect x="-20" y="-28" width="40" height="28" fill="#c98b4e"/><path d="M-25 -26 L0 -44 L25 -26Z" fill="#7a4e2a"/><rect x="-6" y="-18" width="12" height="18" fill="#7a4e2a"/></g>`},
+ climbWall(){const holds=[[60,40,'#f2c94c'],[90,70,'#e5483d'],[120,35,'#3b82c4'],[150,60,'#222'],[180,30,'#222'],[210,80,'#f2c94c'],[240,50,'#e5483d'],[270,90,'#3b82c4'],[75,110,'#3b82c4'],[110,95,'#f2c94c'],[200,115,'#e5483d'],[250,120,'#222'],[160,100,'#222'],[130,125,'#e5483d'],[230,20,'#f2c94c'],[100,15,'#e5483d']];
+  return `<rect width="320" height="180" fill="#dfe5ee"/><path d="M0 0 H320 V140 H0Z" fill="#c9d1dc"/><path d="M120 0 L240 0 L230 26 L130 26Z" fill="#b3bcc8"/>${holds.map(([x,y,c])=>`<ellipse cx="${x}" cy="${y}" rx="5" ry="4" fill="${c}"/>`).join('')}<rect y="140" width="320" height="40" fill="#3e4a5c"/>`},
+ podium(){return `<rect x="110" y="120" width="100" height="60" fill="#d7dde6"/><rect x="40" y="135" width="70" height="45" fill="#c9d1dc"/><rect x="210" y="145" width="70" height="35" fill="#c9d1dc"/><g font-family="sans-serif" font-size="18" font-weight="700" fill="#55606f" text-anchor="middle"><text x="160" y="152">1</text><text x="75" y="164">2</text><text x="245" y="170">3</text></g>`},
+ medal(x,y,c='#d9a514'){return `<path d="M${x-3} ${y-14} L${x} ${y-6} L${x+3} ${y-14}" stroke="#3b82c4" stroke-width="2" fill="none"/><circle cx="${x}" cy="${y-3}" r="4" fill="${c}"/>`},
+ confetti(){return `<g>${[[40,30,'#e5483d'],[80,60,'#ffd23f'],[130,20,'#3b82c4'],[190,45,'#4caf50'],[240,25,'#e5483d'],[280,65,'#ffd23f'],[60,95,'#4caf50'],[300,100,'#3b82c4']].map(([x,y,c],i)=>`<rect x="${x}" y="${y}" width="5" height="9" fill="${c}" transform="rotate(${i*37} ${x} ${y})"/>`).join('')}</g>`},
+ fence(y=128){let s=`<rect x="0" y="${y+8}" width="320" height="4" fill="#c9a46b"/><rect x="0" y="${y+22}" width="320" height="4" fill="#c9a46b"/>`;for(let x=6;x<320;x+=22)s+=`<path d="M${x} ${y+36} V${y+2} L${x+5} ${y-4} L${x+10} ${y+2} V${y+36}Z" fill="#e3c38f"/>`;return s},
+ can(x,y){return `<g transform="translate(${x} ${y})"><rect x="-8" y="-14" width="16" height="14" rx="3" fill="#3aa36b"/><path d="M8 -11 L18 -18" stroke="#3aa36b" stroke-width="3"/><path d="M-8 -12 q-6 0 -6 6 q0 6 6 4" stroke="#3aa36b" stroke-width="2" fill="none"/></g>`},
+ sprout(x,y,h=10){return `<line x1="${x}" y1="${y}" x2="${x}" y2="${y-h}" stroke="#4c9a3c" stroke-width="2"/><ellipse cx="${x-4}" cy="${y-h+2}" rx="4" ry="2" fill="#6cc04a"/><ellipse cx="${x+4}" cy="${y-h+1}" rx="4" ry="2" fill="#6cc04a"/>`},
+ bigPlant(x,top,flower=false){return `<line x1="${x}" y1="160" x2="${x}" y2="${top}" stroke="#4c9a3c" stroke-width="4"/><ellipse cx="${x-12}" cy="${top+60}" rx="12" ry="6" fill="#5fb04a"/><ellipse cx="${x+12}" cy="${top+40}" rx="12" ry="6" fill="#5fb04a"/><ellipse cx="${x-12}" cy="${top+95}" rx="11" ry="5.5" fill="#5fb04a"/>`+(flower?`<g transform="translate(${x} ${top})">${[...Array(12)].map((_,i)=>`<ellipse cx="0" cy="-13" rx="4" ry="8" fill="#ffc21a" transform="rotate(${i*30})"/>`).join('')}<circle r="8" fill="#6b3f1f"/></g>`:`<ellipse cx="${x}" cy="${top}" rx="5" ry="7" fill="#7cbf5a"/>`)},
+ bee(x,y){return `<g transform="translate(${x} ${y})"><ellipse cx="-2" cy="-6" rx="3" ry="4" fill="#fff" opacity=".8"/><ellipse cx="0" cy="0" rx="6" ry="4" fill="#ffc21a"/><rect x="-1.5" y="-4" width="2" height="8" fill="#222"/><rect x="2.5" y="-3.6" width="1.6" height="7.2" fill="#222"/></g>`},
+ station(t1,t2){return `<rect width="320" height="180" fill="#e7ebf1"/><rect y="150" width="320" height="30" fill="#9aa5b4"/><rect x="0" y="0" width="320" height="16" fill="#c9d1dc"/><rect x="40" y="24" width="160" height="48" rx="4" fill="#1f2a3a"/><g font-family="monospace" font-size="13" fill="#ffd23f"><text x="52" y="44">${t1}</text><text x="52" y="62">${t2}</text></g><circle cx="255" cy="46" r="20" fill="#fff" stroke="#1f2a3a" stroke-width="3"/><line x1="255" y1="46" x2="255" y2="32" stroke="#1f2a3a" stroke-width="2.5"/><line x1="255" y1="46" x2="265" y2="46" stroke="#1f2a3a" stroke-width="2.5"/><circle cx="255" cy="46" r="2" fill="#e5483d"/>`},
+ suitcase(x,y,c='#3b82c4'){return `<rect x="${x}" y="${y-18}" width="14" height="18" rx="2" fill="${c}"/><rect x="${x+4}" y="${y-22}" width="6" height="4" rx="1.5" fill="none" stroke="#333"/>`},
+ map(x,y){return `<g transform="translate(${x} ${y})"><rect x="0" y="0" width="38" height="26" fill="#f6ecd2" stroke="#c9b48a"/><path d="M3 18 Q14 8 22 14 T36 6" stroke="#5fb3e6" stroke-width="2" fill="none"/><path d="M6 4 L14 22 M24 3 L30 24" stroke="#d9573a" stroke-width="1"/></g>`},
+ elephant(x,y,s=1){return `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="-6" rx="9" ry="6" fill="#a9b4c2"/><circle cx="8" cy="-10" r="5" fill="#a9b4c2"/><path d="M12 -9 Q16 -4 13 0" stroke="#a9b4c2" stroke-width="3" fill="none"/><ellipse cx="5" cy="-10" rx="3" ry="4" fill="#c4cdd8"/><circle cx="9" cy="-11" r=".9" fill="#222"/></g>`},
+ pretzel(x,y){return `<path d="M${x} ${y} q-10 0 -10 -8 q0 -8 9 -6 q8 3 2 12 q-6 -9 2 -12 q9 -2 9 6 q0 8 -10 8" stroke="#b5652b" stroke-width="3" fill="none"/>`},
+ train(x,y){return `<g transform="translate(${x} ${y})"><rect x="0" y="-34" width="150" height="30" rx="8" fill="#d8282f"/><rect x="146" y="-34" width="22" height="30" rx="10" fill="#d8282f"/>${[10,40,70,100,128].map(a=>`<rect x="${a}" y="-28" width="20" height="11" rx="2" fill="#dff1ff"/>`).join('')}<rect x="0" y="-12" width="168" height="3" fill="#fff"/>${[20,50,110,140].map(a=>`<circle cx="${a}" cy="-3" r="5" fill="#333"/>`).join('')}</g>`},
+ rail(y=172){return `<rect y="${y}" width="320" height="3" fill="#6b7280"/>`},
+ rock(){return `<path d="M0 180 L0 108 Q20 96 46 100 Q80 98 104 112 L118 180Z" fill="#8a8f99"/><path d="M10 112 Q40 104 70 108" stroke="#a7adb6" stroke-width="3" fill="none"/>`},
+ stone(x,y,w=34){return `<ellipse cx="${x}" cy="${y-8}" rx="${w/2}" ry="10" fill="#9aa1ab"/><ellipse cx="${x-4}" cy="${y-12}" rx="${w/4}" ry="3" fill="#b6bcc4"/>`}
+};
+const W=(o)=>Object.assign({},o);
+
+/* ---------- GESCHICHTEN: texts ---------- */
+const STORIES=[
+{id:'finn',title:'Finn und der Nebel',theme:'Ruhig bleiben',teaser:'Ein kleiner Fuchs läuft einem Schmetterling nach – und plötzlich ist alles grau.',
+ parts:[
+  {img:()=>PIC(D.sky('day')+D.mountains()+D.hills()+D.pine(30,140,1.1)+D.pine(290,138)+D.pine(262,142,.8)+D.fox(140,156,1.2)+D.butterfly(215,90)+D.cloud(40,30)),
+   p:['Hoch oben in den Bergen, zwischen Tannen und grossen Steinen, wohnte ein kleiner Fuchs. Er hiess Finn. Finn war sehr neugierig. Jeden Morgen lief er ein Stück weiter vom Bau weg, als seine Mutter erlaubt hatte. „Bleib in der Nähe, Finn!“, rief sie oft. „In den Bergen kann das Wetter schnell wechseln.“ Doch Finn lachte nur. „Ich kenne jeden Stein hier!“, sagte er.','An einem Herbstmorgen sah Finn auf der Wiese einen bunten Schmetterling. Er sprang hinterher, über einen Bach, an einer alten Hütte vorbei und immer weiter den Hang hinauf. Der Schmetterling flog hoch in den Himmel und verschwand. Finn blieb stehen und schaute sich um.']},
+  {img:()=>PIC(D.sky('fog')+D.mountains('#a9b4c2',false)+D.ground('#a8bfa0',138)+D.pine(50,140,1,'#6f8f7d')+D.pine(270,140,1,'#6f8f7d')+D.fox(160,158,1)+D.fog()),
+   p:['Plötzlich kroch dichter Nebel über den Berg. Zuerst sah Finn die Hütte nicht mehr, dann nicht einmal mehr den Bach. Alles war grau und still. Finn drehte sich im Kreis. Wo war links? Wo war rechts? Sein Herz klopfte schnell. „Mama!“, rief er. Aber niemand antwortete.','Finn wollte losrennen, irgendwohin. Doch dann erinnerte er sich an etwas, das seine Mutter einmal gesagt hatte: „Wenn du nichts sehen kannst, dann hör gut zu.“']},
+  {img:()=>PIC(D.sky('fog')+D.hills('#b9d7a3','#98c27e')+D.stream()+D.cow(240,160,1)+D.cow(290,150,.8,-1)+D.notes(250,112)+D.fox(90,160,1)+D.fog().replace('opacity=".45"','opacity=".2"')),
+   p:['Finn setzte sich hin und atmete tief ein und aus. Er spitzte die Ohren. Zuerst hörte er nur den Wind. Dann hörte er etwas anderes: ein leises Plätschern. Das war der Bach! Und ganz weit unten klingelte etwas: kling, klang, kling. Das waren die Glocken der Kühe auf der Alp neben seinem Bau.','Langsam und vorsichtig ging Finn den Geräuschen nach. Zuerst zum Bach, dann immer dem Wasser entlang und dann den Kuhglocken entgegen.']},
+  {img:()=>PIC(D.sky('evening')+D.sun(250,112,20)+D.mountains('#7c7aa0')+D.hills('#9cc47a','#7aa95a')+D.pine(40,142)+D.fox(140,160,1.4)+D.fox(205,162,.8,-1)),
+   p:['Nach einer Weile wurde der Nebel dünner. Finn sah die Kühe, die alte Tanne und dahinter den Eingang zu seinem Bau. Seine Mutter stand davor und suchte ihn schon. Finn rannte zu ihr und drückte sich in ihr warmes Fell.','„Ich hatte Angst“, sagte er leise. „Aber ich bin ruhig geblieben und habe zugehört.“ Die Mutter leckte ihm über die Ohren. „Das hast du klug gemacht“, sagte sie. „Und morgen gehen wir zusammen zum Schmetterlingsplatz.“ Finn nickte. Diesmal wollte er nicht allein so weit laufen.']}],
+ words:[['neugierig','man will alles wissen und entdecken'],['der Bau','die Wohnung von einem Fuchs unter der Erde'],['dicht','so viel, dass man nicht durchsehen kann'],['die Alp','eine Wiese hoch in den Bergen, wo im Sommer Kühe sind'],['vorsichtig','langsam und aufmerksam, damit nichts passiert']],
+ qs:[{t:'mc',q:'Wo wohnte Finn?',a:'In den Bergen',w:['Am See','In der Stadt']},
+  {t:'mc',q:'Wem lief Finn hinterher?',a:'Einem bunten Schmetterling',w:['Einem Hasen','Einer Kuh']},
+  {t:'rf',q:'Finns Mutter erlaubte ihm, ganz weit weg zu laufen.',a:false},
+  {t:'rf',q:'Finn hörte die Glocken der Kühe.',a:true},
+  {t:'order',items:['Finn rannte einem Schmetterling nach.','Der Nebel kam.','Finn hörte den Bach und die Kuhglocken.','Finn fand seine Mutter.']},
+  {t:'word',q:'Was bedeutet „Sein Herz klopfte schnell“?',a:'Er hatte Angst und war aufgeregt',w:['Er war müde','Er hatte Hunger']},
+  {t:'why',q:'Warum setzte sich Finn hin und atmete tief?',a:'Damit er ruhig wird und gut zuhören kann',w:['Weil er schlafen wollte','Weil er sich verstecken wollte']},
+  {t:'gap',q:'„Wenn du nichts sehen kannst, dann ___ gut zu.“',a:['hör','höre']},
+  {t:'write',q:'Was hat Finn gelernt? Schreibe einen ganzen Satz.',m:'Wenn man Angst hat, soll man ruhig bleiben und gut nachdenken.'}]},
+
+{id:'bruecke',title:'Die Brücke über den Bach',theme:'Zusammenarbeit',teaser:'Zwei Dörfer, ein Bach und ein roter Ball, der auf die falsche Seite schwimmt.',
+ parts:[
+  {img:()=>PIC(D.sky('day')+D.sun(40,34)+D.ground('#8cc66a',112)+D.stream()+D.tree(40,130)+D.tree(285,128,.9)+D.kid(95,164,{shirt:'#e5483d',long:true,hair:'#6b3a1e'})+D.kid(245,164,{shirt:'#3aa36b',cap:'#2f7d4f'})+D.ball(212,160)),
+   p:['Mitten im Wald floss ein breiter Bach. Auf der einen Seite lag das Dorf Sonnenberg, auf der anderen Seite das Dorf Tannegg. Die Kinder aus Sonnenberg spielten immer auf ihrer Wiese, die Kinder aus Tannegg auf ihrer. Über den Bach gingen sie nie. „Die drüben sind komisch“, sagten die einen. „Die drüben sind langweilig“, sagten die anderen. Dabei kannten sie sich gar nicht.','Lina wohnte in Sonnenberg. Eines Tages schoss sie ihren roten Ball so fest, dass er in den Bach fiel. Das Wasser trug ihn weg und legte ihn auf der anderen Seite ans Ufer. Dort stand ein Junge mit einer grünen Mütze. Er hob den Ball auf.']},
+  {img:()=>PIC(D.sky('day')+D.ground('#8cc66a',112)+D.stream()+D.tree(40,130)+D.kid(100,164,{shirt:'#e5483d',long:true,hair:'#6b3a1e',up2:true})+'<line x1="114" y1="122" x2="160" y2="150" stroke="#7a4e2a" stroke-width="3"/>'+D.kid(245,164,{shirt:'#3aa36b',cap:'#2f7d4f',up:true,up2:true})+D.ball(166,152)),
+   p:['„Kannst du ihn mir zurückwerfen?“, rief Lina. Der Junge holte aus und warf. Doch der Ball flog nicht weit genug und landete wieder im Wasser. Beide Kinder mussten lachen. „Ich heisse Jonas!“, rief der Junge. „Ich bin Lina!“','Jetzt fischte Lina den Ball mit einem langen Ast heraus. „Schade, dass es hier keine Brücke gibt“, sagte Jonas. Lina überlegte. „Dann bauen wir eben eine!“']},
+  {img:()=>PIC(D.sky('day')+D.ground('#8cc66a',112)+D.stream()+D.planks(3,128)+'<rect x="170" y="150" width="34" height="8" fill="#a4733f" transform="rotate(-12 170 150)"/>'+D.kid(95,166,{shirt:'#e5483d',long:true,hair:'#6b3a1e',up2:true})+D.kid(60,168,{shirt:'#f2b632',hair:'#222',s:.9})+D.kid(240,166,{shirt:'#3aa36b',cap:'#2f7d4f',up:true})+D.kid(280,168,{shirt:'#8a5cc4',hair:'#c98b4e',s:.9,long:true})+'<path d="M110 135 Q170 120 226 132" stroke="#c9a46b" stroke-width="2" fill="none"/>'),
+   p:['Am nächsten Tag brachte Lina Bretter aus dem Schuppen ihres Grossvaters mit. Jonas kam mit einem Seil und mit zwei Freunden. Allein war das schwer. Ein Brett war zu kurz, ein anderes rutschte ins Wasser. Die Kinder stritten sich kurz darüber, wer schuld war.','Dann sagte Lina: „Streiten bringt nichts. Lasst uns einen Plan zeichnen.“ Mit einem Stock zeichneten sie die Brücke in den Sand. Jetzt wusste jeder, was er tun musste. Die einen hielten, die anderen banden mit dem Seil fest. Am Abend lag eine kleine, feste Brücke über dem Bach.']},
+  {img:()=>PIC(D.sky('day')+D.sun(286,30)+D.garland()+D.ground('#8cc66a',112)+D.stream()+D.planks(7,122)+D.kid(150,138,{shirt:'#e5483d',long:true,hair:'#6b3a1e',up:true})+D.kid(185,138,{shirt:'#3aa36b',cap:'#2f7d4f',up2:true})+D.kid(70,166,{shirt:'#f2b632',hair:'#222',s:.9,up:true})+D.kid(270,166,{shirt:'#8a5cc4',hair:'#c98b4e',s:.9,long:true,up2:true})),
+   p:['Von da an spielten die Kinder aus beiden Dörfern zusammen. Sie merkten, dass die anderen gar nicht komisch oder langweilig waren. Jonas konnte toll Geschichten erzählen, und Lina kannte die besten Verstecke im Wald.','Im Herbst feierten beide Dörfer zusammen ein Fest auf der Brücke. Lina und Jonas durften das Band durchschneiden. „Weisst du was?“, sagte Jonas. „Die beste Brücke ist nicht aus Holz. Es ist unsere Freundschaft.“']}],
+ words:[['das Ufer','der Rand vom Wasser'],['der Ast','ein dicker Zweig vom Baum'],['der Schuppen','ein kleines Holzhaus für Werkzeug'],['streiten','sich mit Worten zanken'],['feiern','ein Fest machen']],
+ qs:[{t:'mc',q:'Was fiel in den Bach?',a:'Linas roter Ball',w:['Jonas’ Mütze','Ein Brett']},
+  {t:'mc',q:'Was brachte Jonas mit?',a:'Ein Seil und zwei Freunde',w:['Einen Hammer','Einen neuen Ball']},
+  {t:'rf',q:'Die Kinder aus den beiden Dörfern kannten sich schon lange.',a:false},
+  {t:'rf',q:'Die Kinder zeichneten einen Plan in den Sand.',a:true},
+  {t:'order',items:['Der Ball fiel in den Bach.','Jonas warf den Ball zu kurz.','Die Kinder stritten kurz.','Die Brücke war fertig.']},
+  {t:'word',q:'Wer ist mit „die drüben“ gemeint?',a:'Die Kinder auf der anderen Seite vom Bach',w:['Die Kühe auf der Wiese','Die Eltern im Dorf']},
+  {t:'why',q:'Warum zeichneten die Kinder einen Plan?',a:'Damit jeder weiss, was er tun muss',w:['Weil sie lieber malen wollten','Weil es regnete']},
+  {t:'gap',q:'„Streiten bringt ___.“',a:['nichts']},
+  {t:'write',q:'Jonas sagt: „Die beste Brücke ist unsere Freundschaft.“ Was meint er damit? Schreibe einen Satz.',m:'Freundschaft verbindet Menschen, so wie eine Brücke zwei Seiten verbindet.'}]},
+
+{id:'mo',title:'Mo will nicht schlafen',theme:'Ruhe ist wichtig',teaser:'Ein junges Murmeltier will den Winter sehen – statt zu schlafen.',
+ parts:[
+  {img:()=>PIC(D.sky('spring')+D.mountains()+D.hills()+D.flowers([[40,165,'#f06292'],[70,172,'#ffd23f'],[230,170,'#8a5cc4'],[280,166,'#f06292']])+D.marmot(130,160,1.2)+D.marmot(180,162,.9,-1)+D.eagle(240,48,1)),
+   p:['Auf einer Alp hoch über dem Tal wohnte eine Murmeltierfamilie. Das jüngste Murmeltier hiess Mo. Mo liebte den Sommer. Er rannte über die Wiesen, frass frische Kräuter und pfiff laut, wenn er einen Adler sah. Dann rannten alle schnell in die Höhle.','Im Herbst wurden die Tage kürzer und kälter. Mama Murmeltier sagte: „Bald beginnt der Winterschlaf. Wir müssen noch viel fressen und die Höhle mit Heu auspolstern.“ Mo verzog das Gesicht. „Schlafen? Den ganzen Winter? Das ist doch langweilig! Ich will wach bleiben und den Schnee sehen.“']},
+  {img:()=>PIC(D.sky('winter')+D.mountains('#9fb0c6')+D.ground('#f2f7fb',130)+'<path d="M40 140 Q110 90 180 140Z" fill="#fff" stroke="#dfe8f0"/>'+D.snowflakes()+D.marmot(200,162,1.1)+'<path d="M70 120 Q110 140 160 156" stroke="#cfe0ee" stroke-width="5" fill="none" stroke-linecap="round"/>'),
+   p:['Als die ersten Schneeflocken fielen, rollten sich alle Murmeltiere zusammen und schliefen ein. Nur Mo nicht. Er schlich zum Eingang der Höhle und schaute hinaus. Alles war weiss und glitzerte. „Wunderbar!“, rief er und rannte hinaus.','Er machte Rutschbahnen im Schnee und baute einen kleinen Schneeberg. Doch bald wurde ihm kalt. Seine Pfoten waren eiskalt, und sein Bauch knurrte. Er suchte Kräuter, aber unter dem Schnee fand er nichts.']},
+  {img:()=>PIC(D.sky('winter')+D.mountains('#9fb0c6')+D.ground('#f2f7fb',130)+D.snowflakes()+D.pine(280,140,1,'#4f7f6a')+D.marmot(120,160,1.1,1,true)+D.ptarmigan(190,160,1.3)),
+   p:['Am dritten Tag war Mo so müde, dass er kaum noch laufen konnte. Da landete ein Schneehuhn neben ihm. „Was machst du denn hier draussen?“, fragte es erstaunt. „Ich wollte den Winter sehen“, sagte Mo leise. „Aber ich bin so müde und so hungrig.“','Das Schneehuhn nickte. „Jedes Tier hat seinen Weg, um den Winter zu überstehen. Ich habe weisse Federn und finde Knospen. Du hast eine warme Höhle und den Schlaf. Dein Körper braucht die Ruhe.“']},
+  {img:()=>PIC(D.sky('spring')+D.sun()+D.mountains('#8a9bb3',true)+D.hills('#a8dc7f','#86c35f')+D.flowers([[30,168,'#ffd23f'],[60,160,'#ffd23f'],[100,172,'#f06292'],[220,168,'#ffd23f'],[250,172,'#8a5cc4'],[300,164,'#ffd23f']])+D.marmot(140,162,1.2,1)+D.marmot(185,164,1,-1)+D.marmot(115,166,.8)),
+   p:['Mo kroch zurück in die Höhle. Er kuschelte sich zwischen seine Geschwister ins weiche Heu. Es war warm und gemütlich. Kaum hatte er die Augen zu, schlief er tief und fest ein. Er träumte von grünen Wiesen.','Als er im Frühling aufwachte, schien die Sonne, und überall blühten Blumen. Mo streckte sich und fühlte sich stark wie nie. „Mama“, sagte er, „ich glaube, Schlaf ist doch nicht langweilig. Schlaf ist wie Futter für den Körper.“ Mama lachte und gab ihm den ersten frischen Löwenzahn.']}],
+ words:[['das Heu','getrocknetes Gras'],['auspolstern','weich machen'],['überstehen','etwas Schwieriges gut schaffen'],['die Knospe','eine kleine Blüte, die noch geschlossen ist'],['gemütlich','warm, weich und angenehm']],
+ qs:[{t:'mc',q:'Was machte Mo, wenn er einen Adler sah?',a:'Er pfiff laut',w:['Er versteckte sich unter Blättern','Er rannte zum Bach']},
+  {t:'mc',q:'Wer sprach im Schnee mit Mo?',a:'Ein Schneehuhn',w:['Ein Fuchs','Ein Adler']},
+  {t:'rf',q:'Mo fand unter dem Schnee viele Kräuter.',a:false},
+  {t:'rf',q:'Im Frühling fühlte sich Mo stark.',a:true},
+  {t:'order',items:['Mama erzählte vom Winterschlaf.','Mo rannte in den Schnee.','Das Schneehuhn sprach mit Mo.','Mo wachte im Frühling auf.']},
+  {t:'word',q:'Was bedeutet „Sein Bauch knurrte“?',a:'Er hatte Hunger',w:['Er war wütend','Er war krank']},
+  {t:'why',q:'Warum wurde Mo draussen so müde?',a:'Weil er nichts zu fressen fand und es kalt war',w:['Weil er im Sommer zu viel gespielt hatte','Weil das Schneehuhn ihn ärgerte']},
+  {t:'gap',q:'„Schlaf ist wie ___ für den Körper.“',a:['Futter']},
+  {t:'write',q:'Warum ist Schlaf auch für dich wichtig? Schreibe einen Satz.',m:'Schlaf ist wichtig, weil mein Körper in der Nacht neue Kraft sammelt.'}]},
+
+{id:'fridolin',title:'Fridolin lernt fliegen',theme:'Mut und Übung',teaser:'Ein junger Drache hat Angst vor der Höhe. Sein Grossvater kennt einen Trick.',
+ parts:[
+  {img:()=>PIC(D.sky('day')+D.cloud(150,30)+D.cloud(250,60,.8)+D.mountains('#93a3bb',true)+D.lake(140)+D.rock()+D.dragon(66,104,1)+D.dragon(200,64,.75,'#e0794f',1,true)+D.dragon(270,44,.6,'#6a8de0',-1,true)),
+   p:['Auf einem hohen Felsen über dem Walensee wohnte der junge Drache Fridolin. Er hatte grüne Schuppen, eine lange Nase und zwei grosse Flügel. Alle Drachen in seiner Familie konnten fliegen. Sie kreisten über den Bergen und spielten Fangen mit den Wolken. Nur Fridolin blieb immer auf dem Felsen sitzen.','„Komm doch mit!“, riefen seine Schwestern. Aber Fridolin schüttelte den Kopf. Wenn er nach unten schaute, wurde ihm schwindlig. Seine Knie zitterten, und seine Flügel klebten an seinem Rücken. „Ich bin eben kein richtiger Drache“, dachte er traurig.']},
+  {img:()=>PIC(D.sky('evening')+D.sun(250,120,22)+D.mountains('#7c7aa0',false)+D.lake(140)+'<path d="M40 180 L40 128 Q120 112 230 126 L250 180Z" fill="#8a8f99"/>'+D.dragon(110,130,1.25,'#3f8a6b')+D.dragon(185,132,.85,'#4fae5c',-1)),
+   p:['Eines Abends setzte sich Grossvater Drache neben ihn. Er war alt und hatte schon tausend Flüge gemacht. „Weisst du“, sagte er, „als ich klein war, hatte ich auch Angst.“ Fridolin staunte. „Du? Wirklich?“','„Ja. Aber ich wollte nicht gleich vom höchsten Felsen springen. Ich habe klein angefangen. Jeden Tag ein kleines Stück.“']},
+  {img:()=>PIC(D.sky('day')+D.sun(40,34)+D.hills()+D.stone(150,162,40)+D.dragon(160,128,.85,'#4fae5c',1,true)+D.dragon(250,164,.55,'#e0794f',-1)+D.dragon(285,166,.5,'#6a8de0',-1)+'<g stroke="#9aa5b4" stroke-width="1.5" stroke-linecap="round"><line x1="150" y1="138" x2="146" y2="146"/><line x1="160" y1="138" x2="160" y2="147"/></g>'),
+   p:['Am nächsten Morgen suchte Fridolin einen kleinen Stein, nur so hoch wie ein Stuhl. Er breitete die Flügel aus und hüpfte hinunter. Er landete auf der Nase. Seine Schwestern kicherten, aber Grossvater nickte. „Gut gemacht! Morgen wieder.“','Fridolin übte jeden Tag. Zuerst vom Stein, dann von einem Baumstamm, dann von einem kleinen Hügel. Manchmal fiel er hin. Manchmal wollte er aufgeben. Aber jeden Tag konnte er ein bisschen länger in der Luft bleiben.']},
+  {img:()=>PIC(D.sky('day')+D.cloud(40,40)+D.cloud(230,28,1.1)+D.mountains('#93a3bb',true)+D.lake(140)+D.pine(20,150,.7)+D.pine(300,150,.7)+D.dragon(150,100,1.5,'#4fae5c',1,true)),
+   p:['Nach drei Wochen stand Fridolin wieder auf dem hohen Felsen. Sein Herz klopfte, aber diesmal schaute er nicht nach unten, sondern nach vorne zu den Wolken. Er breitete die Flügel aus, atmete tief ein und sprang. Der Wind trug ihn. Er flog! Er flog über den See, über die Tannen und über die Kühe auf der Alp. Seine Schwestern jubelten.','Am Abend landete er stolz neben Grossvater. „Ich hatte immer noch ein bisschen Angst“, gab er zu. Grossvater lächelte. „Mut heisst nicht, keine Angst zu haben. Mut heisst, es trotzdem zu versuchen.“']}],
+ words:[['die Schuppen','kleine harte Plättchen auf der Haut von Drachen und Fischen'],['schwindlig','alles dreht sich im Kopf'],['staunen','sich sehr wundern'],['aufgeben','aufhören, weil es schwer ist'],['zugeben','ehrlich etwas über sich sagen']],
+ qs:[{t:'mc',q:'Was passierte, wenn Fridolin nach unten schaute?',a:'Ihm wurde schwindlig',w:['Er musste lachen','Er schlief ein']},
+  {t:'mc',q:'Wer half Fridolin?',a:'Sein Grossvater',w:['Seine Schwestern','Ein Adler']},
+  {t:'rf',q:'Fridolin flog am ersten Tag gleich vom hohen Felsen.',a:false},
+  {t:'rf',q:'Fridolin übte jeden Tag ein bisschen mehr.',a:true},
+  {t:'order',items:['Fridolin blieb immer auf dem Felsen.','Grossvater erzählte von seiner Angst.','Fridolin hüpfte von einem kleinen Stein.','Fridolin flog über den See.']},
+  {t:'word',q:'Was bedeutet „Seine Schwestern kicherten“?',a:'Sie lachten leise',w:['Sie weinten','Sie schrien laut']},
+  {t:'why',q:'Warum begann Fridolin mit einem kleinen Stein?',a:'Weil man Schwieriges in kleinen Schritten lernt',w:['Weil der Felsen kaputt war','Weil seine Schwestern es befahlen']},
+  {t:'gap',q:'„Mut heisst, es ___ zu versuchen.“',a:['trotzdem']},
+  {t:'write',q:'Was hast du auch schon in kleinen Schritten gelernt? Schreibe einen Satz.',m:'Ich habe das Klettern in kleinen Schritten gelernt.'}]},
+
+{id:'handschuh',title:'Der rote Handschuh',theme:'Ehrlichkeit und Freundlichkeit',teaser:'Nils findet im Schnee einen Handschuh mit einem kleinen weissen Herz.',
+ parts:[
+  {img:()=>PIC(D.sky('winter')+D.house(40,140,'#f3c94f',true)+D.house(282,140,'#9fc8e8',true)+D.ground('#f2f7fb',140)+D.snowflakes()+D.fountain(160,150)+D.kid(110,170,{shirt:'#3b82c4',cap:'#e5483d'})+D.kid(138,172,{shirt:'#f2b632',s:.78,cap:'#3aa36b'})+D.mitten(196,170,1.1)),
+   p:['Es war ein kalter Dezembertag. Nils ging mit seinem kleinen Bruder Leo zum Bäcker. Die Strassen waren weiss, und aus den Fenstern leuchteten Sterne. Vor dem Brunnen auf dem Dorfplatz lag etwas Rotes im Schnee. Nils hob es auf. Es war ein Handschuh, gestrickt aus weicher Wolle, mit einem kleinen weissen Herz darauf.','„Der ist schön“, sagte Leo. „Nimm ihn doch mit!“ Nils drehte den Handschuh in der Hand. Er dachte nach. „Jemand hat jetzt eine kalte Hand“, sagte er. „Und vielleicht ist der Handschuh ganz wichtig für ihn.“']},
+  {img:()=>PIC(D.sky('winter')+D.house(160,140,'#f3c94f',true)+D.ground('#f2f7fb',140)+D.snowflakes()+D.fountain(120,162)+D.mitten(98,132,1.2)+'<line x1="98" y1="132" x2="116" y2="128" stroke="#3b82c4" stroke-width="1.5"/>'+D.note(130,128)+D.kid(230,170,{shirt:'#3b82c4',cap:'#e5483d'})+D.kid(258,172,{shirt:'#f2b632',s:.78,cap:'#3aa36b',sad:true})),
+   p:['Die beiden Brüder fragten den Bäcker. „Nein, der gehört mir nicht“, sagte er. Sie fragten eine Frau mit einem Hund und den Mann vom Kiosk. Niemand vermisste einen roten Handschuh. Leo wurde ungeduldig. „Komm, wir gehen nach Hause. Mir ist kalt.“','Doch Nils hatte eine Idee. Er band den Handschuh mit einem Band an den Brunnen, gut sichtbar. Daneben legte er einen Zettel: „Gefunden! Wir wohnen im gelben Haus Nummer 4.“']},
+  {img:()=>PIC(D.wall()+D.door(120)+D.kid(145,176,{s:1.3,shirt:'#7a5a8a',hair:'#d8d8d8',glasses:true,stick:true})+D.mitten(126,124,.9)+D.kid(225,174,{shirt:'#3b82c4'})+D.kid(255,176,{shirt:'#f2b632',s:.8})),
+   p:['Am Abend klingelte es. Vor der Tür stand eine alte Frau mit einem Stock. Sie trug einen roten Handschuh, nur einen. „Ich bin Frau Keller“, sagte sie. „Ich habe euren Zettel gelesen.“ Ihre Augen glänzten.','„Diese Handschuhe hat mein Mann vor vielen Jahren für mich gestrickt. Sie sind mein liebstes Andenken. Ich dachte, ich hätte einen für immer verloren.“ Nils gab ihr den Handschuh. Frau Keller drückte ihn fest an sich.']},
+  {img:()=>PIC(D.wall('#f3e3c8')+'<rect x="230" y="30" width="50" height="40" fill="#cfe8ff" stroke="#a4733f" stroke-width="4"/>'+D.kid(90,140,{s:1.2,shirt:'#7a5a8a',hair:'#d8d8d8',glasses:true})+D.kid(170,136,{shirt:'#3b82c4'})+D.kid(235,138,{shirt:'#f2b632',s:.85})+D.table()+D.cup(120,128)+D.cup(200,128,'#fde2e2')+D.heartCookie(150,126)+D.heartCookie(162,128)+'<path d="M172 124 L190 108 M176 124 L196 112" stroke="#9aa5b4" stroke-width="1.6"/><path d="M174 124 q8 6 16 0" stroke="#3b82c4" stroke-width="3" fill="none"/>'),
+   p:['Am nächsten Sonntag lud Frau Keller die beiden Brüder zu Tee und Lebkuchen ein. Sie zeigte ihnen, wie man strickt. Leo liess dauernd Maschen fallen und musste lachen. Nils strickte langsam einen kleinen blauen Schal.','Von da an besuchten sie Frau Keller jede Woche. Sie war nicht mehr allein, und die Jungen hatten eine neue Freundin. „Siehst du“, sagte Nils auf dem Heimweg zu Leo, „wenn man etwas Gutes tut, kommt manchmal etwas Gutes zurück.“']}],
+ words:[['gestrickt','aus Wolle mit Nadeln gemacht'],['vermissen','merken, dass etwas fehlt, und traurig sein'],['ungeduldig','man will nicht mehr warten'],['das Andenken','etwas, das an einen Menschen oder ein Erlebnis erinnert'],['die Masche','eine kleine Schlinge beim Stricken']],
+ qs:[{t:'mc',q:'Wo lag der Handschuh?',a:'Vor dem Brunnen im Schnee',w:['Beim Bäcker','Im Bus']},
+  {t:'mc',q:'Was war auf dem Handschuh?',a:'Ein kleines weisses Herz',w:['Ein Stern','Ein Name']},
+  {t:'rf',q:'Leo wollte den Handschuh zuerst behalten.',a:true},
+  {t:'rf',q:'Der Bäcker hatte den Handschuh verloren.',a:false},
+  {t:'order',items:['Nils fand den Handschuh.','Die Brüder fragten den Bäcker.','Nils band den Handschuh an den Brunnen.','Frau Keller klingelte an der Tür.']},
+  {t:'word',q:'Was bedeutet „Ihre Augen glänzten“?',a:'Sie war gerührt und sehr froh',w:['Sie war müde','Ihre Brille war schmutzig']},
+  {t:'why',q:'Warum war der Handschuh für Frau Keller so wichtig?',a:'Ihr Mann hatte ihn für sie gestrickt',w:['Er war sehr teuer','Sie hatte ihn eben im Laden gekauft']},
+  {t:'gap',q:'„Gefunden! Wir wohnen im gelben Haus Nummer ___.“',a:['4','vier']},
+  {t:'write',q:'Was hättest du mit dem Handschuh gemacht? Warum? Schreibe einen Satz.',m:'Ich hätte den Handschuh zurückgegeben, weil jemand ihn bestimmt vermisst.'}]},
+
+{id:'robo',title:'Robo in der Klasse',theme:'Freundschaft',teaser:'Ein Roboter weiss alle Antworten – aber er hat keinen einzigen Freund.',
+ parts:[
+  {img:()=>PIC(D.wall('#eef0e6')+D.board('347 · 28 = 9716')+D.kid(40,172,{s:1.25,shirt:'#c0533a',hair:'#6b3a1e',long:true,glasses:true})+D.robot(140,166,1.1)+D.kid(220,170,{shirt:'#f2b632',hair:'#222',s:.9,long:true})+D.kid(270,170,{shirt:'#3aa36b',s:.9,up:true})),
+   p:['Am Montag stand in der Klasse 2b ein neuer Schüler vor der Tafel. Er war aus Metall, hatte blinkende Augen und eine Antenne auf dem Kopf. „Das ist Robo“, sagte Frau Huber, die Lehrerin. „Er besucht uns eine Woche lang und möchte lernen, wie Kinder in der Schule leben.“ Die Kinder staunten.','Robo setzte sich neben Samira. Im Mathe-Unterricht wusste er alles. „Wie viel ist 347 mal 28?“, fragte Tim zum Spass. „9716“, piepste Robo sofort. Die Kinder klatschten. Auch die Hauptstädte aller Länder kannte er, und er buchstabierte jedes schwierige Wort ohne Fehler.']},
+  {img:()=>PIC(D.sky('day')+D.ground('#d9c7a6',140)+D.tree(290,140)+D.robot(70,166,1)+D.kid(180,166,{shirt:'#f2b632',hair:'#222',long:true,up:true,up2:true})+D.kid(235,160,{shirt:'#3aa36b',up2:true})+D.kid(150,170,{shirt:'#e5483d',s:.9,up:true})),
+   p:['In der Pause stand Robo allein auf dem Pausenplatz. Die Kinder spielten Fangen und lachten. Robo verstand nicht, warum. „Ihr rennt im Kreis und kommt nirgends an“, sagte er. „Das ist nicht logisch.“','Die Kinder schauten sich an und zuckten mit den Schultern. Niemand wollte mit einem Schüler spielen, der immer alles besser wusste.']},
+  {img:()=>PIC(D.sky('day')+D.ground('#d9c7a6',140)+D.tree(40,140,1,'#e0a03a')+D.leaves()+D.bench(160,162)+D.robot(140,160,.95,'#9aa5b4')+D.kid(182,160,{shirt:'#f2b632',hair:'#222',long:true})),
+   p:['Am Mittwoch sah Samira, dass Robos Augen nicht mehr blinkten. Sie setzte sich zu ihm. „Bist du traurig?“, fragte sie. „Ich weiss nicht, was traurig ist“, sagte Robo. „Aber ich weiss alle Antworten und habe trotzdem keinen Freund. Das kann ich nicht ausrechnen.“','Samira überlegte. „Freunde rechnet man nicht aus“, sagte sie. „Man muss zusammen etwas erleben. Komm, ich zeige dir, wie man Fangen spielt. Es geht nicht ums Ankommen. Es geht ums Lachen.“']},
+  {img:()=>PIC(D.sky('day')+D.ground('#d9c7a6',140)+D.tree(290,140,1,'#e0a03a')+D.leaves()+D.robot(150,172,1,'#47d1ff',-65)+D.kid(90,168,{shirt:'#f2b632',hair:'#222',long:true,up:true,up2:true})+D.kid(220,168,{shirt:'#3aa36b',up:true,up2:true})+D.kid(255,170,{shirt:'#e5483d',s:.9,up2:true})+'<text x="150" y="70" text-anchor="middle" font-family="Comic Sans MS, sans-serif" font-size="15" fill="#3b4f8a">Ha-ha-piep-ha!</text>'),
+   p:['Samira erklärte die Regeln. Robo rannte los, stolperte über seine eigenen Füsse und fiel ins Laub. Die Kinder hielten den Atem an. Dann machte Robo ein Geräusch, das niemand kannte: „Ha-ha-piep-ha!“ Er lachte! Alle Kinder lachten mit.','Von da an spielte Robo in jeder Pause mit. Er half den anderen bei schwierigen Rechnungen, und sie zeigten ihm Witze, Spiele und Lieder. Am Freitag musste Robo zurück in die Fabrik. Zum Abschied sagte er: „Ich habe hier die wichtigste Sache gelernt, die nicht in meinem Computer war: Freundschaft.“']}],
+ words:[['die Antenne','ein Stab, mit dem man Signale empfängt'],['logisch','vernünftig, man kann es gut erklären'],['mit den Schultern zucken','zeigen, dass man etwas nicht weiss'],['den Atem anhalten','vor Spannung kurz nicht atmen'],['der Abschied','wenn man sich auf Wiedersehen sagt']],
+ qs:[{t:'mc',q:'Wie lange besuchte Robo die Klasse?',a:'Eine Woche',w:['Einen Tag','Ein ganzes Jahr']},
+  {t:'mc',q:'Neben wem sass Robo?',a:'Neben Samira',w:['Neben Tim','Neben Frau Huber']},
+  {t:'rf',q:'Robo wusste in Mathe alle Antworten.',a:true},
+  {t:'rf',q:'In der ersten Pause spielte Robo gleich mit allen.',a:false},
+  {t:'order',items:['Robo kam in die Klasse.','Robo stand in der Pause allein.','Samira sprach mit Robo.','Robo lachte zum ersten Mal.']},
+  {t:'word',q:'Was bedeutet „Die Kinder hielten den Atem an“?',a:'Sie waren gespannt, was passiert',w:['Sie waren unter Wasser','Sie hatten Schnupfen']},
+  {t:'why',q:'Warum wollte am Anfang niemand mit Robo spielen?',a:'Weil er immer alles besser wusste',w:['Weil er zu langsam war','Weil er nicht sprechen konnte']},
+  {t:'gap',q:'„Freunde rechnet man nicht ___.“',a:['aus']},
+  {t:'write',q:'Was ist wichtiger: alles wissen oder Freunde haben? Schreibe deine Meinung in einem Satz.',m:'Freunde haben ist wichtiger, weil man zusammen lachen und sich helfen kann.'}]},
+
+{id:'selma',title:'Selma sieht genau hin',theme:'Genau hinschauen',teaser:'Ein Wettbewerb im Garten: Wer entdeckt am meisten? Der schnelle Hase – oder die Schnecke?',
+ parts:[
+  {img:()=>PIC(D.sky('day')+D.sun(40,32)+D.ground('#8cc66a',130)+D.shed(270,130)+D.bed(20,150,80)+D.flowers([[30,150,'#f06292'],[50,150,'#ffd23f'],[70,150,'#8a5cc4'],[90,150,'#f06292']])+D.hare(150,160,1.1)+D.snail(215,166,1.1)+D.bird(110,118)+'<rect x="232" y="96" width="6" height="40" fill="#a4733f"/>'+D.owl(235,96,.9)),
+   p:['Im Garten von Familie Brunner fand jedes Jahr ein grosser Wettbewerb statt. Die Tiere wollten wissen: Wer ist der beste Entdecker im Garten? Der Hase Hopp war sicher, dass er gewinnt. „Ich bin der Schnellste!“, prahlte er. „Ich renne in einer Minute durch den ganzen Garten.“ Auch die Amsel und das Eichhörnchen wollten mitmachen.','Ganz hinten meldete sich eine kleine Schnecke. „Ich möchte auch mitmachen“, sagte sie. „Ich heisse Selma.“ Die anderen lachten. „Du? Bis du am Gartentor bist, ist der Sommer vorbei!“']},
+  {img:()=>PIC(D.sky('day')+D.ground('#8cc66a',130)+D.tree(60,132,1,'#4f9e45')+'<circle cx="52" cy="92" r="3" fill="#d93a32"/><circle cx="70" cy="98" r="3" fill="#d93a32"/>'+D.hare(220,160,1.2,1,true)+D.snail(70,168,.8)+D.bird(150,60)+'<rect x="292" y="100" width="6" height="40" fill="#a4733f"/>'+D.owl(295,100,.85)),
+   p:['Die Eule erklärte die Regeln: „Jeder geht bis zum Abend durch den Garten. Dann erzählt ihr, was ihr entdeckt habt. Wer die meisten Dinge sieht, gewinnt.“','Hopp sauste los. Er rannte um die Beete, über den Rasen und um das Gartenhaus. Nach wenigen Minuten war er schon wieder zurück und legte sich in die Sonne. Die Amsel flog von Baum zu Baum, und das Eichhörnchen kletterte auf den Kirschbaum. Selma kroch langsam los.']},
+  {img:()=>PIC(D.sky('spring')+D.ground('#8cc66a',128)+D.fence(92)+D.web(230,70)+D.beetle(80,160)+D.flowers([[40,170,'#8a5cc4'],[52,172,'#8a5cc4']])+D.snail(160,164,1.6)+'<g fill="#3a2a1a">'+[200,208,216,224,232,240].map(x=>`<circle cx="${x}" cy="172" r="1.6"/>`).join('')+'</g><rect x="246" y="167" width="9" height="7" rx="2" fill="#e9c27a"/>'+D.hedgehog(286,156,.9)),
+   p:['Selma schaute genau hin. Unter einem Blatt fand sie einen glänzenden blauen Käfer. Zwischen den Steinen wuchs ein winziges Pflänzchen mit violetten Blüten. Am Zaun hing ein Spinnennetz voller Wassertropfen, die wie Perlen glitzerten.','Eine Ameisenstrasse führte zu einem Krümel Kuchen. Und unter dem Gartenhaus entdeckte sie sogar ein Igelnest mit drei schlafenden Igelkindern. Selma zählte alles und merkte es sich gut.']},
+  {img:()=>PIC(D.sky('evening')+D.ground('#7fb85a',130)+D.owl(220,150,1.6)+D.snail(130,166,1.5,true)+D.hare(60,160,1,1)+D.hedgehog(270,170,.7)+D.hedgehog(295,172,.6)),
+   p:['Am Abend versammelten sich alle bei der Eule. Hopp sagte: „Ich habe das Haus, den Rasen und die Beete gesehen.“ Die Amsel hatte fünf Bäume gesehen, das Eichhörnchen drei Kirschen. Dann erzählte Selma. Sie erzählte vom blauen Käfer, vom glitzernden Spinnennetz, von der Ameisenstrasse und den Igelkindern. Die anderen Tiere hörten mit offenem Mund zu.','Hopp wurde rot unter seinem Fell. „Das habe ich alles nicht gesehen“, sagte er. „Ich war viel zu schnell.“ Die Eule lächelte und gab Selma eine Krone aus Gänseblümchen. „Wer langsam und genau hinschaut, sieht die schönsten Dinge.“']}],
+ words:[['der Wettbewerb','ein Spiel, bei dem man gewinnen kann'],['prahlen','sich selbst laut loben'],['das Beet','ein Stück Garten mit Blumen oder Gemüse'],['winzig','sehr, sehr klein'],['sich versammeln','zusammenkommen']],
+ qs:[{t:'mc',q:'Wer prahlte, dass er der Schnellste ist?',a:'Der Hase Hopp',w:['Die Amsel','Die Eule']},
+  {t:'mc',q:'Was sollten die Tiere im Wettbewerb tun?',a:'Möglichst viele Dinge im Garten entdecken',w:['Möglichst schnell rennen','Möglichst hoch klettern']},
+  {t:'rf',q:'Die anderen Tiere lachten über Selma.',a:true},
+  {t:'rf',q:'Hopp entdeckte das Igelnest.',a:false},
+  {t:'order',items:['Selma meldete sich für den Wettbewerb.','Hopp sauste los.','Selma fand einen blauen Käfer.','Selma bekam eine Krone.']},
+  {t:'word',q:'Was bedeutet „Hopp wurde rot unter seinem Fell“?',a:'Er schämte sich ein bisschen',w:['Er hatte Sonnenbrand','Er war wütend']},
+  {t:'why',q:'Warum gewann Selma?',a:'Weil sie genau hingeschaut hat',w:['Weil sie am schnellsten war','Weil die Eule ihre Freundin war']},
+  {t:'gap',q:'„Wer langsam und genau hinschaut, sieht die schönsten ___.“',a:['Dinge']},
+  {t:'write',q:'Was hast du schon einmal entdeckt, weil du genau hingeschaut hast? Schreibe einen Satz.',m:'Ich habe im Wald einen kleinen Pilz entdeckt, weil ich genau hingeschaut habe.'}]},
+
+{id:'kletter',title:'Der zweite Versuch',theme:'Nicht aufgeben',teaser:'Bens erster Kletterwettkampf – und eine schwarze Route mit einem Überhang.',
+ parts:[
+  {img:()=>PIC(D.climbWall()+D.kid(130,172,{shirt:'#3b82c4'})+D.kid(172,172,{shirt:'#e5483d',hair:'#2b1a10',braid:true})),
+   p:['Ben ging seit einem Jahr ins Klettertraining. Am Samstag war sein erster Kletterwettkampf. In der grossen Halle hingen bunte Griffe an den Wänden: gelbe, rote, blaue. Jede Farbe war eine andere Route. Die schwierigste Route war die schwarze. Sie führte ganz oben über einen Überhang. Ben schaute hinauf und schluckte.','Neben ihm wartete ein Mädchen mit einem langen Zopf. „Ich bin Aylin“, sagte sie. „Ich bin auch zum ersten Mal hier.“ Ben war froh, dass er nicht der Einzige war, der nervös war.']},
+  {img:()=>PIC(D.climbWall()+'<line x1="180" y1="26" x2="180" y2="86" stroke="#f2b632" stroke-width="2"/><line x1="180" y1="26" x2="210" y2="140" stroke="#f2b632" stroke-width="2"/>'+D.kid(180,122,{shirt:'#3b82c4',up:true,up2:true,sad:true})+D.kid(210,172,{s:1.25,shirt:'#3aa36b',hair:'#555'})+D.kid(60,172,{shirt:'#e5483d',hair:'#2b1a10',braid:true,s:.95})),
+   p:['Zuerst kam die gelbe Route. Ben kletterte ruhig und sicher bis ganz nach oben. Die Leute klatschten. Auch die rote Route schaffte er. Dann kam die schwarze Route. Ben kletterte schnell los, viel zu schnell. Unter dem Überhang wurden seine Arme müde.','Er griff nach einem kleinen schwarzen Griff, aber seine Finger rutschten ab. Er fiel ins Seil. Der Trainer liess ihn langsam herunter. Ben ärgerte sich. Er setzte sich auf die Bank und wollte nach Hause.']},
+  {img:()=>PIC(D.climbWall()+'<path d="M160 130 L150 100 L162 60 L180 30" stroke="#3b82c4" stroke-width="2" stroke-dasharray="5 4" fill="none"/>'+D.kid(130,174,{shirt:'#3b82c4',up2:true})+D.kid(185,174,{shirt:'#e5483d',hair:'#2b1a10',braid:true,up:true})),
+   p:['Da kam Aylin zu ihm. Sie hatte die schwarze Route auch nicht ganz geschafft. „Wir haben noch einen Versuch“, sagte sie. „Lass uns die Route zuerst genau anschauen.“ Zusammen standen sie unten und zeigten mit dem Finger, wo welcher Griff war.','„Hier kannst du dich kurz ausruhen“, sagte Ben und zeigte auf einen grossen Griff. „Und hier musst du den linken Fuss hoch nehmen“, sagte Aylin. Sie machten einen Plan.']},
+  {img:()=>PIC('<rect width="320" height="180" fill="#e7ebf1"/>'+D.confetti()+D.podium()+D.kid(160,120,{shirt:'#8a5cc4',hair:'#c98b4e',up:true,up2:true})+D.kid(75,135,{shirt:'#e5483d',hair:'#2b1a10',braid:true,up2:true})+D.kid(245,145,{shirt:'#3b82c4',up:true})+D.medal(160,96,'#d9a514')+D.medal(75,111,'#b8c3d1')+D.medal(245,121,'#c27a3a')),
+   p:['Beim zweiten Versuch kletterte Ben langsam. Am grossen Griff schüttelte er die Arme aus. Dann nahm er den linken Fuss hoch, so wie Aylin gesagt hatte, und erreichte den kleinen schwarzen Griff. Er zog sich über den Überhang und schlug auf den letzten Griff. Geschafft! Auch Aylin kam nach ihm bis ganz oben.','Am Ende war Ben Dritter und Aylin Zweite. Bei der Siegerehrung standen sie nebeneinander und grinsten. „Danke für den Plan“, sagte Ben. „Danke für deine Hilfe“, sagte Aylin. Beide wussten: Zusammen und mit einem zweiten Versuch klappt es oft besser.']}],
+ words:[['der Griff','ein Stein an der Kletterwand zum Festhalten'],['die Route','der Weg an der Wand'],['der Überhang','eine Stelle, wo die Wand nach vorne kippt'],['schlucken','hier: kurz Angst bekommen'],['die Siegerehrung','die Gewinner bekommen ihre Preise']],
+ qs:[{t:'mc',q:'Welche Route war die schwierigste?',a:'Die schwarze',w:['Die gelbe','Die rote']},
+  {t:'mc',q:'Wer war Aylin?',a:'Ein Mädchen, das auch zum ersten Mal da war',w:['Bens Schwester','Die Trainerin']},
+  {t:'rf',q:'Ben schaffte die schwarze Route beim ersten Versuch.',a:false},
+  {t:'rf',q:'Ben und Aylin machten zusammen einen Plan.',a:true},
+  {t:'order',items:['Ben kletterte die gelbe Route.','Ben fiel ins Seil.','Ben und Aylin schauten die Route genau an.','Ben schlug auf den letzten Griff.']},
+  {t:'word',q:'Was bedeutet „Ben ärgerte sich“?',a:'Er war wütend und enttäuscht',w:['Er war glücklich','Er war hungrig']},
+  {t:'why',q:'Warum fiel Ben beim ersten Versuch?',a:'Er kletterte zu schnell und seine Arme wurden müde',w:['Ein Griff fiel ab','Aylin schubste ihn']},
+  {t:'gap',q:'„Am Ende war Ben ___ und Aylin Zweite.“',a:['Dritter']},
+  {t:'write',q:'Was machst du, wenn etwas beim ersten Mal nicht klappt? Schreibe einen Satz.',m:'Ich schaue genau hin, mache einen Plan und versuche es nochmal.'}]},
+
+{id:'garten',title:'Das Geheimnis im Garten',theme:'Geduld',teaser:'Oma schenkt Mila eine Tüte Samen. Was daraus wächst, ist ein Geheimnis.',
+ parts:[
+  {img:()=>PIC(D.sky('spring')+D.sun(282,30)+D.ground('#8cc66a',128)+D.fence(96)+'<ellipse cx="170" cy="160" rx="34" ry="7" fill="#7a4e2a"/>'+D.kid(60,170,{s:1.25,shirt:'#7a5a8a',hair:'#d8d8d8',glasses:true})+D.kid(140,170,{shirt:'#e5483d',long:true,hair:'#6b3a1e'})+D.kid(205,172,{shirt:'#3b82c4',s:.78})+D.can(232,168)+'<rect x="100" y="146" width="12" height="16" rx="2" fill="#f2b632"/>'),
+   p:['Im Frühling schenkte Oma Mila eine kleine Tüte mit Samen. „Das ist ein Geheimnis“, sagte Oma. „Was daraus wächst, verrate ich nicht. Aber du musst gut für die Samen sorgen.“','Mila und ihr kleiner Bruder Tim gruben zusammen ein Loch am Gartenzaun. Mila legte die Samen hinein, Tim schüttete Erde darüber und goss sie mit seiner kleinen grünen Giesskanne.']},
+  {img:()=>PIC(D.sky('spring')+D.ground('#8cc66a',128)+D.fence(96)+'<ellipse cx="160" cy="160" rx="40" ry="8" fill="#7a4e2a"/>'+D.kid(115,172,{shirt:'#9ec5ef',s:.8,sad:true,pants:'#9ec5ef'})+D.kid(215,170,{shirt:'#e5483d',long:true,hair:'#6b3a1e'})+'<rect x="232" y="128" width="20" height="26" rx="2" fill="#fff" stroke="#c7cdd6"/><g stroke="#8a5a33"><line x1="236" y1="136" x2="248" y2="136"/><line x1="236" y1="142" x2="248" y2="142"/><line x1="236" y1="148" x2="248" y2="148"/></g>'),
+   p:['Am nächsten Morgen rannte Tim im Pyjama hinaus. „Es ist nichts gewachsen!“, rief er enttäuscht. Mila lachte. „So schnell geht das nicht.“ Doch auch nach drei Tagen war nichts zu sehen. Tim wollte die Erde aufgraben und nachschauen. „Nein!“, sagte Mila. „Dann stören wir die Samen.“','Sie gossen jeden Abend, wenn es nicht regnete. Mila malte jeden Tag ein Bild in ein kleines Heft: Erde, Erde, Erde.']},
+  {img:()=>PIC(D.sky('day')+D.ground('#8cc66a',150)+D.bigPlant(120,30)+D.bigPlant(165,20)+D.bigPlant(210,38)+D.kid(70,172,{shirt:'#e5483d',long:true,hair:'#6b3a1e',up:true})+D.kid(265,172,{shirt:'#3b82c4',s:.8,up2:true})),
+   p:['Am zehnten Tag schaute ein winziger grüner Spitz aus der Erde. Dann zwei, dann fünf. Die Pflänzchen wuchsen jeden Tag. Bald waren sie so gross wie Tim, dann so gross wie Mila, dann noch grösser als Papa! Die Stängel waren dick, und die Blätter so gross wie Teller.','„Was ist das bloss?“, fragte Tim jeden Tag. Doch es kam keine Blüte. Mila wurde ungeduldig. Aber sie dachte an Oma und goss weiter.']},
+  {img:()=>PIC(D.sky('day')+D.sun(40,30)+D.ground('#8cc66a',150)+D.bigPlant(100,48,true)+D.bigPlant(160,30,true)+D.bigPlant(220,52,true)+D.bigPlant(275,40,true)+D.bee(130,40)+D.bee(250,70)+D.kid(55,174,{shirt:'#e5483d',long:true,hair:'#6b3a1e',up:true,up2:true})+D.kid(300,176,{shirt:'#3b82c4',s:.75,up:true})),
+   p:['Im August öffneten sich endlich die Knospen. Riesige gelbe Blüten leuchteten über dem Zaun, und alle drehten ihre Köpfe zur Sonne. „Sonnenblumen!“, rief Mila. Die Nachbarn blieben stehen und staunten. Bienen summten um die Blüten.','Im Herbst waren die Blumen voller Kerne. Mila und Tim sammelten sie und füllten neue Tüten. Eine schenkten sie Oma, die anderen den Kindern aus der Strasse. „Und jetzt“, sagte Mila, „verraten wir das Geheimnis nicht. Die anderen sollen auch lernen zu warten.“']}],
+ words:[['der Samen','daraus wächst eine Pflanze'],['sorgen für','sich um etwas kümmern'],['enttäuscht','traurig, weil es anders ist als gehofft'],['der Stängel','der lange Teil der Pflanze, der die Blüte trägt'],['verraten','ein Geheimnis weitersagen']],
+ qs:[{t:'mc',q:'Was schenkte Oma Mila?',a:'Eine Tüte mit Samen',w:['Eine Giesskanne','Eine Sonnenblume']},
+  {t:'mc',q:'Was wollte Tim nach drei Tagen tun?',a:'Die Erde aufgraben und nachschauen',w:['Die Samen essen','Oma anrufen']},
+  {t:'rf',q:'Schon am nächsten Morgen wuchs eine Pflanze.',a:false},
+  {t:'rf',q:'Die Pflanzen wurden grösser als Papa.',a:true},
+  {t:'order',items:['Mila und Tim pflanzten die Samen.','Tim rannte im Pyjama hinaus.','Ein grüner Spitz kam aus der Erde.','Die gelben Blüten öffneten sich.']},
+  {t:'word',q:'Was bedeutet „ungeduldig“?',a:'Man will nicht mehr länger warten',w:['Man ist ganz ruhig','Man ist krank']},
+  {t:'why',q:'Warum durfte Tim die Erde nicht aufgraben?',a:'Weil sie sonst die Samen stören',w:['Weil Oma es verboten hatte','Weil es regnete']},
+  {t:'gap',q:'„Im August öffneten sich endlich die ___.“',a:['Knospen']},
+  {t:'write',q:'Was lernen Mila und Tim in dieser Geschichte? Schreibe einen Satz.',m:'Sie lernen, dass man für schöne Dinge Geduld braucht.'}]},
+
+{id:'zug',title:'Der Zug kommt später',theme:'Das Beste daraus machen',teaser:'Eine halbe Stunde warten im Hauptbahnhof – wie langweilig! Oder doch nicht?',
+ parts:[
+  {img:()=>PIC(D.station('Luzern   9:04','+30\'')+D.kid(120,174,{s:1.3,shirt:'#3aa36b',hair:'#222'})+D.kid(160,174,{shirt:'#e5483d',long:true,hair:'#222',sad:true})+D.suitcase(220,174,'#3b82c4')+D.kid(260,174,{s:1.25,shirt:'#8a5cc4',hair:'#c98b4e'})+D.suitcase(280,174,'#f2b632')),
+   p:['Mia wollte mit Papa zu ihrer Tante nach Luzern fahren. Am Zürcher Hauptbahnhof war es laut und voll. Menschen mit Koffern eilten in alle Richtungen. Mia schaute auf die grosse Anzeigetafel. Neben ihrem Zug stand plötzlich eine gelbe Zahl: „+30“.','„Oh nein“, stöhnte Mia. „Eine halbe Stunde warten! Das ist so langweilig.“']},
+  {img:()=>PIC(D.station('Luzern   9:04','+30\'')+D.bench(90,178)+D.kid(75,166,{s:1.2,shirt:'#3aa36b',hair:'#222'})+D.kid(106,168,{shirt:'#e5483d',long:true,hair:'#222',s:.9})+D.kid(235,174,{s:1.25,shirt:'#c0533a',hair:'#111'})+D.kid(272,174,{s:1.2,shirt:'#f2b632',hair:'#111',long:true})+D.map(236,118)+D.kid(205,176,{shirt:'#3b82c4',hair:'#111',s:.8,sad:true})+D.elephant(214,158,.8)),
+   p:['Papa kaufte zwei Brezeln, und sie setzten sich auf eine Bank. Mia baumelte mit den Beinen und schaute auf die Uhr. Die Minuten krochen.','Da bemerkte sie eine Familie mit einem grossen Stadtplan. Die Eltern drehten den Plan hin und her und sprachen eine Sprache, die Mia nicht verstand. Ihr Sohn war etwa so alt wie Mia und sah müde aus. Er hielt einen Stoff-Elefanten fest im Arm.']},
+  {img:()=>PIC('<rect width="320" height="180" fill="#e7ebf1"/><rect y="150" width="320" height="30" fill="#9aa5b4"/>'+D.kid(130,176,{shirt:'#e5483d',long:true,hair:'#222',rot:18})+D.kid(190,176,{shirt:'#3b82c4',hair:'#111',rot:-18})+D.elephant(214,176,1)+D.pretzel(110,130)+'<text x="160" y="40" text-anchor="middle" font-family="Comic Sans MS, sans-serif" font-size="16" fill="#3b4f8a">Grüezi!</text>'),
+   p:['Papa ging zu ihnen und fragte auf Englisch, ob er helfen könne. Die Familie kam aus Japan und wollte zum Zürichsee. Papa zeigte ihnen auf dem Plan den Weg zum Tram. Mia zeigte dem Jungen ihre Brezel und brach ein Stück ab. Der Junge lachte und zeigte ihr seinen Elefanten. Er hiess Haruto.','Mia brachte ihm bei, wie man auf Schweizerdeutsch „Grüezi“ sagt. Haruto zeigte ihr, wie man sich auf Japanisch verbeugt. Sie lachten beide, weil sie sich gleichzeitig verbeugten und fast mit den Köpfen zusammenstiessen.']},
+  {img:()=>PIC(D.sky('day')+D.mountains('#93a3bb',true)+D.hills('#a4d67f','#86c35f')+D.lake(150)+D.rail(150)+D.train(70,150)+'<circle cx="104" cy="122" r="4.5" fill="#f1c7a1"/><path d="M99 121 Q104 114 109 121Z" fill="#222"/><line x1="108" y1="122" x2="114" y2="114" stroke="#f1c7a1" stroke-width="2" stroke-linecap="round"/>'),
+   p:['Plötzlich hörte Mia die Durchsage: „Der Zug nach Luzern fährt auf Gleis 8 ein.“ Die halbe Stunde war wie im Flug vergangen! Haruto und Mia winkten sich lange zu.','Im Zug sagte Papa: „Erinnerst du dich? Vor dreissig Minuten hast du gesagt, Warten sei langweilig.“ Mia grinste. „Warten ist nur langweilig, wenn man nichts daraus macht.“ Sie schaute aus dem Fenster auf die Berge und dachte: Vielleicht treffe ich Haruto eines Tages in Japan wieder.']}],
+ words:[['eilen','schnell gehen'],['die Anzeigetafel','ein grosser Bildschirm mit den Abfahrtszeiten'],['baumeln','hin und her schwingen'],['sich verbeugen','den Oberkörper nach vorne neigen, um höflich zu grüssen'],['die Durchsage','eine Ansage aus dem Lautsprecher']],
+ qs:[{t:'mc',q:'Wohin wollten Mia und Papa fahren?',a:'Nach Luzern',w:['Nach Bern','Nach Japan']},
+  {t:'mc',q:'Woher kam Harutos Familie?',a:'Aus Japan',w:['Aus Italien','Aus Luzern']},
+  {t:'rf',q:'Der Zug kam 30 Minuten später.',a:true},
+  {t:'rf',q:'Mia brachte Haruto Japanisch bei.',a:false},
+  {t:'order',items:['Mia sah die Verspätung auf der Tafel.','Papa kaufte Brezeln.','Mia teilte ihre Brezel mit Haruto.','Der Zug fuhr auf Gleis 8 ein.']},
+  {t:'word',q:'Was bedeutet „Die Minuten krochen“?',a:'Die Zeit verging sehr langsam',w:['Die Uhr war kaputt','Es gab Schnecken im Bahnhof']},
+  {t:'why',q:'Warum verging die halbe Stunde am Ende so schnell?',a:'Weil Mia mit Haruto spielte und lachte',w:['Weil der Zug früher kam','Weil Mia einschlief']},
+  {t:'gap',q:'„Warten ist nur langweilig, wenn man nichts daraus ___.“',a:['macht']},
+  {t:'write',q:'Was kannst du tun, wenn du warten musst? Schreibe einen Satz.',m:'Ich kann ein Buch lesen, ein Spiel erfinden oder mit jemandem reden.'}]}
+];
+
+/* ---------- Leichte Fassungen (ca. 5 Minuten, kurze Sätze) ---------- */
+const EASY={
+finn:{w:[['der Nebel','tiefe Wolken – man sieht fast nichts'],['der Bach','ein kleiner Fluss'],['die Glocke','sie macht kling, klang']],p:[
+ ['Finn war ein kleiner Fuchs.','Er wohnte in den Bergen.','Finn wollte immer weit weg laufen.','Aber Mama sagte: „Bleib in der Nähe!“','Eines Tages sah Finn einen bunten Schmetterling.','Finn rannte hinterher.','Weit, weit weg.'],
+ ['Plötzlich kam Nebel.','Alles war grau.','Finn sah nichts mehr.','Sein Herz klopfte schnell.','„Mama!“, rief er.','Niemand antwortete.','Da dachte Finn an Mama.','Sie sagte immer: „Wenn du nichts sehen kannst, dann hör gut zu.“'],
+ ['Finn setzte sich hin.','Er atmete tief ein und aus.','Jetzt war er ruhig.','Er hörte gut zu.','Er hörte den Bach.','Und er hörte Glocken: kling, klang!','Das waren die Kühe neben seinem Zuhause.','Finn ging langsam zu den Glocken.'],
+ ['Bald war der Nebel weg.','Da war Mama!','Finn rannte zu ihr.','„Ich hatte Angst“, sagte Finn.','„Aber ich bin ruhig geblieben.“','Mama lachte.','„Das hast du klug gemacht!“']]},
+bruecke:{w:[['der Bach','ein kleiner Fluss'],['das Brett','ein flaches Stück Holz'],['streiten','böse miteinander reden']],p:[
+ ['Im Wald war ein Bach.','Links lag das Dorf Sonnenberg.','Rechts lag das Dorf Tannegg.','Die Kinder spielten nie zusammen.','„Die drüben sind komisch“, sagten sie.','Dabei kannten sie sich gar nicht.','Eines Tages fiel Linas roter Ball in den Bach.','Der Ball schwamm zur anderen Seite.','Dort stand Jonas.'],
+ ['Jonas warf den Ball zurück.','Aber er warf zu kurz.','Platsch!','Der Ball war wieder im Wasser.','Lina und Jonas lachten.','Lina holte den Ball mit einem Ast.','„Wir brauchen eine Brücke!“, sagte Jonas.','„Dann bauen wir eine!“, sagte Lina.'],
+ ['Lina brachte Bretter mit.','Jonas brachte ein Seil und zwei Freunde.','Ein Brett fiel ins Wasser.','Die Kinder stritten kurz.','Dann sagte Lina: „Streiten bringt nichts. Wir machen einen Plan.“','Sie zeichneten den Plan in den Sand.','Jetzt wusste jeder, was er tun musste.','Am Abend war die Brücke fertig.'],
+ ['Jetzt spielten alle Kinder zusammen.','Die anderen waren gar nicht komisch!','Im Herbst machten beide Dörfer ein Fest auf der Brücke.','Jonas sagte: „Die beste Brücke ist unsere Freundschaft.“']]},
+mo:{w:[['die Alp','eine Wiese hoch in den Bergen'],['die Höhle','ein Loch im Berg – das Zuhause der Murmeltiere'],['das Schneehuhn','ein weisser Vogel, der im Schnee lebt']],p:[
+ ['Mo war ein kleines Murmeltier.','Er wohnte auf einer Alp.','Mo liebte den Sommer.','Sah er einen Adler, pfiff er laut.','Dann rannten alle in die Höhle.','Im Herbst sagte Mama: „Bald kommt der Winterschlaf. Wir schlafen den ganzen Winter.“','„Das ist langweilig!“, rief Mo.','„Ich will den Schnee sehen.“'],
+ ['Bald fiel Schnee.','Alle schliefen ein.','Nur Mo nicht.','Er rannte hinaus.','Er rutschte im Schnee.','Das war lustig!','Aber bald war ihm kalt.','Sein Bauch knurrte.','Unter dem Schnee fand er nichts zu fressen.'],
+ ['Mo war müde und hungrig.','Da kam ein Schneehuhn.','„Was machst du hier draussen?“, fragte es.','„Ich wollte den Winter sehen“, sagte Mo leise.','„Dein Körper braucht Ruhe“, sagte das Schneehuhn.','„Geh schlafen.“'],
+ ['Mo ging zurück in die Höhle.','Dort war es warm.','Er schlief sofort ein.','Im Frühling wachte er auf.','Die Sonne schien.','Mo fühlte sich stark.','„Mama“, sagte er, „Schlaf ist wie Futter für den Körper.“']]},
+fridolin:{w:[['der Felsen','ein sehr grosser Stein'],['schwindlig','alles dreht sich im Kopf'],['üben','etwas immer wieder machen']],p:[
+ ['Fridolin war ein kleiner Drache.','Er wohnte auf einem hohen Felsen.','Alle Drachen konnten fliegen.','Nur Fridolin nicht.','Er blieb immer auf dem Felsen sitzen.','Schaute er nach unten, wurde ihm schwindlig.','„Ich bin kein richtiger Drache“, dachte er traurig.'],
+ ['Am Abend kam Grossvater.','„Ich hatte auch Angst“, sagte er.','„Wirklich?“, fragte Fridolin.','„Ja. Ich habe klein angefangen.','Jeden Tag ein kleines Stück.“'],
+ ['Am Morgen fand Fridolin einen kleinen Stein.','Er sprang hinunter.','Plumps!','Er landete auf der Nase.','Seine Schwestern kicherten.','Aber Fridolin übte jeden Tag.','Jeden Tag flog er ein bisschen länger.'],
+ ['Nach drei Wochen stand er wieder auf dem hohen Felsen.','Er sprang.','Und er flog!','Er flog über den See und die Berge.','„Ich hatte noch ein bisschen Angst“, sagte er.','Grossvater lachte.','„Mut heisst, es trotzdem zu versuchen.“']]},
+handschuh:{w:[['der Brunnen','Wasser fliesst aus einem Rohr in ein Becken'],['der Zettel','ein kleines Stück Papier'],['stricken','mit Nadeln und Wolle etwas machen']],p:[
+ ['Es war Winter.','Nils und sein Bruder Leo gingen zum Bäcker.','Vor dem Brunnen lag etwas Rotes im Schnee.','Es war ein Handschuh.','Darauf war ein kleines weisses Herz.','„Nimm ihn mit!“, sagte Leo.','„Nein“, sagte Nils. „Jemand vermisst ihn.“'],
+ ['Sie fragten den Bäcker.','„Der gehört mir nicht“, sagte er.','Niemand kannte den Handschuh.','Leo wurde ungeduldig.','„Mir ist kalt!“','Nils band den Handschuh an den Brunnen.','Er schrieb einen Zettel: „Gefunden! Wir wohnen im gelben Haus Nummer 4.“'],
+ ['Am Abend klingelte es.','Vor der Tür stand eine alte Frau.','Sie hiess Frau Keller.','„Das ist mein Handschuh!“, sagte sie.','Ihre Augen glänzten.','„Mein Mann hat ihn für mich gestrickt.“','Nils gab ihr den Handschuh.'],
+ ['Am Sonntag tranken sie Tee bei Frau Keller.','Sie zeigte den Jungen das Stricken.','Jetzt besuchten sie Frau Keller jede Woche.','„Gutes tun macht froh“, sagte Nils.']]},
+robo:{w:[['der Roboter','eine Maschine, die sich bewegen und sprechen kann'],['die Pause','freie Zeit zwischen den Schulstunden'],['logisch','vernünftig, gut zu erklären']],p:[
+ ['In der Klasse stand ein Roboter.','Er hiess Robo.','„Robo bleibt eine Woche bei uns“, sagte die Lehrerin.','Robo sass neben Samira.','In Mathe wusste Robo alles.','„347 mal 28?“, fragte Tim.','„9716!“, piepste Robo.'],
+ ['In der Pause spielten die Kinder Fangen.','Robo stand allein.','„Das ist nicht logisch“, sagte er.','Niemand spielte mit ihm.','Robo wusste immer alles besser.'],
+ ['Am Mittwoch setzte sich Samira zu Robo.','„Ich habe keinen Freund“, sagte Robo.','„Das kann ich nicht ausrechnen.“','Samira lachte.','„Freunde rechnet man nicht aus. Komm, spiel mit!“'],
+ ['Robo rannte los.','Er fiel ins Laub.','Die Kinder hielten den Atem an.','Dann lachte Robo: „Ha-ha-piep-ha!“','Alle lachten mit.','Jetzt spielte Robo jeden Tag mit.','Am Freitag sagte er: „Hier habe ich Freundschaft gelernt.“']]},
+selma:{w:[['der Wettbewerb','ein Spiel – wer gewinnt?'],['prahlen','sich selbst laut loben'],['entdecken','etwas Neues finden']],p:[
+ ['Im Garten gab es einen Wettbewerb.','Wer entdeckt am meisten?','Der Hase Hopp prahlte: „Ich bin der Schnellste!“','Da kam eine kleine Schnecke.','„Ich heisse Selma. Ich mache auch mit.“','Die anderen Tiere lachten über sie.'],
+ ['Die Eule sagte: „Schaut euch den Garten an.','Wer am meisten sieht, gewinnt.“','Hopp sauste los.','Schnell war er zurück.','Selma kroch langsam los.'],
+ ['Selma schaute genau hin.','Sie fand einen blauen Käfer.','Sie sah ein Spinnennetz mit Tropfen.','Sie sah viele Ameisen.','Und sie fand ein Igelnest mit drei Igelkindern!'],
+ ['Am Abend erzählten alle.','Hopp hatte nur das Haus und den Rasen gesehen.','Selma erzählte vom Käfer, vom Netz und von den Igeln.','Hopp wurde rot unter seinem Fell.','„Ich war zu schnell“, sagte er.','Selma bekam eine Krone aus Blumen.','Die Eule sagte: „Wer langsam und genau hinschaut, sieht die schönsten Dinge.“']]},
+kletter:{w:[['der Griff','ein Stein an der Wand zum Festhalten'],['die Route','der Weg an der Kletterwand'],['der Wettkampf','ein Spiel: Wer ist am besten?']],p:[
+ ['Ben ging zum Klettern.','Heute war sein erster Wettkampf.','An der Wand waren bunte Griffe.','Die schwarze Route war am schwersten.','Neben Ben stand ein Mädchen.','„Ich bin Aylin“, sagte sie.','„Ich bin auch zum ersten Mal hier.“'],
+ ['Zuerst kletterte Ben die gelbe Route.','Er kam ganz nach oben.','Dann kam die schwarze Route.','Ben kletterte zu schnell.','Seine Arme wurden müde.','Er fiel ins Seil.','Ben ärgerte sich.'],
+ ['Aylin kam zu Ben.','„Wir haben noch einen Versuch“, sagte sie.','Zusammen schauten sie die Route genau an.','Sie machten einen Plan.'],
+ ['Jetzt kletterte Ben langsam.','Er machte alles nach dem Plan.','Und er kam bis zum letzten Griff!','Am Ende war Ben Dritter und Aylin Zweite.','„Danke für den Plan“, sagte Ben.']]},
+garten:{w:[['der Samen','daraus wächst eine Pflanze'],['giessen','einer Pflanze Wasser geben'],['die Knospe','eine Blüte, die noch zu ist']],p:[
+ ['Oma gab Mila eine Tüte mit Samen.','„Das ist ein Geheimnis“, sagte Oma.','Mila und ihr Bruder Tim pflanzten die Samen am Zaun.','Tim goss sie mit seiner Giesskanne.'],
+ ['Am Morgen rannte Tim im Pyjama hinaus.','„Es ist nichts gewachsen!“','Auch nach drei Tagen war nichts da.','Tim wurde ungeduldig.','Er wollte die Erde aufgraben.','„Nein!“, sagte Mila. „Dann stören wir die Samen.“'],
+ ['Am zehnten Tag kam ein grüner Spitz aus der Erde.','Die Pflanzen wuchsen und wuchsen.','Bald waren sie grösser als Papa!','Aber es kam keine Blüte.'],
+ ['Im August öffneten sich endlich die Knospen.','Grosse gelbe Blüten!','„Sonnenblumen!“, rief Mila.','Die Bienen summten.','„Das Warten hat sich gelohnt“, sagte Mila.']]},
+zug:{w:[['der Bahnhof','dort halten die Züge'],['die Tafel','ein grosser Bildschirm mit den Zügen'],['sich verbeugen','sich nach vorne beugen, um höflich zu grüssen']],p:[
+ ['Mia und Papa wollten nach Luzern.','Sie waren im Bahnhof in Zürich.','Auf der Tafel stand: „+30“.','Der Zug kam 30 Minuten später.','„Oh nein!“, rief Mia.','„Das ist so langweilig!“'],
+ ['Papa kaufte Brezeln.','Sie setzten sich auf eine Bank.','Die Minuten krochen.','Da sah Mia eine Familie mit einem Plan.','Der Junge hielt einen Elefanten aus Stoff.'],
+ ['Die Familie kam aus Japan.','Papa zeigte ihnen den Weg.','Mia teilte ihre Brezel mit dem Jungen.','Er hiess Haruto.','Mia sagte: „Grüezi!“','Haruto zeigte ihr, wie man sich verbeugt.','Beide lachten.'],
+ ['Dann kam die Durchsage: „Der Zug nach Luzern fährt auf Gleis 8 ein.“','Die halbe Stunde war schnell vorbei!','Mia winkte Haruto.','Sie sagte: „Warten ist nur langweilig, wenn man nichts daraus macht.“']]}
+};
+const SAY={on:'speechSynthesis' in window,v:null};
+function pickVoice(){if(!SAY.on)return;const vs=speechSynthesis.getVoices();SAY.v=vs.find(v=>/de[-_]CH/i.test(v.lang))||vs.find(v=>/^de/i.test(v.lang))||null}
+if(SAY.on){pickVoice();try{speechSynthesis.onvoiceschanged=pickVoice}catch(e){}}
+function say(t,el){if(!SAY.on)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/[„“]/g,''));u.lang=SAY.v?SAY.v.lang:'de-DE';if(SAY.v)u.voice=SAY.v;u.rate=.8;
+  if(el){document.querySelectorAll('.sent.speaking').forEach(x=>x.classList.remove('speaking'));el.classList.add('speaking');u.onend=()=>el.classList.remove('speaking')}
+  speechSynthesis.speak(u)}catch(e){}}
+
+const QLABEL={mc:'Frage',rf:'Richtig oder falsch?',order:'Reihenfolge',word:'Wortbedeutung',why:'Warum?',gap:'Lückensatz',write:'Schreib selbst'};
+
+/* ---------- app ---------- */
+const app=document.getElementById('app');
+let view={screen:'list',cid:null,q:null,tries:0,done:false};
+const list=()=>store.tab==='deutsch'?DEUTSCH:MATHE;
+const total=()=>Object.values(store.stars).reduce((s,n)=>s+n,0);
+
+function setTab(t){store.tab=t;save();view={screen:'list'};render();window.scrollTo(0,0)}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.t)));
+
+function render(){
+  document.body.dataset.subject=store.tab;
+  document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===store.tab));
+  document.getElementById('total').textContent=total();
+  app.onclick=null;app.onkeydown=null;
+  if(store.tab==='lesen')return view.screen==='story'?renderStory():renderLesen();
+  if(store.tab==='fort')return renderProgress();
+  if(view.screen==='list')return renderList();
+  renderConcept();
+}
+
+function renderList(){
+  const L=list();
+  app.innerHTML=`<p class="intro">${store.tab==='mathe'
+    ?'Tippe auf ein Thema. Zuerst kommt die Erklärung, dann kannst du so viele Aufgaben lösen, wie du willst. Jede richtige Antwort gibt einen Stern.'
+    :'Tippe auf ein Thema. Zuerst kommt die Erklärung, dann kannst du so viele Übungen machen, wie du willst. Jede richtige Antwort gibt einen Stern.'}</p>
+  <div class="list">${L.map(c=>`<button class="card" data-id="${c.id}">
+    <span class="glyph" aria-hidden="true">${c.glyph}</span>
+    <span class="card-t"><strong>${c.title}</strong><small>${c.sub}</small>
+    <span class="meta"><span class="pill">${c.week}</span><span><span class="star">★</span> ${store.stars[c.id]||0}</span></span></span></button>`).join('')}</div>
+  <p class="foot">Passt zum Wochenplan im Gymi-Leitfaden. Die Sterne werden nur auf diesem Gerät gespeichert.</p>`;
+  app.querySelectorAll('.card').forEach(b=>b.addEventListener('click',()=>{view={screen:'concept',cid:b.dataset.id,q:null};newQ();render();window.scrollTo(0,0)}));
+}
+
+function concept(){return list().find(c=>c.id===view.cid)}
+function newQ(){view.q=concept().gen();view.tries=0;view.done=false;view.fb='';view.picked=null;view.wrongs=[]}
+
+function answerArea(q){
+  if(q.type==='choice')return `<div class="choices"${q.stack?' style="grid-template-columns:1fr"':''}>${q.choices.map((c,i)=>{
+    let cls='';if(view.done||view.picked!=null){if(c===q.a&&view.done)cls='right';else if(view.wrongs&&view.wrongs.includes(c))cls='wrong'}
+    return `<button class="choice ${cls}" data-c="${i}" ${view.done||(view.wrongs&&view.wrongs.includes(c))?'disabled':''}>${esc(c)}</button>`}).join('')}</div>`;
+  if(q.type==='pair')return `<div class="pair">${q.labels.map((l,i)=>`<label for="ans${i}">${l}<input class="ans" id="ans${i}" inputmode="numeric" autocomplete="off" ${view.done?'disabled':''}></label>`).join('')}</div>`;
+  if(q.type==='free')return '';
+  const im=q.type==='text'?'text':q.type==='time'?'text':'decimal';
+  const ph=q.type==='time'?'z.B. 19:05':'';
+  return `<div class="row"><input class="ans" id="ans0" inputmode="${im}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="${ph}" ${view.done?'disabled':''}>${q.unit?`<span class="unit">${q.unit}</span>`:''}</div>`;
+}
+
+function renderConcept(){
+  const c=concept(),q=view.q;
+  app.innerHTML=`<button class="back" id="back">← Alle Themen</button>
+  <div class="ctitle"><span class="glyph" aria-hidden="true">${c.glyph}</span><div><h2>${c.title}</h2><span class="pill">${c.week}</span></div></div>
+  <div class="cols">
+    <section class="panel"><h3>So geht's</h3>${c.kid.map(p=>`<p>${p}</p>`).join('')}<div class="ex">${c.example}</div>
+      <details><summary>Für Eltern</summary><p>${c.parent}</p></details></section>
+    <section class="panel" aria-live="polite"><div class="prac-head"><h3>${q.type==='free'?'Schreibaufgabe':'Üben'}</h3><span class="score"><span class="star">★</span> ${store.stars[c.id]||0}</span></div>
+      <div class="q">${q.q}</div>
+      ${answerArea(q)}
+      <div class="btns">
+        ${q.type==='free'
+          ?`<button class="btn" id="done" ${view.done?'disabled':''}>Geschichte geschrieben ✓</button><button class="btn ghost" id="next">Neue Idee</button>`
+          :view.done?`<button class="btn" id="next">Nächste Aufgabe →</button>`
+          :`${q.type!=='choice'?'<button class="btn" id="check">Prüfen</button>':''}<button class="btn ghost" id="hint">Tipp</button>`}
+      </div>
+      ${view.fb||''}
+    </section>
+  </div>`;
+  document.getElementById('back').onclick=()=>{view={screen:'list'};render();window.scrollTo(0,0)};
+  const nx=document.getElementById('next');if(nx)nx.onclick=()=>{newQ();render();const a=document.getElementById('ans0');if(a)a.focus()};
+  const h=document.getElementById('hint');if(h)h.onclick=()=>{view.fb=`<div class="fb tip"><b>Tipp</b>${q.hint}</div>`;render()};
+  const ck=document.getElementById('check');if(ck)ck.onclick=check;
+  const dn=document.getElementById('done');if(dn)dn.onclick=()=>{addStar();record(true);view.done=true;view.fb='<div class="fb ok"><b>Super gemacht!</b><span class="why">Lies deine Geschichte jemandem vor.</span></div>';render()};
+  app.querySelectorAll('.ans').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();check()}}));
+  app.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>check(q.choices[+b.dataset.c])));
+}
+
+const dkey=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const emptyDay=()=>({m:{ok:0,all:0},d:{ok:0,all:0},t:{}});
+function record(ok){const k=dkey(),D=store.days[k]=store.days[k]||emptyDay(),sb=store.tab==='mathe'?'m':'d';D[sb].all++;if(ok)D[sb].ok++;const T=D.t[view.cid]=D.t[view.cid]||{ok:0,all:0};T.all++;if(ok)T.ok++;save()}
+function addStar(){store.stars[view.cid]=(store.stars[view.cid]||0)+1;save()}
+
+function isRight(q,val){
+  if(q.type==='choice')return val===q.a;
+  if(q.type==='pair')return q.a.every((x,i)=>numOf(val[i])===x);
+  if(q.type==='time'){const m=minOf(val);return !isNaN(m)&&(m%1440)===(q.a%1440)}
+  if(q.type==='text')return q.a.some(x=>norm(x)===norm(val));
+  const n=numOf(val);return !isNaN(n)&&Math.abs(n-q.a)<0.001;
+}
+function shown(q){if(q.type==='pair')return `${q.a[0]} Rest ${q.a[1]}`;if(q.type==='time')return hm(q.a)+' Uhr';if(q.type==='text')return q.a[0];if(q.type==='choice')return q.a;
+  return (q.unit==='Fr.'&&!Number.isInteger(q.a)?fr(q.a):String(q.a))+(q.unit?' '+q.unit:'')}
+
+function check(choiceVal){
+  const q=view.q;if(view.done)return;
+  let val;
+  if(q.type==='choice')val=choiceVal;
+  else if(q.type==='pair')val=[0,1].map(i=>document.getElementById('ans'+i).value);
+  else val=document.getElementById('ans0').value;
+  const empty=q.type==='pair'?val.some(v=>String(v).trim()===''):q.type!=='choice'&&String(val).trim()==='';
+  if(empty){view.fb='<div class="fb tip"><b>Fast!</b>Schreib zuerst eine Antwort ins Feld.</div>';render();return}
+  if(isRight(q,val)){
+    if(view.tries<2)addStar();record(true);view.done=true;
+    view.fb=`<div class="fb ok"><b>${pick(['Richtig!','Super!','Genau!','Stark gedacht!','Bravo!'])}</b><span class="why">${q.explain}</span></div>`;
+  }else{
+    view.tries++;if(q.type==='choice'){view.wrongs=(view.wrongs||[]).concat([val]);view.picked=val}
+    if(view.tries>=2){view.done=true;record(false);view.fb=`<div class="fb no"><b>Die Lösung ist ${esc(shown(q))}</b><span class="why">${q.explain}</span></div>`}
+    else view.fb=`<div class="fb no"><b>Noch nicht ganz.</b><span class="why">Versuch es nochmal. ${q.hint}</span></div>`;
+  }
+  const keep=q.type==='pair'?val:q.type!=='choice'?[val]:null;
+  render();
+  if(keep)keep.forEach((v,i)=>{const el=document.getElementById('ans'+i);if(el){el.value=v;if(!view.done){el.select();el.focus()}}});
+}
+
+
+/* ---------- Fortschritt ---------- */
+const WD=['So','Mo','Di','Mi','Do','Fr','Sa'];
+const fmtD=k=>{const [y,m,d]=k.split('-').map(Number),dt=new Date(y,m-1,d);return `${WD[dt.getDay()]} ${d}.${m}.`};
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+const TOPIC={};MATHE.forEach(c=>TOPIC[c.id]={c,s:'m'});DEUTSCH.forEach(c=>TOPIC[c.id]={c,s:'d'});
+let wipeAsk=false,importMsg='';
+
+function lastDays(n){const out=[];for(let i=n-1;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);out.push(dkey(d))}return out}
+function streak(){let n=0;const d=new Date();const has=k=>{const D=store.days[k];return D&&((D.m.all+D.d.all)>0||!!D.g)};
+  if(!has(dkey(d)))d.setDate(d.getDate()-1);
+  while(has(dkey(d))){n++;d.setDate(d.getDate()-1)}return n}
+
+function chartSVG(keys){
+  const g=store.goal,W=340,H=170,L=26,B=26,T=10,R=6,cw=(W-L-R)/keys.length;
+  const vals=keys.map(k=>{const D=store.days[k];return D?[D.m.ok,D.d.ok]:[0,0]});
+  let max=Math.max(2*g,...vals.map(v=>v[0]+v[1]));max=Math.ceil(max/5)*5||10;
+  const y=v=>T+(H-T-B)*(1-v/max);
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Richtige Antworten der letzten ${keys.length} Tage">`;
+  [0,max/2,max].forEach(v=>{s+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${L-5}" y="${y(v)+3}" text-anchor="end">${Math.round(v)}</text>`});
+  s+=`<line x1="${L}" x2="${W-R}" y1="${y(2*g)}" y2="${y(2*g)}" stroke="var(--fort)" stroke-width="1.5" stroke-dasharray="4 3"/><text x="${W-R}" y="${y(2*g)-4}" text-anchor="end" style="fill:var(--fort)">Ziel ${2*g}</text>`;
+  keys.forEach((k,i)=>{const [m,d]=vals[i],x=L+i*cw+cw*.18,bw=cw*.64;
+    if(m)s+=`<rect x="${x}" y="${y(m)}" width="${bw}" height="${y(0)-y(m)}" rx="2" fill="var(--mathe)"><title>${fmtD(k)}: Mathe ${m}</title></rect>`;
+    if(d)s+=`<rect x="${x}" y="${y(m+d)}" width="${bw}" height="${y(m)-y(m+d)}" rx="2" fill="var(--deutsch)"><title>${fmtD(k)}: Deutsch ${d}</title></rect>`;
+    if(i%2===(keys.length-1)%2){const [yy,mm,dd]=k.split('-').map(Number);s+=`<text x="${x+bw/2}" y="${H-12}" text-anchor="middle">${dd}.</text><text x="${x+bw/2}" y="${H-2}" text-anchor="middle">${WD[new Date(yy,mm-1,dd).getDay()]}</text>`}
+  });
+  return s+'</svg>'}
+
+function renderProgress(){
+  const g=store.goal,today=dkey(),D=store.days[today]||emptyDay();
+  const week=lastDays(7),wk=week.reduce((a,k)=>{const x=store.days[k];if(x){a.ok+=x.m.ok+x.d.ok;a.all+=x.m.all+x.d.all;if(x.m.all+x.d.all)a.days++}return a},{ok:0,all:0,days:0});
+  const bar=(lbl,o,cls)=>`<div class="bar-row"><span class="lbl">${lbl}</span><div class="track"><div class="fill ${cls}" style="width:${Math.min(100,pct(o.ok,g))}%"></div></div><span class="n">${o.ok} / ${g}${o.ok>=g?' ✓':''}</span></div>`;
+  // per-day log
+  const logKeys=Object.keys(store.days).filter(k=>{const x=store.days[k];return x.m.all+x.d.all>0||x.g}).sort().reverse().slice(0,30);
+  const log=logKeys.map(k=>{const x=store.days[k],met=x.m.ok>=g&&x.d.ok>=g&&!!x.g;return `<tr><td>${fmtD(k)}</td><td class="n">${x.m.ok} / ${x.m.all}</td><td class="n">${x.d.ok} / ${x.d.all}</td><td class="n">${x.g?x.g.ok+' / '+x.g.all:'–'}</td><td>${met?'<span class="tag ok">Ziel ✓</span>':'<span class="muted">–</span>'}</td></tr>`}).join('');
+  // per-topic totals
+  const agg={};Object.entries(store.days).forEach(([k,x])=>Object.entries(x.t||{}).forEach(([id,t])=>{const a=agg[id]=agg[id]||{ok:0,all:0,last:k};a.ok+=t.ok;a.all+=t.all;if(k>a.last)a.last=k}));
+  const order=[...MATHE,...DEUTSCH].map(c=>c.id).filter(id=>agg[id]);
+  const topics=order.map(id=>{const a=agg[id],p=pct(a.ok,a.all),T=TOPIC[id];return `<tr><td><span class="tag ${T.s}">${T.s==='m'?'Mathe':'Deutsch'}</span> ${T.c.title}</td><td class="n">${a.ok} / ${a.all}</td><td class="n">${p}%</td><td>${a.all>=5&&p<60?'<span class="tag warn">nochmals üben</span>':a.all>=5&&p>=85?'<span class="tag ok">sicher</span>':'<span class="muted">'+fmtD(a.last)+'</span>'}</td></tr>`}).join('');
+  const backup=JSON.stringify({v:2,stars:store.stars,days:store.days,goal:store.goal,reads:store.reads,writes:store.writes,level:store.level});
+  const wr=(store.writes||[]).slice(0,20).map(w=>{const st=STORIES.find(x=>x.id===w.id);return `<li><div class="wq">${fmtD(w.d)} · ${st?st.title:''} · ${esc(w.q)}</div><div class="wt">${esc(w.text)}</div></li>`}).join('');
+  app.innerHTML=`<div class="pgrid">
+   <section class="panel"><h3>Heute · ${fmtD(today)}</h3><div class="today">${bar('Mathe',D.m,'m')}${bar('Deutsch',D.d,'d')}<div class="bar-row"><span class="lbl">Lesen</span><div class="track"><div class="fill g" style="width:${D.g?100:0}%"></div></div><span class="n">${D.g?D.g.ok+' / '+D.g.all+' ✓':'0 / 1'}</span></div></div>
+     <div class="goal">Tagesziel pro Fach: <button id="gminus" aria-label="Ziel verkleinern">−</button><b>${g}</b><button id="gplus" aria-label="Ziel vergrössern">+</button> richtige Antworten</div></section>
+   <section class="panel"><h3>Übersicht</h3><div class="kpis">
+     <div class="kpi"><b>${streak()}</b><span>Tage am Stück</span></div>
+     <div class="kpi"><b>${wk.ok}</b><span>richtig in 7 Tagen</span></div>
+     <div class="kpi"><b>${pct(wk.ok,wk.all)}%</b><span>Trefferquote 7 Tage</span></div></div>
+     <p class="small muted" style="margin:10px 0 0">${wk.days} von 7 Tagen geübt · <span class="star">★</span> ${total()} Sterne insgesamt</p></section>
+   <section class="panel wide chart"><h3>Die letzten 14 Tage</h3>${chartSVG(lastDays(14))}
+     <div class="legend"><span><i style="background:var(--mathe)"></i>Mathe richtig</span><span><i style="background:var(--deutsch)"></i>Deutsch richtig</span></div></section>
+   <section class="panel wide"><h3>Tagebuch</h3>${log?`<div class="tbl"><table><thead><tr><th>Tag</th><th class="n">Mathe</th><th class="n">Deutsch</th><th class="n">Lesen</th><th>Ziel</th></tr></thead><tbody>${log}</tbody></table></div><p class="small muted" style="margin:8px 0 0">richtig / gelöst · Ziel = beide Tagesziele und die Geschichte des Tages · die letzten 30 Übungstage</p>`:'<p class="muted">Noch keine Übungen. Wähle unten im Tab Mathe oder Deutsch ein Thema – jede gelöste Aufgabe erscheint hier mit Datum.</p>'}</section>
+   <section class="panel wide"><h3>Geschriebene Sätze</h3>${wr?`<ul class="wlist">${wr}</ul><p class="small muted" style="margin:10px 0 0">Die letzten 20 Sätze aus dem Tab Lesen. Lest sie zusammen und lobt zuerst eine gute Idee.</p>`:'<p class="muted">Nach jeder Geschichte schreibt er einen eigenen Satz. Die Sätze erscheinen hier mit Datum.</p>'}</section>
+   <section class="panel wide"><h3>Themen</h3>${topics?`<div class="tbl"><table><thead><tr><th>Thema</th><th class="n">Richtig</th><th class="n">Quote</th><th>Stand</th></tr></thead><tbody>${topics}</tbody></table></div><p class="small muted" style="margin:8px 0 0">„nochmals üben“ ab 5 Aufgaben unter 60 %, „sicher“ ab 85 %.</p>`:'<p class="muted">Hier siehst du bald, welche Themen schon sicher sitzen.</p>'}</section>
+   <section class="panel wide"><h3>Sicherung</h3>
+     <p class="small">Der Fortschritt wird in diesem Browser gespeichert. Kopiere ab und zu den Code unten (z.B. in Notizen), damit nichts verloren geht. Auf einem anderen Gerät fügst du ihn unten ein.</p>
+     <textarea id="bk" readonly>${esc(backup)}</textarea>
+     <div class="btns" style="margin-top:8px"><button class="btn ghost" id="copy">Code kopieren</button></div>
+     <p class="small" style="margin-top:14px">Sicherung wiederherstellen:</p>
+     <textarea id="imp" placeholder="Code hier einfügen"></textarea>
+     <div class="btns" style="margin-top:8px"><button class="btn ghost" id="load">Sicherung laden</button>${wipeAsk?'<button class="btn danger" id="wipe2">Ja, alles löschen</button><button class="btn ghost" id="wipe0">Abbrechen</button>':'<button class="btn ghost" id="wipe">Alles löschen</button>'}</div>
+     ${importMsg?`<div class="fb ${importMsg.startsWith('OK')?'ok':'no'}">${importMsg.replace(/^OK /,'')}</div>`:''}</section>
+  </div>`;
+  importMsg='';
+  const on=(id,f)=>{const e=document.getElementById(id);if(e)e.onclick=f};
+  on('gminus',()=>{store.goal=Math.max(1,g-1);save();render()});
+  on('gplus',()=>{store.goal=Math.min(50,g+1);save();render()});
+  on('copy',()=>{const t=document.getElementById('bk'),b=document.getElementById('copy');const done=()=>{b.textContent='Kopiert ✓'};
+    try{navigator.clipboard.writeText(t.value).then(done,()=>{t.select();b.textContent='Markiert – jetzt kopieren'})}catch(e){t.select();b.textContent='Markiert – jetzt kopieren'}});
+  on('load',()=>{try{const o=JSON.parse(document.getElementById('imp').value.trim());if(!o||typeof o.days!=='object'||typeof o.stars!=='object')throw 0;
+      store.days=o.days;store.stars=o.stars;store.goal=o.goal||store.goal;store.reads=o.reads||{};store.writes=o.writes||[];save();importMsg='OK Sicherung geladen.'}catch(e){importMsg='Das ist kein gültiger Sicherungs-Code. Kopiere den ganzen Text aus dem oberen Feld.'}render()});
+  on('wipe',()=>{wipeAsk=true;render()});on('wipe0',()=>{wipeAsk=false;render()});
+  on('wipe2',()=>{store.days={};store.stars={};store.reads={};store.writes=[];wipeAsk=false;save();render()});
+}
+
+/* ---------- Lesen ---------- */
+store.reads=store.reads||{};store.writes=store.writes||[];store.level=store.level||'leicht';
+const isEasy=()=>store.level==='leicht';const minLbl=()=>isEasy()?'ca. 5 Minuten':'ca. 10 Minuten';
+const curStory=()=>STORIES.find(x=>x.id===view.sid);
+const fbx=(k,h)=>`<div class="fb ${k}">${h}</div>`;
+function storyOfDay(){const D=store.days[dkey()];if(D&&D.g&&D.g.id){const s=STORIES.find(x=>x.id===D.g.id);if(s)return s}
+  const un=STORIES.find(s=>!store.reads[s.id]);if(un)return un;
+  return STORIES[Math.floor(Date.now()/864e5)%STORIES.length]}
+function mixOrder(n){let a;do{a=shuffle([...Array(n).keys()])}while(a.every((k,j)=>k===j));return a}
+
+function renderLesen(){
+  const s=storyOfDay(),D=store.days[dkey()],done=D&&D.g&&D.g.id===s.id;
+  app.innerHTML=`<div class="seg" role="group" aria-label="Schwierigkeit"><button class="${isEasy()?'on':''}" data-lvl="leicht">Leicht · 5 Min</button><button class="${isEasy()?'':'on'}" data-lvl="lang">Lang · 10 Min</button></div>
+  <section class="panel sotd"><div class="pic">${s.parts[0].img()}</div><div class="sotd-t">
+    <span class="pill">Geschichte des Tages · ${minLbl()}</span><h2>${s.title}</h2><p>${s.teaser}</p>
+    <p class="small muted">Thema: ${s.theme}${done?` · heute gelesen ✓ ${D.g.ok} von ${D.g.all} richtig`:''}</p>
+    <button class="btn" data-open="${s.id}">${done?'Nochmals lesen':'Jetzt lesen'}</button></div></section>
+  <h3 class="sec">Alle Geschichten</h3>
+  <div class="list">${STORIES.map(x=>{const r=store.reads[x.id];return `<button class="card scard" data-open="${x.id}"><span class="thumb" aria-hidden="true">${x.parts[0].img()}</span><span class="card-t"><strong>${x.title}</strong><small>Thema: ${x.theme}</small><span class="meta">${r?`<span class="pill">✓ ${fmtD(r.date)} · ${r.ok}/${r.all} richtig</span>`:'<span class="pill">neu</span>'}</span></span></button>`}).join('')}</div>
+  <p class="foot">„Leicht“: kurze Sätze zum Selberlesen. „Lang“: dieselbe Geschichte mit mehr Text. Die Fragen sind gleich. Jeden Tag kommt die nächste neue Geschichte. Wenn alle gelesen sind, beginnen sie wieder von vorne – beim zweiten Lesen geht es schneller und sicherer.</p>`;
+  app.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openStory(b.dataset.open)));
+  app.querySelectorAll('[data-lvl]').forEach(b=>b.addEventListener('click',()=>{store.level=b.dataset.lvl;save();render()}));
+}
+
+function openStory(id){const s=STORIES.find(x=>x.id===id);
+  view={screen:'story',sid:id,t0:Date.now(),saved:false,sa:s.qs.map(q=>({tries:0,done:false,ok:false,wrongs:[],pick:[],val:'',msg:'',
+    ch:q.t==='rf'?['Richtig','Falsch']:q.t==='order'?mixOrder(q.items.length):q.w?shuffle([q.a,...q.w]):null}))};
+  render();window.scrollTo(0,0)}
+
+function qHTML(s,i){const q=s.qs[i],st=view.sa[i];let body='';
+  const lab=`<span class="qlab">${i+1} · ${QLABEL[q.t]}</span>`;
+  if(['mc','word','why','rf'].includes(q.t)){
+    const right=q.t==='rf'?(q.a?'Richtig':'Falsch'):q.a;
+    body=`<p class="qq">${q.t==='rf'?'„'+q.q+'“':q.q}</p><div class="choices${q.t==='rf'?'':' stack'}">${st.ch.map((c,k)=>{
+      const cls=st.done&&c===right?'right':st.wrongs.includes(c)?'wrong':'';
+      return `<button class="choice ${cls}" data-act="ch" data-i="${i}" data-v="${k}" ${st.done||st.wrongs.includes(c)?'disabled':''}>${c}</button>`}).join('')}</div>`}
+  else if(q.t==='order'){
+    body=st.done?`<p class="qq">Was passierte zuerst, was danach?</p><ol class="picked">${q.items.map(t=>`<li>${t}</li>`).join('')}</ol>`
+    :`<p class="qq">Tippe die Sätze in der richtigen Reihenfolge an.</p>${st.pick.length?`<ol class="picked">${st.pick.map(k=>`<li>${q.items[k]}</li>`).join('')}</ol>`:''}
+      <div class="choices stack">${st.ch.filter(k=>!st.pick.includes(k)).map(k=>`<button class="choice" data-act="op" data-i="${i}" data-k="${k}">${q.items[k]}</button>`).join('')}</div>
+      <div class="btns">${st.pick.length===q.items.length?`<button class="btn" data-act="oc" data-i="${i}">Prüfen</button>`:''}${st.pick.length?`<button class="btn ghost" data-act="or" data-i="${i}">Neu beginnen</button>`:''}</div>`}
+  else if(q.t==='gap'){
+    body=`<p class="qq">Ergänze das fehlende Wort aus der Geschichte:</p><p class="qq gapline">${q.q.replace('___',st.done?`<span class="gap">${esc(q.a[0])}</span>`:'<span class="gap">&nbsp;?&nbsp;</span>')}</p>
+    ${st.done?'':`<div class="row"><input class="ans" id="g${i}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" value="${esc(st.val)}" aria-label="Fehlendes Wort"><button class="btn" data-act="gc" data-i="${i}">Prüfen</button></div>`}`}
+  else if(q.t==='write'){
+    body=`<p class="qq">${q.q}</p>${st.done?`<p class="mine">${esc(st.val)}</p>`:`<textarea class="wr" id="w${i}" placeholder="Schreibe hier deinen Satz …" aria-label="Dein Satz">${esc(st.val)}</textarea><div class="btns"><button class="btn" data-act="ws" data-i="${i}">Speichern</button></div>`}`}
+  return lab+body+st.msg}
+
+function renderStory(){
+  const s=curStory();
+  app.innerHTML=`<button class="back" id="back">← Alle Geschichten</button>
+  <article class="story"><h2 class="stitle">${s.title}</h2><p class="small muted" style="margin:0 0 14px">${minLbl()} · ${isEasy()?'leicht':'lang'} · Thema: ${s.theme}</p>
+    ${isEasy()&&SAY.on?'<p class="tip-say">Lies zuerst allein. Wenn ein Satz schwierig ist, tippe darauf – dann hörst du ihn.</p>':''}
+    <aside class="panel words"><h3>Wörter, die dir helfen</h3><dl>${(isEasy()?EASY[s.id].w:s.words).map(([w,e])=>`<div><dt>${w}</dt><dd>${e}</dd></div>`).join('')}</dl></aside>
+    ${s.parts.map((p,pi)=>`<figure class="pic">${p.img()}</figure>`+(isEasy()?`<p class="read easy">${EASY[s.id].p[pi].map(t=>`<span class="sent"${SAY.on?' role="button" tabindex="0"':''}>${t}</span>`).join('')}</p>`:p.p.map(t=>`<p class="read">${t}</p>`).join(''))).join('')}
+    <p class="end">Ende</p></article>
+  <section class="qwrap"><h3 class="sec">Fragen zur Geschichte</h3><p class="small muted" style="margin-top:-4px">${s.qs.length-1} Fragen und ein eigener Satz. Du darfst im Text nachschauen!</p>
+    ${s.qs.map((q,i)=>`<div class="panel sq" id="sq${i}">${qHTML(s,i)}</div>`).join('')}<div id="sum"></div></section>`;
+  document.getElementById('back').onclick=()=>{view={screen:'list'};render();window.scrollTo(0,0)};
+  app.onclick=storyClick;
+  app.onkeydown=e=>{if(e.key==='Enter'&&e.target.id&&e.target.id.startsWith('g')){e.preventDefault();const b=e.target.parentNode.querySelector('[data-act="gc"]');if(b)b.click()}};
+  updateSum(s);
+}
+
+function finishQ(st,ok,html){st.done=true;st.ok=ok;st.msg=fbx(ok?'ok':'no',html)}
+function storyClick(e){const se=e.target.closest&&e.target.closest('.sent');if(se){say(se.textContent,se);return}
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const s=curStory(),i=+b.dataset.i,q=s.qs[i],st=view.sa[i],act=b.dataset.act;if(st.done)return;
+  if(act==='ch'){const c=st.ch[+b.dataset.v],right=q.t==='rf'?(q.a?'Richtig':'Falsch'):q.a;
+    if(c===right)finishQ(st,true,'<strong>Richtig!</strong>');
+    else{st.wrongs.push(c);st.tries++;if(q.t==='rf'||st.tries>=2)finishQ(st,false,`Die richtige Antwort ist: <strong>${right}</strong>. Lies die Stelle in der Geschichte nochmal.`);else st.msg=fbx('no','Noch nicht. Lies im Text nach und versuch es nochmal.')}}
+  else if(act==='op'){st.pick.push(+b.dataset.k);st.msg=''}
+  else if(act==='or'){st.pick=[]}
+  else if(act==='oc'){if(st.pick.every((k,j)=>k===j))finishQ(st,true,'<strong>Richtig!</strong> Genau so war es.');
+    else{st.tries++;if(st.tries>=2)finishQ(st,false,'So war die richtige Reihenfolge – oben siehst du sie.');else{st.pick=[];st.msg=fbx('no','Noch nicht ganz. Überlege: Was passierte ganz am Anfang?')}}}
+  else if(act==='gc'){const v=document.getElementById('g'+i).value;st.val=v;
+    if(!v.trim())st.msg=fbx('tip','Schreib zuerst ein Wort ins Feld.');
+    else if(q.a.some(x=>norm(x)===norm(v)))finishQ(st,true,'<strong>Richtig!</strong>');
+    else{st.tries++;if(st.tries>=2)finishQ(st,false,`Das fehlende Wort ist: <strong>${q.a[0]}</strong>.`);else st.msg=fbx('no','Noch nicht. Suche den Satz in der Geschichte.')}}
+  else if(act==='ws'){const v=document.getElementById('w'+i).value.trim();st.val=v;
+    if(v.split(/\s+/).filter(Boolean).length<4)st.msg=fbx('tip','Schreibe einen ganzen Satz mit mindestens 4 Wörtern.');
+    else{store.writes.unshift({d:dkey(),id:s.id,q:q.q,text:v});store.writes=store.writes.slice(0,300);save();
+      finishQ(st,true,`<strong>Gespeichert!</strong> Lies deinen Satz Mama oder Papa vor.<span class="why">So könnte man es auch sagen: „${q.m}“</span>`)}}
+  const box=document.getElementById('sq'+i);box.innerHTML=qHTML(s,i);
+  const inp=box.querySelector('input.ans');if(inp&&!st.done){inp.focus();inp.select()}
+  updateSum(s);
+}
+
+function updateSum(s){
+  const all=view.sa.every(x=>x.done),el=document.getElementById('sum');if(!el)return;
+  if(!all){const n=view.sa.filter(x=>x.done).length;el.innerHTML=`<p class="small muted" style="text-align:center">${n} von ${s.qs.length} beantwortet</p>`;return}
+  const scored=s.qs.map((q,i)=>[q,view.sa[i]]).filter(([q])=>q.t!=='write'),ok=scored.filter(([,x])=>x.ok).length,tot=scored.length;
+  const min=Math.max(1,Math.round((Date.now()-view.t0)/60000));
+  if(!view.saved){const k=dkey(),D=store.days[k]=store.days[k]||emptyDay();D.g={id:s.id,title:s.title,ok,all:tot,min,lvl:store.level};
+    store.reads[s.id]={date:k,ok,all:tot};store.stars.lesen=(store.stars.lesen||0)+ok;save();view.saved=true;
+    document.getElementById('total').textContent=total()}
+  el.innerHTML=`<section class="panel done"><h3>Geschafft!</h3><p class="big3">${ok} von ${tot} richtig</p><p class="small muted">Lese- und Fragezeit: ca. ${min} Minuten · <span class="star">★</span> +${ok}</p>
+    <p>${ok===tot?'Perfekt! Du hast ganz genau gelesen.':ok>=tot-2?'Sehr gut gelesen!':'Gut gemacht. Morgen geht es noch besser – lies die Geschichte ruhig nochmal.'}</p>
+    <div class="btns"><button class="btn" id="tolist">Zurück zu den Geschichten</button></div></section>`;
+  document.getElementById('tolist').onclick=()=>{view={screen:'list'};render();window.scrollTo(0,0)};
+}
+
+render();
+</script>
+</body>
+</html>
