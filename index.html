@@ -1,11 +1,6 @@
-<!doctype html>
-<html lang="de">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Denkheft">
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Denkheft</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@600;800&family=Lexend:wght@400;500;600&family=Andika:wght@400;700&display=swap">
@@ -14,7 +9,7 @@
 :root{
   --bg:#eef2f7; --paper:#ffffff; --ink:#1b2438; --muted:#59657e; --line:#d6dfeb; --grid:rgba(47,91,211,.10);
   --mathe:#2f5bd3; --mathe-soft:#e7eefd; --deutsch:#0d8768; --deutsch-soft:#e0f3ec;
-  --fort:#a8670b; --fort-soft:#fbefd9; --lesen:#a33d72; --lesen-soft:#f8e4ef; --good:#1d8a4a; --good-soft:#e2f5e9; --bad:#c03f2b; --bad-soft:#fbe8e4; --star:#d99a00;
+  --fort:#a8670b; --fort-soft:#fbefd9; --nmg:#6a4fcf; --nmg-soft:#ece8fd; --lesen:#a33d72; --lesen-soft:#f8e4ef; --good:#1d8a4a; --good-soft:#e2f5e9; --bad:#c03f2b; --bad-soft:#fbe8e4; --star:#d99a00;
   --f-display:"Grandstander","Comic Sans MS","Trebuchet MS",sans-serif;
   --f-body:"Lexend",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-read:"Andika","Lexend",system-ui,sans-serif;
@@ -23,11 +18,11 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0f141d; --paper:#171f2c; --ink:#e7ecf5; --muted:#9ba7bd; --line:#2b3648; --grid:rgba(124,156,255,.09);
   --mathe:#86a3ff; --mathe-soft:#1e2944; --deutsch:#45cba4; --deutsch-soft:#14322a;
-  --fort:#f2bd4b; --fort-soft:#3a2d10; --lesen:#f08bc4; --lesen-soft:#3a1a2c; --good:#52c882; --good-soft:#15321f; --bad:#ff8b74; --bad-soft:#3a1d17; --star:#f4c445; color-scheme:dark}}
+  --fort:#f2bd4b; --fort-soft:#3a2d10; --nmg:#a996ff; --nmg-soft:#2a2448; --lesen:#f08bc4; --lesen-soft:#3a1a2c; --good:#52c882; --good-soft:#15321f; --bad:#ff8b74; --bad-soft:#3a1d17; --star:#f4c445; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0f141d; --paper:#171f2c; --ink:#e7ecf5; --muted:#9ba7bd; --line:#2b3648; --grid:rgba(124,156,255,.09);
   --mathe:#86a3ff; --mathe-soft:#1e2944; --deutsch:#45cba4; --deutsch-soft:#14322a;
-  --fort:#f2bd4b; --fort-soft:#3a2d10; --lesen:#f08bc4; --lesen-soft:#3a1a2c; --good:#52c882; --good-soft:#15321f; --bad:#ff8b74; --bad-soft:#3a1d17; --star:#f4c445; color-scheme:dark}
+  --fort:#f2bd4b; --fort-soft:#3a2d10; --nmg:#a996ff; --nmg-soft:#2a2448; --lesen:#f08bc4; --lesen-soft:#3a1a2c; --good:#52c882; --good-soft:#15321f; --bad:#ff8b74; --bad-soft:#3a1d17; --star:#f4c445; color-scheme:dark}
 
 html,body{min-height:100%}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -42,6 +37,9 @@ body[data-subject="lesen"]{--accent:var(--lesen);--accent-soft:var(--lesen-soft)
 body[data-subject="fort"]{--accent:var(--fort);--accent-soft:var(--fort-soft)}
 body[data-subject="deutsch"]{--accent:var(--deutsch);--accent-soft:var(--deutsch-soft);
   background-image:repeating-linear-gradient(to bottom,transparent 0 29px,var(--grid) 29px 30px);background-size:auto}
+body[data-subject="schule-mathe"]{--accent:var(--mathe);--accent-soft:var(--mathe-soft)}
+body[data-subject="schule-deutsch"]{--accent:var(--deutsch);--accent-soft:var(--deutsch-soft);background-image:repeating-linear-gradient(to bottom,transparent 0 29px,var(--grid) 29px 30px);background-size:auto}
+body[data-subject="schule-nmg"]{--accent:var(--nmg);--accent-soft:var(--nmg-soft);background-image:radial-gradient(var(--grid) 1.5px,transparent 1.6px);background-size:22px 22px}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
 *{box-sizing:border-box}
 button,input{font:inherit;color:inherit}
@@ -56,13 +54,14 @@ button,input{font:inherit;color:inherit}
 .total{display:flex;align-items:center;gap:6px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--muted);font-size:.95rem}
 .total b{color:var(--ink)}
 .star{color:var(--star)}
-.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:var(--bg);padding:4px;border-radius:12px}
-.tab{border:0;background:transparent;padding:9px 2px;min-width:0;border-radius:9px;font-weight:600;cursor:pointer;color:var(--muted);font-family:var(--f-display);font-size:clamp(.88rem,3.6vw,1.05rem)}
+.tabs{display:grid;grid-template-columns:repeat(5,auto);gap:6px;background:var(--bg);padding:4px;border-radius:12px}
+.tab{border:0;background:transparent;padding:9px 4px;min-width:0;border-radius:9px;font-weight:600;cursor:pointer;color:var(--muted);font-family:var(--f-display);font-size:clamp(.8rem,3.4vw,1.05rem)}
 .tab[aria-selected="true"]{background:var(--paper);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .tab[data-t="mathe"][aria-selected="true"]{color:var(--mathe)}
 .tab[data-t="deutsch"][aria-selected="true"]{color:var(--deutsch)}
 .tab[data-t="fort"][aria-selected="true"]{color:var(--fort)}
 .tab[data-t="lesen"][aria-selected="true"]{color:var(--lesen)}
+.tab[data-t="schule"][aria-selected="true"]{color:var(--nmg)}
 
 .wrap{padding-block:18px 48px}
 .intro{margin:2px 0 16px;color:var(--muted);max-width:60ch}
@@ -207,10 +206,15 @@ textarea{width:100%;min-height:90px;font:inherit;font-size:.8rem;border:2px soli
 .sent:hover,.sent:focus-visible{background:var(--accent-soft)}
 .sent.speaking{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
 .tip-say{font-size:.9rem;background:var(--accent-soft);border-radius:10px;padding:8px 12px;margin:0 0 12px}
+.seg.seg3{display:grid;grid-template-columns:repeat(3,1fr);width:100%;max-width:420px}
+.q .emo{font-size:3.2rem;line-height:1.2;display:inline-block}
+.q .row-emo{font-size:1.75rem;line-height:1.45;letter-spacing:1px;display:inline-block;margin:4px 0}
+.choices.emo .choice{font-size:2.2rem;padding:8px 6px;line-height:1.2}
+.syl span{margin:0 .06em}.syl span:nth-child(odd){color:var(--mathe)}.syl span:nth-child(even){color:var(--bad)}
+.btn.say{padding:9px 14px}
+.tag.n{background:var(--nmg-soft);color:var(--nmg)} .fill.n{background:var(--nmg)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
-</head>
-<body>
 <header class="top">
   <div class="top-in">
     <div class="brand">
@@ -222,6 +226,7 @@ textarea{width:100%;min-height:90px;font:inherit;font-size:.8rem;border:2px soli
       <button class="tab" role="tab" data-t="deutsch" id="tab-deutsch">Deutsch</button>
       <button class="tab" role="tab" data-t="lesen" id="tab-lesen">Lesen</button>
       <button class="tab" role="tab" data-t="fort" id="tab-fort">Fortschritt</button>
+      <button class="tab" role="tab" data-t="schule" id="tab-schule">Schule</button>
     </div>
   </div>
 </header>
@@ -547,6 +552,256 @@ const DEUTSCH=[
  parent:'Writing is not auto-checked. Read the story together with the checklist and praise one good word or idea first.',
  gen(){const [t,w]=pick(IDEEN);return {q:`<div class="text"><b>Titel:</b> ${t}<br><b>Benutze diese Wörter:</b> ${w.join(', ')}</div>Schreibe 8 bis 12 Sätze in dein Heft. Prüfe danach:<ul class="check"><li>Einleitung: Wer? Wo? Wann?</li><li>Ein spannender Höhepunkt</li><li>Ein Schluss</li><li>Vergangenheit (ging, sah, rief …)</li><li>Verschiedene Satzanfänge</li><li>Wörtliche Rede mit „ … “</li></ul>`,type:'free'}}}
 ];
+
+
+/* ---------- SCHULE: Themen aus dem 2. Quintalsbrief (1. Klasse, Herbst- bis Weihnachtsferien 2026) ---------- */
+const emoRow=(e,n)=>{let s='';for(let i=0;i<n;i++){s+=e;if(i%5===4&&i<n-1)s+='&nbsp; '}return `<span class="row-emo">${s}</span>`};
+const sylHTML=s=>`<span class="syl">${s.map(x=>`<span>${x}</span>`).join('')}</span>`;
+const dotField=n=>{let s='';for(let r=0;r<2;r++)for(let c=0;c<10;c++){const i=r*10+c,x=16+c*24+(c>=5?10:0),y=16+r*26;
+  s+=i<n?`<circle cx="${x}" cy="${y}" r="9" fill="${c<5?'#e5483d':'#3b82c4'}"/>`:`<circle cx="${x}" cy="${y}" r="9" fill="none" stroke="var(--line)" stroke-width="1.5"/>`}
+  return `<div class="svgbox"><svg width="262" height="60" viewBox="0 0 262 60" role="img" aria-label="Punktefeld">${s}</svg></div>`};
+const SHAPE={Kreis:'<circle cx="60" cy="50" r="38"/>',Dreieck:'<polygon points="60,10 104,88 16,88"/>',Quadrat:'<rect x="22" y="12" width="76" height="76"/>',Rechteck:'<rect x="6" y="24" width="108" height="56"/>'};
+const shapeSVG=k=>`<div class="svgbox"><svg width="120" height="100" viewBox="0 0 120 100" role="img" aria-label="Form" style="fill:var(--accent-soft);stroke:var(--accent);stroke-width:4;stroke-linejoin:round">${SHAPE[k]}</svg></div>`;
+const optsN=(right,pool,n=3)=>shuffle([right,...shuffle(pool.filter(x=>x!==right)).slice(0,n-1)]);
+const lautSplit=w=>w.match(/(sch|ei|au|eu|ie|ch|[a-zäöü])/gi).join(' – ');
+const wordTip=w=>SAY.on?'':`<br><small class="muted">(${w})</small>`;
+
+const ZW=['null','eins','zwei','drei','vier','fünf','sechs','sieben','acht','neun','zehn','elf','zwölf','dreizehn','vierzehn','fünfzehn','sechzehn','siebzehn','achtzehn','neunzehn','zwanzig'];
+const ZIFF=['Oben beginnen und im Bogen nach links ganz rundherum, bis du wieder oben bist.','Kleiner Strich schräg nach oben, dann gerade nach unten.','Oben einen Bogen nach rechts, schräg nach unten links, dann ein Strich nach rechts.','Oben beginnen: zwei Bäuche nach rechts, einer oben, einer unten.','Gerade nach unten, nach rechts, dann den langen Strich von oben nach unten.','Zuerst kurz nach unten, dann den Bauch nach rechts, zum Schluss oben das Dach.','Oben beginnen, im grossen Bogen nach unten links, unten einen Kreis schliessen.','Oben ein Strich nach rechts, dann schräg nach unten.','Oben beginnen, wie eine Schlange nach unten und wieder hinauf.','Oben einen Kreis, dann gerade nach unten.'];
+const PLAT=[['▶️','Starten'],['🔊','Anhören'],['✅','Fertig'],['⬅️','Zurück'],['🏠','Zur Startseite'],['❓','Hilfe'],['🔄','Nochmal'],['⏸️','Pause']];
+const PLAT_Q=[['Du weisst bei einer Aufgabe nicht weiter. Was machst du?','Den Hilfe-Knopf drücken oder fragen',['Das Tablet ausschalten','Ganz viele Knöpfe drücken']],['Wie gehst du mit dem Tablet um?','Vorsichtig und mit sauberen Händen',['Mit Znüni-Fingern','Es auf den Boden legen']],['Du bist mit der Aufgabe fertig. Was drückst du?','✅ Fertig',['❓ Hilfe','⏸️ Pause']],['Du willst die Aufgabe noch einmal hören. Was drückst du?','🔊 Anhören',['🏠 Startseite','⬅️ Zurück']]];
+const platGen=()=>{if(Math.random()<.6){const [e,a]=pick(PLAT);return {q:`<span class="emo">${e}</span><br>Was macht dieser Knopf?`,say:'Was macht dieser Knopf?',type:'choice',choices:optsN(a,PLAT.map(x=>x[1])),a,hint:'Denk an die Lernplattform in der Schule. Was passiert, wenn du darauf tippst?',explain:`${e} heisst: ${a}`}}
+  const [q,a,w]=pick(PLAT_Q);return {q,type:'choice',stack:true,choices:shuffle([a,...w]),a,hint:'Was ist gut für dich und das Tablet?',explain:a}};
+
+/* Deutsch data */
+const SILBEN=[['Banane','🍌',['Ba','na','ne']],['Apfel','🍎',['Ap','fel']],['Hund','🐕',['Hund']],['Katze','🐈',['Kat','ze']],['Schokolade','🍫',['Scho','ko','la','de']],['Auto','🚗',['Au','to']],['Blume','🌸',['Blu','me']],['Sonne','☀️',['Son','ne']],['Elefant','🐘',['E','le','fant']],['Maus','🐭',['Maus']],['Tomate','🍅',['To','ma','te']],['Rakete','🚀',['Ra','ke','te']],['Lama','🦙',['La','ma']],['Igel','🦔',['I','gel']],['Ball','⚽',['Ball']],['Eis','🍦',['Eis']],['Tiger','🐯',['Ti','ger']],['Krokodil','🐊',['Kro','ko','dil']],['Ananas','🍍',['A','na','nas']],['Pinguin','🐧',['Pin','gu','in']],['Hase','🐰',['Ha','se']],['Zitrone','🍋',['Zi','tro','ne']],['Mond','🌙',['Mond']],['Kuchen','🍰',['Ku','chen']],['Dino','🦕',['Di','no']],['Schmetterling','🦋',['Schmet','ter','ling']],['Bus','🚌',['Bus']],['Fisch','🐟',['Fisch']],['Schnecke','🐌',['Schne','cke']],['Melone','🍉',['Me','lo','ne']],['Gitarre','🎸',['Gi','tar','re']],['Kamel','🐪',['Ka','mel']],['Frosch','🐸',['Frosch']],['Baum','🌳',['Baum']],['Haus','🏠',['Haus']],['Kerze','🕯️',['Ker','ze']],['Tannenbaum','🎄',['Tan','nen','baum']],['Geschenk','🎁',['Ge','schenk']]];
+const LESEW=[['Oma','👵',['O','ma']],['Opa','👴',['O','pa']],['Mama','👩',['Ma','ma']],['Eis','🍦',['Eis']],['Ei','🥚',['Ei']],['Auto','🚗',['Au','to']],['Sofa','🛋️',['So','fa']],['Maus','🐭',['Maus']],['Rose','🌹',['Ro','se']],['Nase','👃',['Na','se']],['Hut','🎩',['Hut']],['Mond','🌙',['Mond']],['Igel','🦔',['I','gel']],['Lama','🦙',['La','ma']],['Sonne','☀️',['Son','ne']],['Ball','⚽',['Ball']],['Haus','🏠',['Haus']],['Baum','🌳',['Baum']],['Fisch','🐟',['Fisch']],['Hase','🐰',['Ha','se']],['Dino','🦕',['Di','no']],['Tomate','🍅',['To','ma','te']],['Banane','🍌',['Ba','na','ne']],['Hose','👖',['Ho','se']],['Limo','🥤',['Li','mo']]];
+const LESES=[['Die Sonne ist gelb.','Ja'],['Ein Hund kann bellen.','Ja'],['Eis ist heiss.','Nein'],['Ein Fisch kann laufen.','Nein'],['Im Winter kann es schneien.','Ja'],['Ein Auto hat Räder.','Ja'],['Eine Kuh kann fliegen.','Nein'],['Bananen sind blau.','Nein'],['Ein Ball ist rund.','Ja'],['Ein Igel hat Stacheln.','Ja'],['Eine Rose ist eine Blume.','Ja'],['Ein Ei ist eckig.','Nein'],['Die Maus ist grösser als der Elefant.','Nein'],['Am Abend gehe ich ins Bett.','Ja'],['Ein Hase hat lange Ohren.','Ja'],['Der Mond ist aus Käse.','Nein']];
+const ANLAUT=[['Affe','🐒','A'],['Banane','🍌','B'],['Dino','🦕','D'],['Elefant','🐘','E'],['Fisch','🐟','F'],['Gabel','🍴','G'],['Hase','🐰','H'],['Igel','🦔','I'],['Jacke','🧥','J'],['Kuchen','🍰','K'],['Löwe','🦁','L'],['Maus','🐭','M'],['Nase','👃','N'],['Orange','🍊','O'],['Pinguin','🐧','P'],['Rakete','🚀','R'],['Sonne','☀️','S'],['Tomate','🍅','T'],['Uhr','⌚','U'],['Wal','🐋','W'],['Zebra','🦓','Z'],['Ei','🥚','Ei'],['Auto','🚗','Au'],['Schaf','🐑','Sch'],['Mond','🌙','M'],['Apfel','🍎','A'],['Lama','🦙','L']];
+const ENDLAUT=[['Sofa','🛋️','a'],['Lama','🦙','a'],['Nase','👃','e'],['Rose','🌹','e'],['Ball','⚽','l'],['Igel','🦔','l'],['Hut','🎩','t'],['Bett','🛏️','t'],['Zelt','⛺','t'],['Pilz','🍄','z'],['Bus','🚌','s'],['Fisch','🐟','sch'],['Kamel','🐪','l'],['Auto','🚗','o'],['Dino','🦕','o'],['Melone','🍉','e'],['Huhn','🐔','n'],['Schwan','🦢','n'],['Maus','🐭','s'],['Baum','🌳','m'],['Wolf','🐺','f']];
+const INLAUT=[['Ball','⚽','a'],['Hut','🎩','u'],['Fisch','🐟','i'],['Bus','🚌','u'],['Bett','🛏️','e'],['Pilz','🍄','i'],['Zelt','⛺','e'],['Wolf','🐺','o'],['Schaf','🐑','a'],['Mond','🌙','o'],['Hund','🐕','u'],['Hand','✋','a'],['Fuss','🦶','u'],['Maus','🐭','au'],['Haus','🏠','au'],['Baum','🌳','au'],['Bein','🦵','ei']];
+const SCHREIBW=[['Mama','👩'],['Papa','👨'],['Oma','👵'],['Opa','👴'],['Auto','🚗'],['Sofa','🛋️'],['Nase','👃'],['Rose','🌹'],['Hose','👖'],['Dose','🥫'],['Lama','🦙'],['Igel','🦔'],['Hut','🎩'],['Tomate','🍅'],['Rakete','🚀'],['Banane','🍌'],['Kamel','🐪'],['Dino','🦕'],['Eis','🍦'],['Ei','🥚'],['Maus','🐭'],['Haus','🏠'],['Baum','🌳'],['Wal','🐋'],['Limo','🥤'],['Salat','🥗']];
+const ABC='ABDEFGHIJKLMNOPRSTUWZ';
+const SIM={b:'dp',d:'bq',p:'qb',m:'nw',n:'mu',u:'nv',a:'oe',e:'ao',i:'lj',l:'it',h:'nk',f:'tk',t:'fl',g:'qj',k:'hx',o:'ae',r:'nt',s:'zc',w:'mv',z:'sx',j:'ig'};
+const FRAGEW=[['___ heisst du?','Wie',['Wo','Wann']],['___ alt bist du?','Wie',['Wo','Wer']],['___ wohnst du?','Wo',['Wer','Was']],['___ hast du Geburtstag?','Wann',['Wer','Was']],['___ kommt mit auf den Spielplatz?','Wer',['Wo','Wann']],['___ liegt in deiner Schultasche?','Was',['Wann','Wo']],['___ ist meine Mütze?','Wo',['Wann','Wer']],['___ weinst du?','Warum',['Wer','Welche']]];
+const ERZ=[['vom Kinobesuch','Was habt ihr im Kino gesehen? Was war lustig oder spannend?'],['vom Waldtag','Was hast du im Wald gefunden, gehört oder gespielt?'],['von der Erzählnacht','Welche Geschichte hast du gehört? Wer kam darin vor?'],['vom Kerzenziehen','Wie hast du deine Kerze gemacht? Welche Farben hat sie?'],['vom Räbenschnitzen','Was hast du in deine Räbe geschnitzt?'],['von deinem Wochenende','Was hast du am Wochenende gemacht?'],['von deinem Lieblingsspiel','Wie spielt man es? Erkläre es so, dass es jemand nachmachen kann.'],['von der Pause','Was hast du heute in der Pause gespielt? Mit wem?']];
+
+/* NMG data */
+const KOERPER=[['👁️','Auge'],['👂','Ohr'],['👃','Nase'],['👄','Mund'],['✋','Hand'],['🦶','Fuss'],['🦵','Bein'],['🦷','Zahn'],['💪','Arm']];
+const SINNE=[['Womit hörst du?','Mit den Ohren',['Mit der Nase','Mit den Füssen']],['Womit riechst du?','Mit der Nase',['Mit den Ohren','Mit den Händen']],['Womit siehst du?','Mit den Augen',['Mit dem Mund','Mit den Ohren']],['Womit schmeckst du?','Mit dem Mund',['Mit den Augen','Mit den Füssen']],['Womit fühlst du, ob etwas weich ist?','Mit den Händen',['Mit den Ohren','Mit der Nase']]];
+const FAMILIE=[['Die Mutter von Mama ist meine …','Oma',['Tante','Schwester']],['Der Vater von Papa ist mein …','Opa',['Onkel','Bruder']],['Die Schwester von Mama ist meine …','Tante',['Oma','Cousine']],['Der Bruder von Papa ist mein …','Onkel',['Opa','Cousin']],['Das Kind von meiner Tante ist mein Cousin oder meine …','Cousine',['Oma','Tante']]];
+const ICH=[['Mein Steckbrief','Male dich auf ein Blatt und schreibe deinen Namen dazu. Erzähle: Wie alt bist du? Was spielst du gern? Was isst du gern?'],['Gleich und anders','Schau dich und ein anderes Kind an. Was ist gleich? Was ist anders? (Haare, Augen, Grösse, Hobbys)'],['Das kann ich gut','Erzähle drei Dinge, die du schon gut kannst.'],['Meine Familie','Male deine Familie. Wer gehört dazu? Wie heissen alle?'],['Wir sind eine Klasse','Was macht ihr in der Klasse alle zusammen? Was gefällt dir in deiner Klasse?']];
+const UMG=[['In welchem Ort wohnst du?','Adliswil',['Luzern','Bern']],['In welchem Land lebst du?','Schweiz',['Italien','Japan']],['In welchem Kanton liegt Adliswil?','Zürich',['Bern','Luzern']],['Welcher Fluss fliesst durch Adliswil?','Sihl',['Rhein','Aare']],['Womit fährst du von Adliswil auf die Felsenegg?','Mit der Seilbahn',['Mit dem Schiff','Mit dem Zug']],['Wie heisst dein Schulhaus?','Wilacker',['Felsenegg','Bahnhof']],['Wo kaufst du Brot?','In der Bäckerei',['Auf der Post','Im Bahnhof']],['Wo fährt der Zug ab?','Am Bahnhof',['Im Wald','Auf dem Spielplatz']],['Wo gibt es Rutschbahn und Schaukel?','Auf dem Spielplatz',['In der Bäckerei','Auf der Post']],['Wo kannst du Bücher ausleihen?','In der Bibliothek',['Im Schwimmbad','In der Bäckerei']],['Was trägst du in der 1. Klasse auf dem Schulweg?','Die Leuchtweste',['Eine Sonnenbrille','Einen Velohelm']],['Bevor du über die Strasse gehst: „Warte, luege, lose …“','laufe',['renne','springe']],['Wo gehst du am sichersten über die Strasse?','Auf dem Fussgängerstreifen',['Zwischen parkierten Autos','Hinter dem Bus']]];
+const FEEL=[['😀','fröhlich'],['😢','traurig'],['😠','wütend'],['😨','ängstlich'],['😲','überrascht'],['😴','müde']];
+const FEELSIT=[['Du bekommst ein Geschenk.','fröhlich'],['Dein Eis fällt auf den Boden.','traurig'],['Ein Kind nimmt dir einfach dein Spielzeug weg.','wütend'],['Es donnert in der Nacht ganz laut.','ängstlich'],['Opa springt hinter der Tür hervor: „Buh!“','überrascht'],['Nach dem langen Waldtag liegst du im Bett.','müde'],['Deine Freundin zieht in einen anderen Ort.','traurig'],['Du darfst mit zum Kerzenziehen.','fröhlich']];
+const KOMPL=[['Du hast ein schönes Bild gemalt.','Ja'],['Du kannst toll rennen!','Ja'],['Danke für deine Hilfe, du bist lieb.','Ja'],['Dein Bild ist doof.','Nein'],['Geh weg!','Nein'],['Ich mag, wie du lachst.','Ja'],['Du bist zu langsam.','Nein'],['Du hattest eine super Idee!','Ja'],['Das kannst du sowieso nicht.','Nein']];
+const NETT=[['Ein Kind ist hingefallen und weint. Was sagst du?','Hast du dir weh getan? Ich helfe dir.',['Selber schuld!','Hör auf zu weinen!']],['Dein Freund hat einen hohen Turm gebaut. Was sagst du?','Wow, dein Turm ist toll!',['Meiner ist besser.','Langweilig.']],['Ein neues Kind schnuppert in deiner Klasse. Was sagst du?','Hallo! Willst du mit mir spielen?',['Du gehörst nicht zu uns.','Geh weg!']],['Jemand hat dir geholfen. Was sagst du?','Danke, das war lieb von dir!',['Endlich!','Das hätte ich auch allein gekonnt.']]];
+
+const SFREE=(o)=>Object.assign({type:'free',freeTitle:'Aufgabe',doneLabel:'Fertig ✓',nextLabel:'Andere Aufgabe',doneMsg:'Super gemacht!'},o);
+
+const SCHULE={
+mathe:[
+{id:'s_vergl',glyph:'&lt; &gt;',title:'Zahlen vergleichen und ordnen',sub:'Grösser, kleiner, Nachbarzahlen',week:'2. Quintal',
+ kid:['Welche Zahl ist <b>grösser</b>? Die Zahl, die beim Zählen <b>später</b> kommt.','Das Zeichen ist wie ein hungriges Krokodil: Das Maul ist immer offen zur <b>grösseren</b> Zahl. 8 <b>&gt;</b> 3 und 3 <b>&lt;</b> 8.'],
+ example:'12 <b>&gt;</b> 9 &nbsp; · &nbsp; 5 <b>&lt;</b> 15 &nbsp; · &nbsp; 7 <b>=</b> 7<br>Nachbarzahlen: <b>13</b>, 14, <b>15</b>',
+ parent:'Use a number line or a staircase: "Which number comes later?" The crocodile picture helps children remember < and >.',
+ gen(){const v=ri(1,4);
+  if(v===1){let a=ri(0,20),b;do{b=ri(0,20)}while(b===a);return {q:`Welche Zahl ist <b>grösser</b>?<br><span class="big">${a} &nbsp; oder &nbsp; ${b}</span>`,type:'choice',choices:[String(a),String(b)],a:String(Math.max(a,b)),hint:'Welche Zahl kommt beim Zählen später?',explain:`${Math.max(a,b)} ist grösser als ${Math.min(a,b)}.`}}
+  if(v===2){const a=ri(0,20),b=Math.random()<.2?a:ri(0,20),s=a>b?'>':a<b?'<':'=';return {q:`Welches Zeichen passt?<br><span class="big">${a} <span class="gap">?</span> ${b}</span>`,say:`${a} und ${b}. Welches Zeichen passt?`,type:'choice',choices:['<','>','='],a:s,hint:'Das Krokodil frisst immer die grössere Zahl. Sind beide gleich? Dann =',explain:`${a} ${s} ${b}`}}
+  if(v===3){const t=ri(1,3);
+   if(t===1){const n=ri(0,19);return {q:`Welche Zahl kommt <b>nach</b> <span class="big">${n}</span>?`,type:'num',a:n+1,hint:'Zähle weiter: eins mehr.',explain:`Nach ${n} kommt ${n+1}.`}}
+   if(t===2){const n=ri(1,20);return {q:`Welche Zahl kommt <b>vor</b> <span class="big">${n}</span>?`,type:'num',a:n-1,hint:'Eins weniger.',explain:`Vor ${n} kommt ${n-1}.`}}
+   const n=ri(0,18);return {q:`Welche Zahl liegt <b>zwischen</b> <span class="big">${n}</span> und <span class="big">${n+2}</span>?`,type:'num',a:n+1,hint:'Zähle von der ersten Zahl eins weiter.',explain:`${n}, ${n+1}, ${n+2}`}}
+  const ns=shuffle([...Array(21).keys()]).slice(0,3),small=Math.random()<.5,a=small?Math.min(...ns):Math.max(...ns);
+  return {q:`Welche Zahl ist die <b>${small?'kleinste':'grösste'}</b>?<br><span class="big">${ns.join(' &nbsp; ')}</span>`,type:'choice',choices:ns.map(String),a:String(a),hint:'Ordne die Zahlen im Kopf von klein nach gross.',explain:`Geordnet: ${ns.slice().sort((x,y)=>x-y).join(' < ')}`}}},
+
+{id:'s_zerl',glyph:'3+4',title:'Zahlen zerlegen',sub:'Zahlenhaus und Schüttelbox',week:'2. Quintal',
+ kid:['Jede Zahl kann man in <b>zwei Teile</b> zerlegen. 7 = 3 + 4 oder 7 = 5 + 2.','Die <b>Zehnerfreunde</b> geben zusammen 10: 1+9, 2+8, 3+7, 4+6, 5+5.'],
+ example:'Zahlenhaus 6: &nbsp; 0+6 · 1+5 · 2+4 · 3+3<br>Schüttelbox: 8 Plättchen, 5 sieht man → <b>3</b> sind versteckt',
+ parent:'Shake 10 counters in a cup and tip them out: how many red, how many white? Knowing the pairs to 10 by heart is the key to fast mental maths later.',
+ gen(){const v=ri(1,3);
+  if(v===1){const n=ri(3,10),a=ri(0,n);return {q:`Zahlenhaus <b>${n}</b><br><span class="big">${n} = ${a} + <span class="gap">?</span></span>`,say:`${n} ist gleich ${a} plus wie viel?`,type:'num',a:n-a,hint:`Zähle von ${a} weiter bis ${n}.`,explain:`${n} = ${a} + ${n-a}`}}
+  if(v===2){const a=ri(1,9);return {q:`Zehnerfreunde<br><span class="big">${a} + <span class="gap">?</span> = 10</span>`,say:`${a} plus wie viel gibt 10?`,type:'num',a:10-a,hint:'Zeige die Zahl mit den Fingern. Wie viele Finger fehlen noch bis 10?',explain:`${a} + ${10-a} = 10`}}
+  const n=ri(4,10),a=ri(1,n-1);return {q:`In der Schüttelbox sind <b>${n}</b> Plättchen. Du siehst diese:<br>${emoRow('🔴',a)}<br>Wie viele sind unter dem Deckel versteckt?`,say:`In der Schüttelbox sind ${n} Plättchen. Du siehst ${a}. Wie viele sind versteckt?`,type:'num',a:n-a,hint:`Zähle von ${a} weiter bis ${n}.`,explain:`${a} + ${n-a} = ${n}`}}},
+
+{id:'s_ziff',glyph:'1 2 3',title:'Ziffern und Mengen',sub:'Zählen und Ziffern schön schreiben',week:'2. Quintal',
+ kid:['Zähle jedes Ding nur <b>einmal</b>. Tippe mit dem Finger darauf.','Ziffern schreibst du immer <b>oben</b> beginnend. Fahre sie zuerst mit dem Finger in der Luft nach.'],
+ example:'🍎🍎🍎🍎🍎 &nbsp; 🍎🍎 → <b>7</b><br>Fünf in einer Gruppe – dann zählst du schneller!',
+ parent:'For counting, encourage grouping in fives. For writing digits, watch the starting point and direction more than neatness; the teacher practises this at stations too.',
+ gen(){const v=ri(1,4);
+  if(v<=2){const n=ri(1,20),e=pick(['🍎','⭐','🐞','🌸','🍓','🐟','🎈','🌰']);return {q:`Wie viele sind es?<br>${emoRow(e,n)}`,say:'Zähle. Wie viele sind es?',type:'num',a:n,hint:'Zähle zuerst die Fünfergruppen: 5, 10, 15 …',explain:`Es sind ${n}.`}}
+  if(v===3){const n=ri(0,12),pool=[...Array(13).keys()].map(String);return {q:`Welche Ziffer ist das?<br><span class="big">${ZW[n]}</span>`,type:'choice',choices:optsN(String(n),pool),a:String(n),hint:'Zähle mit den Fingern bis zu diesem Wort.',explain:`${ZW[n]} = ${n}`}}
+  const d=ri(0,9);return SFREE({q:`<span class="emo" style="font-family:var(--f-read)">${d}</span><br>Schreibe eine ganze Zeile <b>${d}</b> in dein Heft.<ul class="check"><li>So geht's: ${ZIFF[d]}</li><li>Zuerst mit dem Finger in die Luft schreiben.</li><li>Kreise deine schönste ${d} ein.</li></ul>`,say:`Schreibe eine ganze Zeile mit der Ziffer ${d}. ${ZIFF[d]}`,freeTitle:'Schreibaufgabe',doneLabel:'Zeile geschrieben ✓',nextLabel:'Andere Ziffer',doneMsg:'Zeig deine Zeile Mama oder Papa!'})}},
+
+{id:'s_punkte',glyph:'●●',title:'Punktefelder',sub:'Schnell sehen statt zählen',week:'2. Quintal',
+ kid:['Im Zwanzigerfeld sind immer <b>5 rote</b> und <b>5 blaue</b> Punkte in einer Reihe. Eine volle Reihe sind <b>10</b>.','Versuche, die Zahl zu <b>sehen</b>, ohne jeden Punkt zu zählen.'],
+ example:'Eine volle Reihe und 3 rote Punkte → 10 + 3 = <b>13</b>',
+ parent:'This "quick seeing" (Blitzblick) of structured quantities is a step away from counting one by one. Cover the picture after 3 seconds for an extra challenge.',
+ gen(){const v=ri(1,3);
+  if(v===1){const n=ri(1,20);return {q:`Wie viele Punkte siehst du?${dotField(n)}`,say:'Wie viele Punkte siehst du? Schau schnell!',type:'num',a:n,hint:'Eine volle Reihe sind 10. Fünf rote sind 5.',explain:n>10?`10 + ${n-10} = ${n}`:n>5?`5 + ${n-5} = ${n}`:`Es sind ${n}.`}}
+  if(v===2){const n=ri(1,9);return {q:`Wie viele Punkte fehlen bis <b>10</b>?${dotField(n)}`,say:'Wie viele Punkte fehlen, bis die erste Reihe voll ist?',type:'num',a:10-n,hint:'Zähle die leeren Kreise in der ersten Reihe.',explain:`${n} + ${10-n} = 10`}}
+  const n=ri(11,19);return {q:`Wie viele Punkte fehlen bis <b>20</b>?${dotField(n)}`,say:'Wie viele Punkte fehlen bis 20?',type:'num',a:20-n,hint:'Zähle die leeren Kreise in der zweiten Reihe.',explain:`${n} + ${20-n} = 20`}}},
+
+{id:'s_doppel',glyph:'2×',title:'Verdoppeln und Halbieren',sub:'Bis 20',week:'2. Quintal',
+ kid:['<b>Verdoppeln</b> heisst: noch einmal gleich viel dazu. Das Doppelte von 4 ist 4 + 4 = 8.','<b>Halbieren</b> heisst: gerecht in zwei gleiche Teile teilen. Die Hälfte von 8 ist 4.'],
+ example:'Doppelt: 6 + 6 = <b>12</b><br>Hälfte: 14 → 7 und 7 → <b>7</b>',
+ parent:'Use a small mirror next to counters, or share sweets fairly between two plates. Doubles are anchor facts for many later calculations.',
+ gen(){const v=ri(1,3);
+  if(v===1){const n=ri(1,10),e=pick(['🍓','🐞','⭐','🍪']);return {q:`Verdopple <span class="big">${n}</span>${n<=6?`<br>${emoRow(e,n)} &nbsp;|&nbsp; ${emoRow(e,n)}`:''}`,say:`Verdopple ${n}.`,type:'num',a:2*n,hint:`Rechne ${n} + ${n}.`,explain:`${n} + ${n} = ${2*n}`}}
+  if(v===2){const n=ri(1,10);return {q:`Halbiere <span class="big">${2*n}</span>`,say:`Halbiere ${2*n}.`,type:'num',a:n,hint:'Welche Zahl plus die gleiche Zahl gibt das?',explain:`${n} + ${n} = ${2*n}, also ist die Hälfte ${n}.`}}
+  const n=ri(1,10);return {q:`Das Doppelte von <span class="gap">?</span> ist <span class="big">${2*n}</span>.`,say:`Das Doppelte von welcher Zahl ist ${2*n}?`,type:'num',a:n,hint:'Halbiere die Zahl.',explain:`${n} + ${n} = ${2*n}`}}},
+
+{id:'s_rechg',glyph:'+ −',title:'Rechengeschichten',sub:'Erste Plus- und Minusaufgaben',week:'2. Quintal',
+ kid:['Hör gut zu: Kommt etwas <b>dazu</b>? Dann rechnest du <b>plus</b>. Geht etwas <b>weg</b>? Dann rechnest du <b>minus</b>.','Du darfst die Geschichte mit Fingern oder Plättchen nachspielen.'],
+ example:'4 Vögel sitzen auf dem Baum. 3 fliegen dazu.<br>4 + 3 = <b>7</b> Vögel',
+ parent:'Let him retell the story in his own words and act it out before calculating. Then ask him to invent a story for "5 + 2".',
+ gen(){const plus=Math.random()<.55;
+  if(plus){const a=ri(1,9),b=ri(1,Math.min(9,20-a)),T=pick([[`Auf dem Baum sitzen ${a} Vögel. ${b} Vögel fliegen dazu.`,'Wie viele Vögel sind es jetzt?','🐦'],[`Lea hat ${a} Murmeln. Sie bekommt ${b} Murmeln geschenkt.`,'Wie viele Murmeln hat Lea jetzt?','🔵'],[`Im Bus sitzen ${a} Kinder. ${b} Kinder steigen ein.`,'Wie viele Kinder sind jetzt im Bus?','🧒'],[`Auf dem Teller liegen ${a} Äpfel. Mama legt ${b} Äpfel dazu.`,'Wie viele Äpfel sind es jetzt?','🍎'],[`Beim Kerzenziehen macht Tim ${a} rote und ${b} gelbe Kerzen.`,'Wie viele Kerzen sind es zusammen?','🕯️']]);
+   return {q:`${T[0]}<br>${emoRow(T[2],a)}<br><b>${T[1]}</b>`,say:`${T[0]} ${T[1]}`,type:'num',a:a+b,hint:'Es kommt etwas dazu: plus!',explain:`${a} + ${b} = ${a+b}`}}
+  const a=ri(3,15),b=ri(1,Math.min(9,a-1)),T=pick([[`Auf der Wiese sind ${a} Schmetterlinge. ${b} fliegen weg.`,'Wie viele Schmetterlinge sind noch da?','🦋'],[`Ben hat ${a} Ballone. ${b} Ballone platzen.`,'Wie viele Ballone hat Ben noch?','🎈'],[`Auf dem Pausenplatz spielen ${a} Kinder. ${b} Kinder gehen hinein.`,'Wie viele Kinder spielen noch draussen?','🧒'],[`Am Waldtag findet Mia ${a} Tannzapfen. Sie schenkt ${b} ihrem Freund.`,'Wie viele Tannzapfen hat Mia noch?','🌰'],[`Im Korb liegen ${a} Eier. ${b} Eier gehen kaputt.`,'Wie viele Eier sind noch ganz?','🥚']]);
+  return {q:`${T[0]}<br>${emoRow(T[2],a)}<br><b>${T[1]}</b>`,say:`${T[0]} ${T[1]}`,type:'num',a:a-b,hint:'Es geht etwas weg: minus! Decke mit dem Finger ab, was weggeht.',explain:`${a} − ${b} = ${a-b}`}}},
+
+{id:'s_muster',glyph:'🔴🔵',title:'Muster',sub:'Erkennen und weiterlegen',week:'2. Quintal',
+ kid:['Ein Muster <b>wiederholt</b> sich immer gleich. Sprich es laut: rot, blau, rot, blau …','Finde zuerst den <b>Teil, der sich wiederholt</b>. Dann weisst du, was als Nächstes kommt.'],
+ example:'🍎🍌🍌 🍎🍌🍌 🍎 → <b>🍌</b><br>2, 4, 6, 8 → <b>10</b> (immer 2 mehr)',
+ parent:'Make patterns with Lego, beads or claps (clap, clap, stomp). Recognising the repeating unit is early algebra.',
+ gen(){if(Math.random()<.65){const sets=[['🔴','🔵','🟡'],['🍎','🍌','🍐'],['⭐','🌙','☁️'],['🐶','🐱','🐭'],['🟥','🟨','🟦'],['🔺','⚫','🟩']],S=pick(sets),t=pick(['AB','AAB','ABB','ABC','AABB']);
+   const unit=t.split('').map(c=>S['ABC'.indexOf(c)]),len=t.length*2+ri(0,t.length-1),seq=[];for(let i=0;i<len;i++)seq.push(unit[i%unit.length]);const a=unit[len%unit.length];
+   return {q:`Was kommt als Nächstes?<br><span class="row-emo">${seq.join('')}<span class="gap">?</span></span>`,say:'Was kommt als Nächstes?',type:'choice',emo:true,choices:shuffle(S.slice()),a,hint:'Sprich das Muster laut. Welcher Teil wiederholt sich?',explain:`Der Teil ${unit.join('')} wiederholt sich.`}}
+  const back=Math.random()<.3;if(back){const s=ri(10,20),arr=[0,1,2,3].map(i=>s-i);return {q:`Wie geht es weiter?<br><span class="big">${arr.join(', ')}, ?</span>`,type:'num',a:s-4,hint:'Die Zahlen werden kleiner. Um wie viel?',explain:`Immer 1 weniger → ${s-4}`}}
+  const st=pick([1,2]),s=ri(0,20-5*st),arr=[0,1,2,3].map(i=>s+i*st);return {q:`Wie geht es weiter?<br><span class="big">${arr.join(', ')}, ?</span>`,type:'num',a:s+4*st,hint:'Wie viel kommt jedes Mal dazu?',explain:`Immer ${st} mehr → ${s+4*st}`}}},
+
+{id:'s_formen',glyph:'▲●■',title:'Grundformen',sub:'Kreis, Dreieck, Quadrat, Rechteck',week:'2. Quintal',
+ kid:['Ein <b>Kreis</b> ist rund und hat keine Ecken. Ein <b>Dreieck</b> hat 3 Ecken.','Ein <b>Quadrat</b> hat 4 Ecken und 4 <b>gleich lange</b> Seiten. Ein <b>Rechteck</b> hat 4 Ecken, aber zwei lange und zwei kurze Seiten.'],
+ example:'⚽ Ball → Kreis &nbsp; · &nbsp; 🚪 Tür → Rechteck &nbsp; · &nbsp; 🍕 Pizzastück → Dreieck',
+ parent:'Go on a shape hunt at home or on the way to school: windows, plates, road signs. Let him trace the edges with a finger and count corners.',
+ gen(){const v=ri(1,3),K=['Kreis','Dreieck','Quadrat','Rechteck'];
+  if(v===1){const k=pick(K);return {q:`Wie heisst diese Form?${shapeSVG(k)}`,type:'choice',choices:K.slice(),a:k,hint:'Zähle die Ecken. Sind alle Seiten gleich lang?',explain:`Das ist ein ${k}.`}}
+  if(v===2){const k=pick(K),c={Kreis:0,Dreieck:3,Quadrat:4,Rechteck:4}[k];return {q:`Wie viele <b>Ecken</b> hat diese Form?${shapeSVG(k)}`,type:'num',a:c,hint:'Tippe auf jede Ecke und zähle.',explain:`Ein ${k} hat ${c} Ecken.`}}
+  const [e,n,k]=pick([['⚽','ein Ball','Kreis'],['🕒','eine Uhr','Kreis'],['🍪','ein Keks','Kreis'],['🍕','ein Pizzastück','Dreieck'],['⚠️','ein Warnschild','Dreieck'],['🚪','eine Tür','Rechteck'],['📱','ein Handy','Rechteck'],['🎲','eine Würfelseite','Quadrat']]);
+  return {q:`<span class="emo">${e}</span><br>Welche Form hat ${n}?`,type:'choice',choices:K.slice(),a:k,hint:'Fahre mit dem Finger um den Rand.',explain:`${n[0].toUpperCase()+n.slice(1)} ist wie ein ${k}.`}}},
+
+{id:'s_plat_m',glyph:'▶',title:'Digitale Lernplattform',sub:'Die Knöpfe kennen',week:'2. Quintal',
+ kid:['In der Schule übst du jetzt auch am <b>Tablet</b>. Die Knöpfe zeigen dir, was du tun kannst.','▶️ starten, 🔊 anhören, ✅ fertig, ⬅️ zurück, ❓ Hilfe.'],
+ example:'Du hörst die Aufgabe nicht gut? → <b>🔊</b> drücken',
+ parent:'The class is being introduced to a digital learning platform. Sit with him for the first sessions, keep them short, and let him explain the buttons to you.',
+ gen:platGen}
+],
+
+deutsch:[
+{id:'s_silben',glyph:'Ba·na',title:'Silben',sub:'Klatschen und Silben lesen',week:'2. Quintal',
+ kid:['Wörter kann man in <b>Silben</b> klatschen: Ba – na – ne. Jedes Klatschen ist eine Silbe.','Beim Lesen liest du <b>Silbe für Silbe</b>, dann schnell zusammen.'],
+ example:'Ba · na · ne → 3 Silben<br>Hund → 1 Silbe',
+ parent:'Clap, jump or walk the syllables. Reading in syllable chunks (Silbenlesen) is how the class learns to read right now. 🔊 reads the task, not the word to read.',
+ gen(){const v=ri(1,3),[w,e,s]=pick(SILBEN);
+  if(v===1)return {q:`<span class="emo">${e}</span><br><span class="big">${w}</span><br>Klatsche das Wort. Wie viele Silben hörst du?`,say:`${w}. Klatsche das Wort. Wie viele Silben hörst du?`,type:'choice',choices:['1','2','3','4'],a:String(s.length),hint:'Sprich das Wort langsam und klatsche bei jeder Silbe.',explain:`${s.join(' – ')} → ${s.length} ${s.length===1?'Silbe':'Silben'}`};
+  if(v===2){const o=shuffle(SILBEN.filter(x=>x[0]!==w)).slice(0,2);return {q:`Lies die Silben:<br><span class="big">${sylHTML(s)}</span><br>Welches Bild passt?`,say:'Lies die Silben. Welches Bild passt?',type:'choice',emo:true,choices:shuffle([e,o[0][1],o[1][1]]),a:e,hint:'Lies Silbe für Silbe, dann schnell hintereinander.',explain:`${s.join(' – ')} = ${w} ${e}`}}
+  let x;do{x=pick(SILBEN)}while(x[2].length<2);const [w2,e2,s2]=x,k=ri(0,s2.length-1),right=s2[k];
+  const fix=y=>k===0?y[0].toUpperCase()+y.slice(1).toLowerCase():y.toLowerCase();
+  const pool=shuffle([...new Set(SILBEN.flatMap(y=>y[2]).map(fix))].filter(y=>y!==right&&y.length<=4)).slice(0,2);
+  return {q:`<span class="emo">${e2}</span><br><span class="big">${s2.map((y,i)=>i===k?'<span class="gap">?</span>':y).join(' · ')}</span><br>Welche Silbe fehlt?`,say:`${w2}. Welche Silbe fehlt?`,type:'choice',choices:shuffle([right,...pool]),a:right,hint:`Sprich das Wort langsam und klatsche.`,explain:`${s2.join(' – ')} = ${w2}`}}},
+
+{id:'s_lesen',glyph:'Oma',title:'Erstes Lesen',sub:'Wörter und kleine Sätze',week:'2. Quintal',
+ kid:['Lies das Wort Silbe für Silbe. Dann <b>schnell zusammen</b> – welches Wort hörst du?','Bei Sätzen: Lies den ganzen Satz. Dann überlege: <b>Stimmt das?</b>'],
+ example:'<span class="syl"><span>Ro</span><span>se</span></span> → Rose 🌹<br>„Eis ist heiss.“ → <b>Nein</b>, Eis ist kalt!',
+ parent:'This matches the first reading booklets (Lesehefte). Let him read aloud; help only with the sound of a letter, not the whole word. 🔊 reads only the instruction.',
+ gen(){if(Math.random()<.6){const [w,e,s]=pick(LESEW),o=shuffle(LESEW.filter(x=>x[0]!==w)).slice(0,2);
+   return {q:`Lies das Wort:<br><span class="big">${sylHTML(s)}</span><br>Welches Bild passt?`,say:'Lies das Wort. Welches Bild passt?',type:'choice',emo:true,choices:shuffle([e,o[0][1],o[1][1]]),a:e,hint:'Lies langsam Silbe für Silbe und dann zusammen.',explain:`${w} ${e}`}}
+  const [s,a]=pick(LESES);return {q:`Lies den Satz:<br><span class="big" style="font-family:var(--f-read)">${s}</span><br>Stimmt das?`,say:'Lies den Satz. Stimmt das?',type:'choice',choices:['Ja','Nein'],a,hint:'Lies den Satz noch einmal langsam. Ist das in echt so?',explain:a==='Ja'?'Ja, das stimmt.':'Nein, das stimmt nicht.'}}},
+
+{id:'s_laute',glyph:'A…',title:'Anlaut, Inlaut, Endlaut',sub:'Was hörst du am Anfang, in der Mitte, am Ende?',week:'2. Quintal',
+ kid:['Sprich das Wort ganz <b>langsam</b> und dehne es: Mmmaaauuusss.','<b>Anlaut</b> = der erste Laut. <b>Inlaut</b> = ein Laut in der Mitte. <b>Endlaut</b> = der letzte Laut. Tippe auf 🔊, dann hörst du das Wort.'],
+ example:'🐭 Maus: Anlaut <b>M</b> · Inlaut <b>au</b> · Endlaut <b>s</b>',
+ parent:'Stretch the word like chewing gum. Sounds, not letter names: "mmm", not "em". Words with tricky endings (Mond sounds like "Mont") are left out on purpose.',
+ gen(){const v=ri(1,3);
+  if(v===1){const [w,e,a]=pick(ANLAUT);return {q:`<span class="emo">${e}</span>${wordTip(w)}<br>Was hörst du am <b>Anfang</b>?`,say:`${w}. Was hörst du am Anfang?`,type:'choice',choices:optsN(a,[...new Set(ANLAUT.map(x=>x[2]))]),a,hint:'Sprich nur den ersten Laut ganz lang.',explain:`${w} beginnt mit ${a}.`}}
+  if(v===2){const [w,e,a]=pick(INLAUT);return {q:`<span class="emo">${e}</span>${wordTip(w)}<br>Was hörst du in der <b>Mitte</b>?`,say:`${w}. Was hörst du in der Mitte?`,type:'choice',choices:optsN(a,['a','e','i','o','u','au','ei']),a,hint:'Dehne das Wort. Welcher Laut klingt lang in der Mitte?',explain:`${w}: ${lautSplit(w)}`}}
+  const [w,e,a]=pick(ENDLAUT);return {q:`<span class="emo">${e}</span>${wordTip(w)}<br>Was hörst du am <b>Ende</b>?`,say:`${w}. Was hörst du am Ende?`,type:'choice',choices:optsN(a,[...new Set(ENDLAUT.map(x=>x[2]))]),a,hint:'Sprich das Wort und bleib am Schluss stehen.',explain:`${w} endet mit ${a}.`}}},
+
+{id:'s_tabelle',glyph:'ABC',title:'Schreiben mit der Schreibtabelle',sub:'Laut für Laut aufschreiben',week:'2. Quintal',
+ kid:['Sprich das Wort langsam. Bei jedem Laut suchst du das <b>Bild in der Schreibtabelle</b> und schreibst den Buchstaben dazu.','Tippe auf 🔊, dann hörst du das Wort. Gross- oder Kleinschreibung ist hier egal.'],
+ example:'🦙 → L (Löwe) · a (Affe) · m (Maus) · a (Affe) → <b>Lama</b>',
+ parent:'At this stage children write what they hear (lautgetreu). Praise every correct sound; spelling rules come later. All words here are written exactly as they sound.',
+ gen(){const [w,e]=pick(SCHREIBW);return {q:`<span class="emo">${e}</span><br>Schreib das Wort. Sprich langsam: Welche Laute hörst du?`,say:`${w}. Schreib das Wort.`,type:'text',a:[w],hint:`Das Wort beginnt mit ${w[0]}. Sprich weiter, Laut für Laut.`,explain:`${w}: ${lautSplit(w)}`}}},
+
+{id:'s_buchst',glyph:'Aa',title:'Buchstaben schreiben',sub:'Gross und klein, formgerecht',week:'2. Quintal',
+ kid:['Jeder Buchstabe hat eine <b>grosse</b> und eine <b>kleine</b> Form: A a, M m, B b.','Buchstaben schreibst du immer <b>oben beginnend</b>. Achtung bei b und d: der Bauch zeigt in eine andere Richtung!'],
+ example:'G → <b>g</b> &nbsp; · &nbsp; b → <b>B</b><br>b und d sind keine Zwillinge!',
+ parent:'For b/d/p/q mix-ups, a trick: make a "bed" with both fists (thumbs up) — b is the left fist, d the right. Writing tasks are checked by you, not the app.',
+ gen(){const v=ri(1,3),L=pick(ABC.split('')),l=L.toLowerCase();
+  if(v===1){const sim=(SIM[l]||'').split('').filter(x=>x!==l),pool=[...new Set([...sim,...shuffle('abdefghiklmnoprstuwz'.split(''))])].filter(x=>x!==l).slice(0,2);
+   return {q:`Welcher <b>kleine</b> Buchstabe gehört zu<br><span class="big" style="font-family:var(--f-read);font-size:2.4rem">${L}</span>?`,say:`Welcher kleine Buchstabe gehört zu ${L}?`,type:'choice',choices:shuffle([l,...pool]),a:l,hint:'Sprich den Laut. Wie sieht er klein aus?',explain:`${L} ${l}`}}
+  if(v===2){const sim=(SIM[l]||'').split('').filter(x=>x!==l),pool=[...new Set([...sim,...shuffle('abdefghiklmnoprstuwz'.split(''))])].filter(x=>x!==l).slice(0,2).map(x=>x.toUpperCase());
+   return {q:`Welcher <b>grosse</b> Buchstabe gehört zu<br><span class="big" style="font-family:var(--f-read);font-size:2.4rem">${l}</span>?`,say:'Welcher grosse Buchstabe gehört dazu?',type:'choice',choices:shuffle([L,...pool]),a:L,hint:'Sprich den Laut. Wie sieht er gross aus?',explain:`${L} ${l}`}}
+  return SFREE({q:`<span class="emo" style="font-family:var(--f-read)">${L} ${l}</span><br>Schreibe eine ganze Zeile <b>${L} ${l}</b> in dein Schreibheft.<ul class="check"><li>Zuerst mit dem Finger in die Luft schreiben.</li><li>Oben beginnen.</li><li>Schön auf der Linie bleiben.</li><li>Kreise deinen schönsten Buchstaben ein.</li></ul>`,say:`Schreibe eine ganze Zeile ${L}, gross und klein.`,freeTitle:'Schreibaufgabe',doneLabel:'Zeile geschrieben ✓',nextLabel:'Anderer Buchstabe',doneMsg:'Zeig deine Zeile Mama oder Papa. Welcher Buchstabe ist am schönsten?'})}},
+
+{id:'s_erz',glyph:'💬',title:'Erzählen, Zuhören, Fragen',sub:'Fragewörter und Erzählaufträge',week:'2. Quintal',
+ kid:['Fragen beginnen oft mit einem <b>Fragewort</b>: Wer? Was? Wo? Wann? Wie? Warum?','Beim <b>Erzählen</b> sagst du: Wer war dabei? Wo war es? Was ist passiert? Beim <b>Zuhören</b> schaust du die Person an und fragst danach nach.'],
+ example:'<b>Wo</b> wohnst du? · <b>Wann</b> hast du Geburtstag? · <b>Wer</b> spielt mit?',
+ parent:'The storytelling prompts match the class events this term (cinema, forest day, storytelling night, candle dipping, turnip carving). Do them on the day of the event and ask one follow-up question each.',
+ gen(){if(Math.random()<.55){const [s,a,w]=pick(FRAGEW);return {q:`Welches Fragewort passt?<br><span class="big" style="font-family:var(--f-read)">${s.replace('___','<span class="gap">?</span>')}</span>`,say:`Welches Fragewort passt? ${s.replace('___','Lücke')}`,type:'choice',choices:shuffle([a,...w]),a,hint:'Lies die Frage mit jedem Wort. Was klingt richtig?',explain:s.replace('___',a)}}
+  const [t,p]=pick(ERZ);return SFREE({q:`<div class="text"><b>Erzähle ${t}</b><br>${p}</div>Erzähle Mama oder Papa davon. Denk an:<ul class="check"><li>Wer war dabei?</li><li>Wo war es?</li><li>Was ist passiert – zuerst, dann, am Schluss?</li><li>Wie hast du dich gefühlt?</li></ul><b>Zuhören:</b> Danach stellt dir Mama oder Papa eine Frage – und du stellst auch eine Frage zurück!`,say:`Erzähle ${t}. ${p}`,freeTitle:'Erzählen',doneLabel:'Erzählt ✓',nextLabel:'Anderes Thema',doneMsg:'Super erzählt! Toll, dass ihr euch Fragen gestellt habt.'})}},
+
+{id:'s_plat_d',glyph:'▶',title:'Digitale Lernplattform',sub:'Die Knöpfe kennen',week:'2. Quintal',
+ kid:['In der Schule übst du jetzt auch am <b>Tablet</b>. Die Knöpfe zeigen dir, was du tun kannst.','▶️ starten, 🔊 anhören, ✅ fertig, ⬅️ zurück, ❓ Hilfe.'],
+ example:'Du weisst nicht weiter? → <b>❓</b> drücken oder fragen',
+ parent:'The class is being introduced to a digital learning platform for German too. Keep screen sessions short and let him show you what he did.',
+ gen:platGen}
+],
+
+nmg:[
+{id:'s_ich',glyph:'🙋',title:'Wer bin ich? Wer sind wir?',sub:'Körper, Sinne, Familie, Steckbrief',week:'2. Quintal',
+ kid:['Jeder Mensch ist <b>einzigartig</b>: Wir sehen anders aus und mögen andere Dinge. Und doch haben wir vieles <b>gemeinsam</b>.','Mit unseren <b>Sinnen</b> entdecken wir die Welt: sehen, hören, riechen, schmecken, fühlen.'],
+ example:'👂 Ohr → hören &nbsp; · &nbsp; 👃 Nase → riechen<br>Die Mutter von Mama ist meine <b>Oma</b>.',
+ parent:'This finishes the class unit "Who am I? Who are we?". The talk tasks are the heart of it: let him draw, talk and compare himself with others kindly.',
+ gen(){const v=ri(1,4);
+  if(v===1){const [e,a]=pick(KOERPER);return {q:`<span class="emo">${e}</span><br>Wie heisst dieser Körperteil?`,type:'choice',choices:optsN(a,KOERPER.map(x=>x[1])),a,hint:'Zeige ihn an deinem eigenen Körper.',explain:`${e} = ${a}`}}
+  if(v===2){const [q,a,w]=pick(SINNE);return {q:`<span class="big">${q}</span>`,type:'choice',stack:true,choices:shuffle([a,...w]),a,hint:'Probiere es aus: Halte dir kurz die Augen, Ohren oder Nase zu.',explain:a}}
+  if(v===3){const [q,a,w]=pick(FAMILIE);return {q:`<span class="big">${q}</span>`,type:'choice',choices:shuffle([a,...w]),a,hint:'Male einen kleinen Familienbaum.',explain:q.replace('…',a)}}
+  const [t,p]=pick(ICH);return SFREE({q:`<div class="text"><b>${t}</b><br>${p}</div>`,say:`${t}. ${p}`,freeTitle:'Erzählen und malen',doneLabel:'Gemacht ✓',doneMsg:'Toll! Du hast viel über dich erzählt.'})}},
+
+{id:'s_umg',glyph:'🏡',title:'Wo lebe ich? Wo leben wir?',sub:'Adliswil, Schulweg, wichtige Orte',week:'2. Quintal',
+ kid:['Du wohnst in <b>Adliswil</b>. Adliswil liegt im Kanton <b>Zürich</b> in der <b>Schweiz</b>. Durch Adliswil fliesst die <b>Sihl</b>.','Auf dem Schulweg trägst du die <b>Leuchtweste</b>. Vor der Strasse gilt: Warte, luege, lose, laufe.'],
+ example:'Brot → Bäckerei &nbsp; · &nbsp; Zug → Bahnhof &nbsp; · &nbsp; Bücher → Bibliothek',
+ parent:'Walk the way to school together and name places: bakery, station, playground, the Sihl. The drawing task (Schulweg) is great for spatial thinking.',
+ gen(){if(Math.random()<.8){const [q,a,w]=pick(UMG);return {q:`<span class="big">${q}</span>`,type:'choice',stack:true,choices:shuffle([a,...w]),a,hint:'Denk an deinen Weg zur Schule und an deinen Ort.',explain:a}}
+  return SFREE({q:`<div class="text"><b>Mein Schulweg</b><br>Zeichne deinen Weg von zu Hause zur Schule: dein Haus, die Strassen, die Schule. Was siehst du unterwegs? Wo musst du besonders aufpassen?</div>`,say:'Zeichne deinen Schulweg. Was siehst du unterwegs? Wo musst du besonders aufpassen?',freeTitle:'Zeichnen',doneLabel:'Gezeichnet ✓',doneMsg:'Super! Zeig Mama oder Papa, wo du aufpassen musst.'})}},
+
+{id:'s_gefuehl',glyph:'😊',title:'Gefühle',sub:'Fröhlich, traurig, wütend …',week:'2. Quintal',
+ kid:['Alle Menschen haben <b>Gefühle</b>: fröhlich, traurig, wütend, ängstlich, überrascht, müde. Alle Gefühle sind in Ordnung.','Wenn du sagst, wie du dich fühlst, können andere dich besser verstehen.'],
+ example:'Dein Eis fällt auf den Boden → 😢 <b>traurig</b>',
+ parent:'Name feelings in everyday moments ("You look frustrated — the tower fell"). There is no wrong feeling; what we do with it is what we practise.',
+ gen(){const v=ri(1,3),lab=FEEL.map(([e,w])=>`${e} ${w}`);
+  if(v===1){const [e,w]=pick(FEEL);return {q:`<span class="emo">${e}</span><br>Wie fühlt sich dieses Gesicht?`,type:'choice',choices:optsN(w,FEEL.map(x=>x[1])),a:w,hint:'Mach das Gesicht selbst nach. Wie fühlst du dich dabei?',explain:`${e} ${w}`}}
+  if(v===2){const [s,w]=pick(FEELSIT),right=lab.find(x=>x.endsWith(' '+w));return {q:`<span class="big" style="font-family:var(--f-read)">${s}</span><br>Wie fühlst du dich wohl?`,type:'choice',stack:true,choices:optsN(right,lab),a:right,hint:'Stell dir vor, es passiert dir wirklich.',explain:`Da fühlt man sich oft ${w}.`}}
+  return SFREE({q:`<div class="text"><b>Mein Gefühl heute</b><br>Wie fühlst du dich heute? Zeige es mit deinem Gesicht. Erzähle Mama oder Papa, warum du dich so fühlst.</div>`,say:'Wie fühlst du dich heute? Zeige es mit deinem Gesicht und erzähle, warum.',freeTitle:'Erzählen',doneLabel:'Erzählt ✓',doneMsg:'Danke, dass du dein Gefühl erzählt hast!'})}},
+
+{id:'s_kompl',glyph:'💛',title:'Komplimente',sub:'Nette Worte machen froh',week:'2. Quintal',
+ kid:['Ein <b>Kompliment</b> ist etwas Nettes, das du jemandem sagst. Es macht froh.','Ein gutes Kompliment ist <b>ehrlich</b> und <b>genau</b>: „Dein Bild hat so schöne Farben!“'],
+ example:'„Du kannst toll rennen!“ → Kompliment ✓<br>„Du bist zu langsam.“ → kein Kompliment',
+ parent:'At dinner, let everyone give one compliment to the person on their left. Model specific compliments ("You helped your brother tie his shoes").',
+ gen(){const v=ri(1,3);
+  if(v===1){const [s,a]=pick(KOMPL);return {q:`<span class="big" style="font-family:var(--f-read)">„${s}“</span><br>Ist das ein Kompliment?`,type:'choice',choices:['Ja','Nein'],a,hint:'Würdest du dich darüber freuen?',explain:a==='Ja'?'Ja, das macht froh.':'Nein, das macht traurig.'}}
+  if(v===2){const [q,a,w]=pick(NETT);return {q,type:'choice',stack:true,choices:shuffle([a,...w]),a,hint:'Was würde dich freuen, wenn du das Kind wärst?',explain:a}}
+  return SFREE({q:`<div class="text"><b>3 Komplimente</b><br>Mache heute 3 Komplimente: einem Kind, Mama oder Papa – und dir selbst!</div>`,say:'Mache heute drei Komplimente: einem Kind, Mama oder Papa, und dir selbst.',freeTitle:'Auftrag',doneLabel:'Gemacht ✓',doneMsg:'Wunderbar! Wie haben die anderen reagiert?'})}}
+]};
+const SINTRO={mathe:'Mathe-Themen aus der Schule. Erst die Erklärung, dann üben, so lange du willst. Mit 🔊 wird die Aufgabe vorgelesen.',deutsch:'Deutsch-Themen aus der Schule. Erst die Erklärung, dann üben. Bei Lese-Aufgaben liest 🔊 nur die Aufgabe vor – das Wort liest du selbst!',nmg:'NMG heisst Natur, Mensch, Gesellschaft. Hier geht es um dich, deinen Ort und deine Gefühle.'};
+const SUBN={mathe:'Mathe',deutsch:'Deutsch',nmg:'NMG'};
+const plainQ=s=>{const d=document.createElement('div');d.innerHTML=s;return d.textContent.replace(/\p{Extended_Pictographic}|️|‍/gu,' ').replace(/\s+/g,' ').trim()};
+
+function renderSchoolList(){
+  const sub=store.ssub,L=SCHULE[sub];
+  app.innerHTML=`<div class="seg seg3" role="group" aria-label="Fach">${Object.keys(SCHULE).map(k=>`<button class="${sub===k?'on':''}" data-sub="${k}">${SUBN[k]}</button>`).join('')}</div>
+  <p class="intro">${SINTRO[sub]}</p>
+  <div class="list">${L.map(c=>`<button class="card" data-id="${c.id}">
+    <span class="glyph" aria-hidden="true">${c.glyph}</span>
+    <span class="card-t"><strong>${c.title}</strong><small>${c.sub}</small>
+    <span class="meta"><span class="pill">${c.week}</span><span><span class="star">★</span> ${store.stars[c.id]||0}</span></span></span></button>`).join('')}</div>
+  <p class="foot">Themen aus dem 2. Quintalsbrief der 1. Klasse (Herbst- bis Weihnachtsferien 2026). Die Sterne zählen auch im Fortschritt mit.</p>`;
+  app.querySelectorAll('[data-sub]').forEach(b=>b.addEventListener('click',()=>{store.ssub=b.dataset.sub;save();render()}));
+  app.querySelectorAll('.card').forEach(b=>b.addEventListener('click',()=>{view={screen:'concept',cid:b.dataset.id,q:null};newQ();render();window.scrollTo(0,0)}));
+}
+store.ssub=store.ssub||'mathe';
 
 /* ---------- GESCHICHTEN: illustration kit (original SVG drawings) ---------- */
 let SID=0;
@@ -919,20 +1174,20 @@ const QLABEL={mc:'Frage',rf:'Richtig oder falsch?',order:'Reihenfolge',word:'Wor
 /* ---------- app ---------- */
 const app=document.getElementById('app');
 let view={screen:'list',cid:null,q:null,tries:0,done:false};
-const list=()=>store.tab==='deutsch'?DEUTSCH:MATHE;
+const list=()=>store.tab==='schule'?SCHULE[store.ssub]:store.tab==='deutsch'?DEUTSCH:MATHE;
 const total=()=>Object.values(store.stars).reduce((s,n)=>s+n,0);
 
 function setTab(t){store.tab=t;save();view={screen:'list'};render();window.scrollTo(0,0)}
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.t)));
 
 function render(){
-  document.body.dataset.subject=store.tab;
+  document.body.dataset.subject=store.tab==='schule'?'schule-'+store.ssub:store.tab;
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===store.tab));
   document.getElementById('total').textContent=total();
   app.onclick=null;app.onkeydown=null;
   if(store.tab==='lesen')return view.screen==='story'?renderStory():renderLesen();
   if(store.tab==='fort')return renderProgress();
-  if(view.screen==='list')return renderList();
+  if(view.screen==='list')return store.tab==='schule'?renderSchoolList():renderList();
   renderConcept();
 }
 
@@ -953,7 +1208,7 @@ function concept(){return list().find(c=>c.id===view.cid)}
 function newQ(){view.q=concept().gen();view.tries=0;view.done=false;view.fb='';view.picked=null;view.wrongs=[]}
 
 function answerArea(q){
-  if(q.type==='choice')return `<div class="choices"${q.stack?' style="grid-template-columns:1fr"':''}>${q.choices.map((c,i)=>{
+  if(q.type==='choice')return `<div class="choices${q.emo?' emo':''}"${q.stack?' style="grid-template-columns:1fr"':''}>${q.choices.map((c,i)=>{
     let cls='';if(view.done||view.picked!=null){if(c===q.a&&view.done)cls='right';else if(view.wrongs&&view.wrongs.includes(c))cls='wrong'}
     return `<button class="choice ${cls}" data-c="${i}" ${view.done||(view.wrongs&&view.wrongs.includes(c))?'disabled':''}>${esc(c)}</button>`}).join('')}</div>`;
   if(q.type==='pair')return `<div class="pair">${q.labels.map((l,i)=>`<label for="ans${i}">${l}<input class="ans" id="ans${i}" inputmode="numeric" autocomplete="off" ${view.done?'disabled':''}></label>`).join('')}</div>`;
@@ -970,14 +1225,15 @@ function renderConcept(){
   <div class="cols">
     <section class="panel"><h3>So geht's</h3>${c.kid.map(p=>`<p>${p}</p>`).join('')}<div class="ex">${c.example}</div>
       <details><summary>Für Eltern</summary><p>${c.parent}</p></details></section>
-    <section class="panel" aria-live="polite"><div class="prac-head"><h3>${q.type==='free'?'Schreibaufgabe':'Üben'}</h3><span class="score"><span class="star">★</span> ${store.stars[c.id]||0}</span></div>
+    <section class="panel" aria-live="polite"><div class="prac-head"><h3>${q.type==='free'?(q.freeTitle||'Schreibaufgabe'):'Üben'}</h3><span class="score"><span class="star">★</span> ${store.stars[c.id]||0}</span></div>
       <div class="q">${q.q}</div>
       ${answerArea(q)}
       <div class="btns">
         ${q.type==='free'
-          ?`<button class="btn" id="done" ${view.done?'disabled':''}>Geschichte geschrieben ✓</button><button class="btn ghost" id="next">Neue Idee</button>`
+          ?`<button class="btn" id="done" ${view.done?'disabled':''}>${q.doneLabel||'Geschichte geschrieben ✓'}</button><button class="btn ghost" id="next">${q.nextLabel||'Neue Idee'}</button>`
           :view.done?`<button class="btn" id="next">Nächste Aufgabe →</button>`
           :`${q.type!=='choice'?'<button class="btn" id="check">Prüfen</button>':''}<button class="btn ghost" id="hint">Tipp</button>`}
+        ${store.tab==='schule'&&SAY.on?'<button class="btn ghost say" id="say" aria-label="Aufgabe vorlesen">🔊</button>':''}
       </div>
       ${view.fb||''}
     </section>
@@ -986,14 +1242,15 @@ function renderConcept(){
   const nx=document.getElementById('next');if(nx)nx.onclick=()=>{newQ();render();const a=document.getElementById('ans0');if(a)a.focus()};
   const h=document.getElementById('hint');if(h)h.onclick=()=>{view.fb=`<div class="fb tip"><b>Tipp</b>${q.hint}</div>`;render()};
   const ck=document.getElementById('check');if(ck)ck.onclick=check;
-  const dn=document.getElementById('done');if(dn)dn.onclick=()=>{addStar();record(true);view.done=true;view.fb='<div class="fb ok"><b>Super gemacht!</b><span class="why">Lies deine Geschichte jemandem vor.</span></div>';render()};
+  const dn=document.getElementById('done');if(dn)dn.onclick=()=>{addStar();record(true);view.done=true;view.fb=`<div class="fb ok"><b>Super gemacht!</b><span class="why">${q.doneMsg||'Lies deine Geschichte jemandem vor.'}</span></div>`;render()};
+  const sy=document.getElementById('say');if(sy)sy.onclick=()=>say(q.say||plainQ(q.q));
   app.querySelectorAll('.ans').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();check()}}));
   app.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>check(q.choices[+b.dataset.c])));
 }
 
 const dkey=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const emptyDay=()=>({m:{ok:0,all:0},d:{ok:0,all:0},t:{}});
-function record(ok){const k=dkey(),D=store.days[k]=store.days[k]||emptyDay(),sb=store.tab==='mathe'?'m':'d';D[sb].all++;if(ok)D[sb].ok++;const T=D.t[view.cid]=D.t[view.cid]||{ok:0,all:0};T.all++;if(ok)T.ok++;save()}
+function record(ok){const k=dkey(),D=store.days[k]=store.days[k]||emptyDay(),sb=store.tab==='schule'?{mathe:'m',deutsch:'d',nmg:'n'}[store.ssub]:store.tab==='mathe'?'m':'d';D[sb]=D[sb]||{ok:0,all:0};D[sb].all++;if(ok)D[sb].ok++;const T=D.t[view.cid]=D.t[view.cid]||{ok:0,all:0};T.all++;if(ok)T.ok++;save()}
 function addStar(){store.stars[view.cid]=(store.stars[view.cid]||0)+1;save()}
 
 function isRight(q,val){
@@ -1033,10 +1290,12 @@ const WD=['So','Mo','Di','Mi','Do','Fr','Sa'];
 const fmtD=k=>{const [y,m,d]=k.split('-').map(Number),dt=new Date(y,m-1,d);return `${WD[dt.getDay()]} ${d}.${m}.`};
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 const TOPIC={};MATHE.forEach(c=>TOPIC[c.id]={c,s:'m'});DEUTSCH.forEach(c=>TOPIC[c.id]={c,s:'d'});
+SCHULE.mathe.forEach(c=>TOPIC[c.id]={c,s:'m',sch:1});SCHULE.deutsch.forEach(c=>TOPIC[c.id]={c,s:'d',sch:1});SCHULE.nmg.forEach(c=>TOPIC[c.id]={c,s:'n',sch:1});
+const nAll=x=>x&&x.n?x.n.all:0,nOk=x=>x&&x.n?x.n.ok:0;
 let wipeAsk=false,importMsg='';
 
 function lastDays(n){const out=[];for(let i=n-1;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);out.push(dkey(d))}return out}
-function streak(){let n=0;const d=new Date();const has=k=>{const D=store.days[k];return D&&((D.m.all+D.d.all)>0||!!D.g)};
+function streak(){let n=0;const d=new Date();const has=k=>{const D=store.days[k];return D&&((D.m.all+D.d.all+nAll(D))>0||!!D.g)};
   if(!has(dkey(d)))d.setDate(d.getDate()-1);
   while(has(dkey(d))){n++;d.setDate(d.getDate()-1)}return n}
 
@@ -1057,19 +1316,19 @@ function chartSVG(keys){
 
 function renderProgress(){
   const g=store.goal,today=dkey(),D=store.days[today]||emptyDay();
-  const week=lastDays(7),wk=week.reduce((a,k)=>{const x=store.days[k];if(x){a.ok+=x.m.ok+x.d.ok;a.all+=x.m.all+x.d.all;if(x.m.all+x.d.all)a.days++}return a},{ok:0,all:0,days:0});
+  const week=lastDays(7),wk=week.reduce((a,k)=>{const x=store.days[k];if(x){a.ok+=x.m.ok+x.d.ok+nOk(x);a.all+=x.m.all+x.d.all+nAll(x);if(x.m.all+x.d.all+nAll(x))a.days++}return a},{ok:0,all:0,days:0});
   const bar=(lbl,o,cls)=>`<div class="bar-row"><span class="lbl">${lbl}</span><div class="track"><div class="fill ${cls}" style="width:${Math.min(100,pct(o.ok,g))}%"></div></div><span class="n">${o.ok} / ${g}${o.ok>=g?' ✓':''}</span></div>`;
   // per-day log
-  const logKeys=Object.keys(store.days).filter(k=>{const x=store.days[k];return x.m.all+x.d.all>0||x.g}).sort().reverse().slice(0,30);
+  const logKeys=Object.keys(store.days).filter(k=>{const x=store.days[k];return x.m.all+x.d.all+nAll(x)>0||x.g}).sort().reverse().slice(0,30);
   const log=logKeys.map(k=>{const x=store.days[k],met=x.m.ok>=g&&x.d.ok>=g&&!!x.g;return `<tr><td>${fmtD(k)}</td><td class="n">${x.m.ok} / ${x.m.all}</td><td class="n">${x.d.ok} / ${x.d.all}</td><td class="n">${x.g?x.g.ok+' / '+x.g.all:'–'}</td><td>${met?'<span class="tag ok">Ziel ✓</span>':'<span class="muted">–</span>'}</td></tr>`}).join('');
   // per-topic totals
   const agg={};Object.entries(store.days).forEach(([k,x])=>Object.entries(x.t||{}).forEach(([id,t])=>{const a=agg[id]=agg[id]||{ok:0,all:0,last:k};a.ok+=t.ok;a.all+=t.all;if(k>a.last)a.last=k}));
-  const order=[...MATHE,...DEUTSCH].map(c=>c.id).filter(id=>agg[id]);
-  const topics=order.map(id=>{const a=agg[id],p=pct(a.ok,a.all),T=TOPIC[id];return `<tr><td><span class="tag ${T.s}">${T.s==='m'?'Mathe':'Deutsch'}</span> ${T.c.title}</td><td class="n">${a.ok} / ${a.all}</td><td class="n">${p}%</td><td>${a.all>=5&&p<60?'<span class="tag warn">nochmals üben</span>':a.all>=5&&p>=85?'<span class="tag ok">sicher</span>':'<span class="muted">'+fmtD(a.last)+'</span>'}</td></tr>`}).join('');
+  const order=[...MATHE,...DEUTSCH,...SCHULE.mathe,...SCHULE.deutsch,...SCHULE.nmg].map(c=>c.id).filter(id=>agg[id]);
+  const topics=order.map(id=>{const a=agg[id],p=pct(a.ok,a.all),T=TOPIC[id];return `<tr><td><span class="tag ${T.s}">${T.sch?'Schule · ':''}${{m:'Mathe',d:'Deutsch',n:'NMG'}[T.s]}</span> ${T.c.title}</td><td class="n">${a.ok} / ${a.all}</td><td class="n">${p}%</td><td>${a.all>=5&&p<60?'<span class="tag warn">nochmals üben</span>':a.all>=5&&p>=85?'<span class="tag ok">sicher</span>':'<span class="muted">'+fmtD(a.last)+'</span>'}</td></tr>`}).join('');
   const backup=JSON.stringify({v:2,stars:store.stars,days:store.days,goal:store.goal,reads:store.reads,writes:store.writes,level:store.level});
   const wr=(store.writes||[]).slice(0,20).map(w=>{const st=STORIES.find(x=>x.id===w.id);return `<li><div class="wq">${fmtD(w.d)} · ${st?st.title:''} · ${esc(w.q)}</div><div class="wt">${esc(w.text)}</div></li>`}).join('');
   app.innerHTML=`<div class="pgrid">
-   <section class="panel"><h3>Heute · ${fmtD(today)}</h3><div class="today">${bar('Mathe',D.m,'m')}${bar('Deutsch',D.d,'d')}<div class="bar-row"><span class="lbl">Lesen</span><div class="track"><div class="fill g" style="width:${D.g?100:0}%"></div></div><span class="n">${D.g?D.g.ok+' / '+D.g.all+' ✓':'0 / 1'}</span></div></div>
+   <section class="panel"><h3>Heute · ${fmtD(today)}</h3><div class="today">${bar('Mathe',D.m,'m')}${bar('Deutsch',D.d,'d')}<div class="bar-row"><span class="lbl">Lesen</span><div class="track"><div class="fill g" style="width:${D.g?100:0}%"></div></div><span class="n">${D.g?D.g.ok+' / '+D.g.all+' ✓':'0 / 1'}</span></div>${nAll(D)?bar('NMG',D.n,'n'):''}</div>
      <div class="goal">Tagesziel pro Fach: <button id="gminus" aria-label="Ziel verkleinern">−</button><b>${g}</b><button id="gplus" aria-label="Ziel vergrössern">+</button> richtige Antworten</div></section>
    <section class="panel"><h3>Übersicht</h3><div class="kpis">
      <div class="kpi"><b>${streak()}</b><span>Tage am Stück</span></div>
@@ -1206,5 +1465,5 @@ function updateSum(s){
 
 render();
 </script>
-</body>
-</html>
+
+</body></html>
